@@ -16,6 +16,7 @@ Stejný způsob evidence jako v `DT-grafika-TV/ZADANI.md`:
 
 ## 2. Potvrzený rámec
 
+- Současný hosting: **Active24, klasický multihosting** dle zadavatele. Přesná varianta/platforma, limity a dostupné funkce dosud neověřené. ✔ 28. 9. 2026
 - Nový web vzniká odděleně v lokálním/testovacím prostředí; cílem je přenos kompletní ověřené verze na ostrou doménu. ✔ 28. 9. 2026
 - Pořadí realizace: **nejprve odladit kroky 1–3 a spustit základní web; mapu, registrace, live a další rozšíření řešit následně**. ✔ 28. 9. 2026
 - Projekt webu má vlastní složku `web/` v tomto repozitáři a respektuje jeho ostatní části. ✔ 28. 9. 2026
@@ -184,6 +185,12 @@ Lokální WordPress navrhuji spouštět v reprodukovatelném prostředí, např�
 
 Staging nesmí používat produkční databázi, rozesílat e-maily jezdcům ani přijímat ostré platby. Webhooky platební brány ověřovat na dostupné HTTPS testovací adrese; veřejná výjimka pro callback musí být omezená a zprávy ověřené. Samotný noindex není ochrana přístupu.
 
+### Upřesnění pro Active24
+
+Pro první verzi zatím neplánovat stěhování hostingu. Doporučený směr je lokální vývoj a oddělený náhled na Active24 s vlastní databází; proveditelnost konkrétního umístění potvrdit v účtu před založením. Oficiální dokumentace popisuje [subdomény](https://www.active24.cz/centrum-napovedy/vytvareni-subdomen) i [oddělené subservery multihostingu](https://faq.active24.com/cz/090035-Multihosting---spr%C3%A1va-multihostingov%C3%BDch-bal%C3%AD%C4%8Dk%C5%AF), ale postup závisí na platformě účtu. Parametry dnešní nabídky nelze automaticky přisoudit staršímu tarifu.
+
+Název tarifu sám o sobě nepotvrzuje SSH, automatické nasazování ani podporu běžící Node.js aplikace. Budoucí interní aplikace může mít jiný hosting při zachování subdomény aplikace.svdtpribram.cz. Toto rozhodnutí nebrání přípravě obsahového webu.
+
 ### Co se bude skutečně vyvíjet
 
 Po potvrzení WordPressu stavět od prvních funkčních stránek vlastní šablonu a bloky v reálném WordPressu, včetně editace obsahu. Krátké vizuální studie lze dělat samostatně, ale nemají se stát celým hotovým webem, který se teprve nakonec předělává do CMS.
@@ -218,7 +225,7 @@ Pro návrat uchovat předchozí balíček a předmigrační zálohu. Návrat kó
 
 ### Co zjistit před založením prostředí
 
-- Hosting, dostupné PHP/databáze, staging, SSH a možnosti záloh: **K doplnění** (čeká: zadavatel).
+- Hosting: **Active24, klasický multihosting** ✔ 28. 9. 2026. Technická inventura: **Rozpracováno** (čeká: na nás) — ověřit v administraci konkrétní platformu, verze PHP/databáze, volnou kapacitu pro samostatný testovací web a databázi, HTTPS, ochranu náhledu, přenos souborů a zálohy/obnovu. Přístup zatím není ověřený.
 - Zvolená platforma a místní vývojový nástroj: **K potvrzení** (čeká: na nás) — navazuje na rozhodnutí zadavatele o CMS.
 - Kdo schvaluje obsah a má přístup do náhledu: **K doplnění** (čeká: zadavatel).
 - Ověřený postup sestavení, migrace a návratu: **K doplnění** (čeká: na nás).
@@ -277,3 +284,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: zadavatel potvrdil nejprve odladění kroků 1–3 a spuštění základního webu. Etapa 4 (mapa a integrace) i další vzniklé potřeby následují až po spuštění. Přesunuta přejímka a nasazení před rozšíření, vymezen rozsah první verze a samostatné testy dalších vydání.
 
 - 28. 9. 2026: na žádost zadavatele založen UKOLY.md: nejbližší postup, úkoly první verze, přejímka/nasazení a odložený zásobník. Zadání zůstává zdrojem požadavků a rozhodnutí; pracovní stav úkolů má vlastní evidenci.
+
+- 28. 9. 2026: zadavatel uvedl Active24, klasický multihosting. Poskytovatel je známý; konkrétní funkce a kapacity zbývá ověřit. Pro první verzi zatím neplánována migrace hostingu.
