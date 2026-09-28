@@ -20,7 +20,7 @@ Stejný způsob evidence jako v `DT-grafika-TV/ZADANI.md`:
 - Nový web vzniká odděleně v lokálním/testovacím prostředí; cílem je přenos kompletní ověřené verze na ostrou doménu. ✔ 28. 9. 2026
 - Pořadí realizace: **nejprve odladit kroky 1–3 a spustit základní web; mapu, registrace, live a další rozšíření řešit následně**. ✔ 28. 9. 2026
 - Projekt webu má vlastní složku `web/` v tomto repozitáři a respektuje jeho ostatní části. ✔ 28. 9. 2026
-- Současný web je postavený na **WordPressu + Divi**. Pro nové řešení není Divi podmínkou. Redakční systém a pohodlná administrace jsou nutné; platforma nového webu zůstává k rozhodnutí. ✔ 28. 9. 2026
+- Současný web je postavený na **WordPressu + Divi**. Nový web: **WordPress s vlastní šablonou a redakčními bloky, bez Divi**, potvrzeno zadavatelem. ✔ 28. 9. 2026
 - Zachovat vizuální identitu a dodržovat společný [design systém](../design-system/readme.md). ✔ 28. 9. 2026
 - Cílem je přehlednost, modernost a jednodušší orientace; důležitou cílovou skupinou jsou noví zahraniční riders. ✔ 28. 9. 2026
 - Připravit sekci **Chci se stát partnerem** z aktuální Canva prezentace, obohacenou o vhodná webová média bez zahlcení návštěvníka. ✔ 28. 9. 2026
@@ -32,16 +32,16 @@ Z [TV zadání](../DT-grafika-TV/ZADANI.md) přebíráme referenci na 11. ročn�
 
 ### Architektura nového webu — aktuální doporučení
 
-Po upřesnění zadavatele není cílem pouze přerovnat sekce Divi. Doporučením je znovu postavit veřejnou část webu, její strukturu a komponenty, se zachováním značky a využitelných podkladů. Rozsah přestavby i finální technologie jsou **návrh k rozhodnutí** (čeká: zadavatel); zahájení migrace ani ostrého vývoje tím není potvrzené.
+Po upřesnění zadavatele není cílem pouze přerovnat sekce Divi. Doporučením je znovu postavit veřejnou část webu, její strukturu a komponenty, se zachováním značky a využitelných podkladů. Zadavatel potvrdil WordPress s vlastní šablonou bez Divi. Konkrétní obsah první verze se upřesní ve struktuře; migrace ani implementace zatím neproběhly.
 
 | Varianta | Přínos pro SVDT | Náklady a omezení | Doporučení |
 | --- | --- | --- | --- |
-| WordPress + vlastní šablona a bloky, bez závislosti na Divi | Známá administrace, vlastní design a strukturovaný obsah, standardní redakční nástroje | Vývoj šablony a funkcí, průběžná údržba a aktualizace | Preferovaná výchozí cesta |
+| WordPress + vlastní šablona a bloky, bez závislosti na Divi | Známá administrace, vlastní design a strukturovaný obsah, standardní redakční nástroje | Vývoj šablony a funkcí, průběžná údržba a aktualizace | Potvrzená volba — 28. 9. 2026 |
 | WordPress jako obsahový systém + oddělený web | Zachová redakci a umožní samostatnou aplikaci | Dva propojené celky; náhledy, publikování, cache a přihlášení vyžadují další práci | Pouze pokud oddělení přinese konkrétní výhodu |
 | Payload + vlastní web | Přizpůsobitelná administrace, strukturovaná data a aplikace ve společném technologickém základu | Nové prostředí, migrace a větší závislost na vývojáři | Relevantní alternativa při dlouhodobém rozvoji závodního portálu |
 | Vlastní CMS od nuly | Úplná kontrola | Vývoj médií, oprávnění, verzování, publikování a dalších základních funkcí navíc | Nedoporučeno pro současný rozsah |
 
-Jde o technické doporučení, nikoli uzavřené rozhodnutí. Interaktivní 3D ani live výsledky samy o sobě nevyžadují odchod z WordPressu. Registrace bude mít oddělenou doménovou logiku a správu stavů bez ohledu na CMS; běžný obsahový editor nenahrazuje transakční systém.
+Srovnání uchovává posouzené alternativy; volba WordPressu s vlastní šablonou je již potvrzená. Interaktivní 3D ani live výsledky samy o sobě nevyžadují odchod z WordPressu. Registrace bude mít oddělenou doménovou logiku a správu stavů bez ohledu na CMS; běžný obsahový editor nenahrazuje transakční systém.
 
 Administrace má spravovat ročníky, program, místa trati, partnery, média a překlady přes pojmenovaná pole a připravené komponenty. Běžný editor má měnit datum nebo partnera jednou, bez zásahu do kódu a bez možnosti náhodně rozbít design. Požadovány jsou role, náhled před publikací a dohledatelné změny. Přesný rozsah správy registrací a prezence závisí na rozhodnutí o W06.
 
@@ -167,7 +167,7 @@ První verze: správné údaje 2027 a oddělený archiv, průchozí CZ/EN cesty 
 
 Následná vydání přidají vlastní přejímku podle funkce: náhradní zobrazení mapy, dostupnost a stáří live dat, případně transakční scénáře registrací a plateb. Tyto testy nejsou podmínkou první verze, která příslušné funkce neobsahuje.
 
-Nejbližší práce: rozhodnutí o architektuře a způsobu redakční správy, inventura obsahu a návrh konkrétního pořadí homepage s vazbou na W01–W03. Nové nápady zapisovat do následného rozvoje; změnu rozsahu první verze výslovně zaznamenat.
+Nejbližší práce: upřesnění redakční správy, inventura obsahu a návrh konkrétního pořadí homepage s vazbou na W01–W03. Nové nápady zapisovat do následného rozvoje; změnu rozsahu první verze výslovně zaznamenat.
 
 ## 11. Vývoj, neveřejný náhled a nasazení
 
@@ -195,7 +195,7 @@ Podklady doplněny 28. 9. 2026: screenshoty administrace poskytnuté zadavatelem
 - Nový screenshot služeb potvrzuje pro svdtpribram.cz **Apache 2.4 / PHP 7.4**; rozhraní označuje PHP jako staré. Rozšířená podpora PHP je aktivní podle předchozího snímku, její konkrétní rozsah oprav ale nebyl ověřen. Nastavení celého multihostingu neměnit bez kontroly ostatních webů.
 - Verze WordPressu **6.9.9** je údaj dodaný zadavatelem 28. 9. 2026; snímek hostingu ji nezobrazuje a nebyla nezávisle ověřena v administraci WordPressu.
 - Snímek potvrzuje dostupné rozhraní WebFTP a phpMyAdmin pro MySQL/MariaDB; neprokazuje konkrétní verzi databáze ani kvótu pro novou databázi.
-- Nové prostředí nestavět na PHP 7.4. Při potvrzení WordPressu zvolit podporovanou verzi dostupnou na hostingu a ověřenou s novou šablonou a pluginy; nově doporučujeme PHP 8.5, případně PHP 8.4 při doložené nekompatibilitě potřebné závislosti. WordPress doporučuje PHP 8.3+, MariaDB 10.11+ nebo MySQL 8.0+. Nabídka hostingu je již doložená; konkrétní cílovou verzi uzavřít po kontrole kompatibility zvolených závislostí. Zdroje: [WordPress requirements](https://wordpress.org/about/requirements/), [podpora PHP](https://www.php.net/supported-versions.php), ověřeno 28. 9. 2026.
+- Nové prostředí nestavět na PHP 7.4. Pro potvrzený WordPress zvolit podporovanou verzi dostupnou na hostingu a ověřenou s novou šablonou a pluginy; nově doporučujeme PHP 8.5, případně PHP 8.4 při doložené nekompatibilitě potřebné závislosti. WordPress doporučuje PHP 8.3+, MariaDB 10.11+ nebo MySQL 8.0+. Nabídka hostingu je již doložená; konkrétní cílovou verzi uzavřít po kontrole kompatibility zvolených závislostí. Zdroje: [WordPress requirements](https://wordpress.org/about/requirements/), [podpora PHP](https://www.php.net/supported-versions.php), ověřeno 28. 9. 2026.
 - Přechod současného Divi webu na nové PHP posoudit odděleně na kopii, s inventurou pluginů a možností návratu; nepřepínat produkci naslepo. Založení nového sandboxu není dokončením údržby starého webu.
 - Graf CPU za zobrazené období ukazuje nízké využití, ale nepotvrzuje výkon při závodní špičce ani parametry budoucího webu.
 - Screenshot nabídky z 28. 9. 2026 potvrzuje Apache 2.4 s PHP **8.5, 8.4, 8.3 a 8.2**, vedle starších 7.4, 7.2 a 5.6. Zaškrtnutá je stále 7.4; zvýrazněný řádek 8.2 není důkaz uložené změny. Doporučený základ nového sandboxu je po ověření podpory WordPressu PHP 8.5; dostupnost verze neprokazuje kompatibilitu současného Divi webu. Rozhraní zmiňuje možnost testu kompatibility, ten zatím nebyl proveden.
@@ -207,9 +207,21 @@ Pro první verzi zatím neplánovat stěhování hostingu. Doporučený směr je
 
 Název tarifu sám o sobě nepotvrzuje SSH, automatické nasazování ani podporu běžící Node.js aplikace. Budoucí interní aplikace může mít jiný hosting při zachování subdomény aplikace.svdtpribram.cz. Toto rozhodnutí nebrání přípravě obsahového webu.
 
+### Vlastní šablona a funkční plugin
+
+Potvrzený směr je vlastní WordPress šablona bez Divi. Doporučené provedení: samostatná bloková šablona SVDT bez závislosti na cizí rodičovské šabloně. Child theme dává smysl při přizpůsobování konkrétní existující šablony; pro vlastní vzhled odvozený ze společného design systému zatím nemáme důvod zavádět další rodičovskou závislost. Viz [WordPress — child themes](https://developer.wordpress.org/themes/advanced-topics/child-themes/).
+
+- **Šablona SVDT:** vzhled, rozložení, hlavička/patička, šablony stránek a styly podle společného design systému; přednastavené vzory bloků pro redakci.
+- **Funkční plugin SVDT:** obsahové typy a pole pro ročníky, partnery a program, potřebné vlastní bloky a související logika. Údaje nemají zmizet ze správy při změně vzhledu.
+- **Editor:** standardní blokový editor WordPressu s připravenými komponentami a přiměřeně uzamčeným rozložením. Vlastní blok vyvíjet pouze tam, kde nestačí standardní bloky a vzory.
+- **Údržba:** zdroje a vydání vlastní šablony/pluginu v Gitu. Aktualizace jádra WordPressu jejich soubory běžně nepřepisuje, ale kompatibilitu musíme testovat a vlastní kód udržovat. Změny přímo v produkčních souborech by další nasazení přepsalo, proto patří do zdrojů.
+- **Přenos:** šablona a plugin mohou mít instalační ZIP balíčky; kompletní nasazení navíc vyžaduje databázi, média a konfiguraci podle této kapitoly. Rozlišovat šablony uložené v kódu od redakčních úprav uložených v databázi, které je mohou překrýt.
+
+Názvy balíčků a jejich strukturu upřesní implementace; zatím nebyly vytvořeny. Budoucí transakční registrace a interní aplikace zůstávají v následné etapě.
+
 ### Co se bude skutečně vyvíjet
 
-Po potvrzení WordPressu stavět od prvních funkčních stránek vlastní šablonu a bloky v reálném WordPressu, včetně editace obsahu. Krátké vizuální studie lze dělat samostatně, ale nemají se stát celým hotovým webem, který se teprve nakonec předělává do CMS.
+Stavět od prvních funkčních stránek vlastní šablonu a bloky v reálném WordPressu, včetně editace obsahu. Krátké vizuální studie lze dělat samostatně, ale nemají se stát celým hotovým webem, který se teprve nakonec předělává do CMS.
 
 Ve web/ budou při zahájení implementace oddělené zdroje šablony, pluginu pro obsahové typy a případných funkčních modulů, konfigurace lokálního prostředí, sestavení, migrací a návod k nasazení. Konkrétní složky nevytvářet prázdné předem. Obsahové typy a registrace nevázat na šablonu, aby změna vzhledu neodstranila data.
 
@@ -242,7 +254,7 @@ Pro návrat uchovat předchozí balíček a předmigrační zálohu. Návrat kó
 ### Co zjistit před založením prostředí
 
 - Hosting: **Active24, klasický multihosting** ✔ 28. 9. 2026. Technická inventura: **Rozpracováno** (čeká: na nás) — screenshoty dokládají balíček Smart a nabídku SSL, denních záloh, 512MB PHP limitu a shell konzole; zbývající ověření jsou vypsaná v oddílu Upřesnění pro Active24. Přímý přístup ani obnova zatím nebyly ověřené.
-- Zvolená platforma a místní vývojový nástroj: **K potvrzení** (čeká: na nás) — navazuje na rozhodnutí zadavatele o CMS.
+- Platforma: **WordPress s vlastní šablonou bez Divi** ✔ 28. 9. 2026. Místní vývojový nástroj a přesný způsob nasazení: **K doplnění** (čeká: na nás).
 - Kdo schvaluje obsah a má přístup do náhledu: **K doplnění** (čeká: zadavatel).
 - Ověřený postup sestavení, migrace a návratu: **K doplnění** (čeká: na nás).
 
@@ -310,3 +322,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: z nabídky služeb ověřena dostupnost PHP 8.2–8.5. PHP 8.4 zůstává doporučením pro nový sandbox; produkce podle snímku stále používá 7.4. Žádná změna hostingu nebyla provedena.
 
 - 28. 9. 2026: po dotazu zadavatele ověřena aktuální oficiální podpora: WordPress 6.9 a 7.0 plně podporují PHP 8.5 ([vyjádření WordPress Core z 22. 5. 2026](https://make.wordpress.org/core/2026/05/22/php-support-clarification-2026/)). Předchozí doporučení 8.4 bylo konzervativní, bez doložené překážky pro 8.5. Nově doporučeným základem nového sandboxu je 8.5; šablonu a pluginy ověříme samostatně. Starší záznamy doporučení 8.4 jsou tímto nahrazené; produkční PHP nebylo změněno.
+
+- 28. 9. 2026: zadavatel potvrdil WordPress s vlastní šablonou a bloky bez Divi. Doplněno doporučení samostatné blokové šablony SVDT a odděleného funkčního pluginu; child theme není pro navržené provedení potřebná. Předchozí otevřená volba CMS je tím uzavřená.
