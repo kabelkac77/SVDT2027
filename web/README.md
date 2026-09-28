@@ -1,6 +1,6 @@
 # SVDT — web 2027
 
-Zadání a postupný rozvoj [svdtpribram.cz](https://svdtpribram.cz/) pro ročník 2027. Současný web běží na WordPressu s Divi. Nové řešení není na Divi vázané; redakční systém je nutný a jeho výběr popisuje zadání. Navazujeme na společný design systém a ostatní projekty v tomto repozitáři.
+Zadání a postupný rozvoj [svdtpribram.cz](https://svdtpribram.cz/) pro ročník 2027. Současný web běží na WordPressu s Divi. Nové řešení používá potvrzený WordPress s vlastní samostatnou blokovou šablonou a funkčním pluginem, bez Divi a bez child theme. Navazujeme na společný design systém a ostatní projekty v tomto repozitáři.
 
 ## Kde začít
 
@@ -8,6 +8,7 @@ Zadání a postupný rozvoj [svdtpribram.cz](https://svdtpribram.cz/) pro ročn�
 | --- | --- |
 | [ZADANI.md](ZADANI.md) | Zdroj požadavků, rozsahu, rozhodnutí a otevřených bodů webového projektu |
 | [UKOLY.md](UKOLY.md) | Nejbližší kroky, stav konkrétních úkolů, závislosti a zásobník po spuštění |
+| [STRUKTURA_V1.md](STRUKTURA_V1.md) | Pracovní návrh navigace, stránek, homepage, redakčního modelu a převodu známých adres |
 | [REVIZE_2026-09-28.md](REVIZE_2026-09-28.md) | Výchozí obsahový a vizuální audit; historický podklad, nikoli automaticky schválený rozsah |
 | [ODKAZY.md](ODKAZY.md) | Rozcestník společných pravidel, návazností a externích podkladů |
 | [Společný design systém](../design-system/readme.md) | Vizuální pravidla, tokeny a komponenty pro celý projekt |
@@ -21,4 +22,4 @@ Zadání a postupný rozvoj [svdtpribram.cz](https://svdtpribram.cz/) pro ročn�
 5. Zachovat návaznosti na broadcast, 3D, prezentaci a merch. Jejich specifická rozhodnutí nepřenášet automaticky na web a jejich soubory neměnit jako vedlejší účinek práce na webu.
 6. Pracovní návrhy označit jako návrhy, ukázková data jako fiktivní. Hesla, klíče, skutečné přihlášky, platební údaje ani export databáze WordPressu do veřejného repozitáře nepatří.
 
-V této chvíli je připravené zadání a revize. Nevznikla nová implementace ani nasazení webu. Složka nemá vlastní dashboard; generátor v `DT-grafika-TV/` nadále obsluhuje pouze svůj projekt.
+V této chvíli jsou připravené zadání, revize a pracovní návrh struktury první verze. Nevznikla nová implementace ani nasazení webu. Složka nemá vlastní dashboard; generátor v `DT-grafika-TV/` nadále obsluhuje pouze svůj projekt.
