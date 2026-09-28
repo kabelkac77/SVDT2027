@@ -2,7 +2,7 @@
 
 ## Stav připojení projektu
 
-Projekt `svdt-organizace` je vytvořený a klient je připojen přes ignorované `.env.local`. URL: `https://eiutxbuzbrpetgfirkma.supabase.co`; klíče se do dokumentace nezapisují. Uživatel potvrdil `Success` po spuštění partnerské migrace a `bootstrap-admin.sql`, potom potvrdil úspěšné přihlášení do aplikace.
+Projekt `svdt-organizace` je vytvořený a klient je připojen přes ignorované `.env.local`. URL: `https://<project-ref>.supabase.co`; klíče se do dokumentace nezapisují. Uživatel potvrdil `Success` po spuštění partnerské migrace a `bootstrap-admin.sql`, potom potvrdil úspěšné přihlášení do aplikace.
 
 Read-only ověření Data API nejprve vracelo chybějící tabulku, po migraci vracelo odmítnutí anonymního čtení (HTTP 401 / PostgreSQL 42501). To potvrzuje existenci tabulky a omezení anon, nikoli kompletní funkčnost všech RPC a RLS. Zbývá live akceptace více rolí a operací; neopakovat bootstrap jen kvůli staršímu zápisu v historii chatu.
 

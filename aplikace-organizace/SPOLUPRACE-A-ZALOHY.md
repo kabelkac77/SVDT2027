@@ -4,7 +4,7 @@
 
 Repozitář `kabelkac77/SVDT2027` je veřejný. Uživatel 2026-09-28 zadal aktualizaci tohoto repozitáře kódem, dokumentací a předáním pro Claude. Soukromé podklady, konfigurace a zálohy zůstávají mimo Git. Viditelnost repozitáře se nemění. iCloud kopie není náhradou verzování přes Git.
 
-**Finální umístění pro přechodné období určené uživatelem:** `/Users/vojtechhrach/Library/Mobile Documents/com~apple~CloudDocs/Vojta/Cowarna/2027/AKCE/SVDT-2027/APLIKACE-ORGANIZACE-ZALOHY`. Nahrazuje dřívější návrh `iCloud Drive/SVDT-zalohy`. Do této složky byl úspěšně zkopírován první archiv `SVDT-zdroje_2026-09-28_21-32-05.zip` a soubor `.sha256`. Archiv zachycuje zdroje v okamžiku vytvoření, nikoli pozdější změny dokumentace. Jde pouze o zdroje a dokumentaci bez databázových dat. Zápis do místní iCloud složky neprokazuje dokončenou synchronizaci do cloudu. Automatické denní zálohy dosud neběží.
+**Finální umístění pro přechodné období určené uživatelem:** `[cesta v neveřejném PROVOZ.md]`. Nahrazuje dřívější návrh `iCloud Drive/SVDT-zalohy`. Do této složky byl úspěšně zkopírován první archiv `SVDT-zdroje_2026-09-28_21-32-05.zip` a soubor `.sha256`. Archiv zachycuje zdroje v okamžiku vytvoření, nikoli pozdější změny dokumentace. Jde pouze o zdroje a dokumentaci bez databázových dat. Zápis do místní iCloud složky neprokazuje dokončenou synchronizaci do cloudu. Automatické denní zálohy dosud neběží.
 
 Potvrzený požadavek uživatele: jednou denně zálohovat aplikaci a její data, včetně čitelného výstupu CSV nebo Excel. Uživatel následně zvolil **dočasně vlastní iCloud Drive**, protože model Synology zatím nezná. Čas, retence a provozní služba dosud nejsou zvolené. Žádná automatická záloha není tímto dokumentem spuštěna.
 
@@ -35,11 +35,11 @@ Aplikace, dokumentace a předání pro Claude se verzují společně. Před kaž
 
 ### Doporučené umístění podle nabízených možností
 
-**Aktuální rozhodnutí:** dočasný cíl je `iCloud Drive/SVDT-zalohy`. Lokální kořen iCloud Drive byl ověřen na `/Users/vojtechhrach/Library/Mobile Documents/com~apple~CloudDocs`. Jednotlivé zálohy ukládat s časem vytvoření, nepřepisovat jediný soubor. Lokální zapsání neprokazuje dokončenou synchronizaci na iCloud. Provoz přes tento Mac bude závislý na jeho dostupnosti a připojení; požadavek nezávislého provozu zůstává cílem po vyřešení NAS/plánovače.
+**Aktuální rozhodnutí:** dočasný cíl je uživatelem určená složka iCloud Drive, jejíž přesná cesta je v neveřejném `PROVOZ.md`. Lokální kořen iCloud Drive byl ověřen na `[lokální iCloud Drive]`. Jednotlivé zálohy ukládat s časem vytvoření, nepřepisovat jediný soubor. Lokální zapsání neprokazuje dokončenou synchronizaci na iCloud. Provoz přes tento Mac bude závislý na jeho dostupnosti a připojení; požadavek nezávislého provozu zůstává cílem po vyřešení NAS/plánovače.
 
 První krok je kopie zdrojů aplikace a dokumentace bez `.env.local`, klíčů, soukromých podkladů a databázových dat. Nesmí být označena za kompletní denní zálohu. Pro databázový dump a CSV/XLSX stále chybí bezpečně nastavený servisní přístup a exportní úloha; veřejný publishable key jej nenahradí.
 
-První archiv byl vytvořen lokálně v ignorovaném `.local/backups/SVDT-zdroje_2026-09-28_21-32-05.zip`: 68 zdrojových souborů, manifest s SHA-256 jednotlivých souborů, kontrola ZIP prošla. Přiložen kontrolní součet archivu. Pokus o kopírování do iCloud Drive vyžadoval povolení zápisu mimo workspace a byl odmítnut; kopie v iCloudu ani synchronizace nejsou potvrzené. Denní automatizace stále neběží.
+První archiv byl vytvořen lokálně v ignorovaném `.local/backups/SVDT-zdroje_2026-09-28_21-32-05.zip`: 68 zdrojových souborů, manifest s SHA-256 jednotlivých souborů, kontrola ZIP prošla. Přiložen kontrolní součet archivu. Po následném povolení byl archiv zkopírován do místní složky iCloud Drive; dokončená cloudová synchronizace nebyla ověřena. Denní automatizace stále neběží.
 
 Uživatel má možnost Google Drive, osobního iCloud Drive a Synology. Doporučení: vytvářet denní zálohy na Synology a po dokončení přenést šifrovanou verzovanou kopii přes Hyper Backup na Google Drive. Model NAS/DSM, dostupnost balíčků, volná kapacita a nepřetržitý provoz se musí nejprve ověřit. Samotný Hyper Backup nevytvoří dump vzdálené Supabase databáze: první krok musí obsloužit samostatná úloha s databázovým klientem. Pokud NAS není vhodný pro běh úlohy, vybrat jiný plánovač; neprohlašovat zálohy za nasazené.
 
@@ -82,3 +82,7 @@ Rozsah exportu musí odpovídat skutečně nasazeným modulům. Dnešní Finance
 - [Anthropic Opus 5.5](https://www.anthropic.com/claude-opus-5-5): oznámení modelu a deklarovaná úspora vůči Opus 5; nejde o nezávislý benchmark SVDT.
 - [OpenAI — code generation](https://developers.openai.com/api/docs/guides/code-generation): Codex podporuje implementaci, review i ladění; rozdělení rolí výše je naše doporučení.
 - [Supabase — Database Backups](https://supabase.com/docs/guides/platform/backups): Free vyžaduje vlastní pravidelné exporty; vestavěné databázové zálohy nezahrnují Storage objekty. Denní zálohy placených tarifů nenahrazují nezávislou kopii mimo projekt.
+
+## Rozdělení veřejné a neveřejné části — 2026-09-29
+
+Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `aplikace-organizace/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-neverejne/aplikace-organizace-neverejne/`. Toto rozhodnutí nahrazuje dřívější plošný zákaz verzovat podklady: do soukromého repozitáře jsou výslovně schválené, do veřejného nadále nesmějí. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.

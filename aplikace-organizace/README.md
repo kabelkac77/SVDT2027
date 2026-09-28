@@ -20,3 +20,7 @@ Tato složka je source of truth pro organizační strukturu SVDT 2027 a připrav
 4. Následně personál, závodníci, mapy/zóny, Race Control a další části.
 
 Dokumentace je živá. Nová rozhodnutí se mají průběžně zapisovat sem, aby nezůstávala pouze v chatu.
+
+## Veřejné a neveřejné podklady
+
+Tato složka obsahuje veřejnou specifikaci. Zdrojová data, podrobné rozbory a konkrétní provozní údaje jsou v soukromém [SVDT2027-neverejne](https://github.com/vojtechhrach/SVDT2027-neverejne/tree/main/aplikace-organizace-neverejne). Přístup k němu se přiděluje samostatně. Hesla a klíče nejsou součástí žádného repozitáře.

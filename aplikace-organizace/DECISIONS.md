@@ -8,7 +8,7 @@
 ## 2026-09-28 — WhatsApp/Twilio odloženy a přesný cíl záloh
 
 - Nejnovější pokyn uživatele: WhatsApp a Twilio přesunout do backlogu a zatím neřešit. Předchozí schválení implementace tím není pokynem k další práci nebo aktivaci. Existující klientský kód zůstává vypnutý; konfigurace, placený provoz a ověření doručení jsou odložené.
-- Uživatel určil přesný cíl záloh: `/Users/vojtechhrach/Library/Mobile Documents/com~apple~CloudDocs/Vojta/Cowarna/2027/AKCE/SVDT-2027/APLIKACE-ORGANIZACE-ZALOHY`. Nahrazuje původně navržené `iCloud Drive/SVDT-zalohy`.
+- Uživatel určil přesný cíl záloh: `[cesta v neveřejném PROVOZ.md]`. Nahrazuje původně navržené `iCloud Drive/SVDT-zalohy`.
 
 ## 2026-09-28 — dočasný cíl záloh iCloud Drive
 
@@ -86,3 +86,7 @@ Potvrzené rozhodnutí nemažeme; změněné označíme jako nahrazené.
 - Na výslovný pokyn uživatele integrujeme aplikaci, testy, SQL migrace, MD a projektové Claude skills do stávajícího veřejného repozitáře `kabelkac77/SVDT2027`, cílová větev `main`, bez změny viditelnosti a bez force-push.
 - Soukromé zdrojové Excel/JSON podklady, `.env.local`, servisní klíče a lokální zálohy se nepublikují. GitHub není záloha databáze.
 - WhatsApp/Twilio zůstávají v backlogu a vypnuté. Denní export databáze do CSV/XLSX a automatické zálohování jsou nadále nedokončené.
+
+## 2026-09-29 — oddělení neveřejných podkladů
+
+Na pokyn uživatele: veřejná část v `kabelkac77/SVDT2027/aplikace-organizace`, neveřejná část v novém soukromém `vojtechhrach/SVDT2027-neverejne/aplikace-organizace-neverejne`. Podrobné rozbory zdrojů, data a konkrétní provozní údaje jsou neveřejné. Kód, obecné modely a pravidla vývoje zůstávají veřejné. Klíče a hesla nepatří ani do soukromého Gitu. Úprava aktuálních MD nemaže dřívější historii veřejného repozitáře.

@@ -33,7 +33,7 @@ Konfigurace poskytovatelů (client ID/secrets mimo Git), produkční doména a t
 Společný callback, který patří do konzolí Google, Apple a Meta:
 
 ```text
-https://eiutxbuzbrpetgfirkma.supabase.co/auth/v1/callback
+https://<project-ref>.supabase.co/auth/v1/callback
 ```
 
 Supabase → Authentication → URL Configuration: do Redirect URLs přidat přesný návrat `http://127.0.0.1:3000/` pro lokální zkoušení. Pokud používáme i localhost, přidat samostatně `http://localhost:3000/`. Site URL nastavit na aktuální adresu aplikace, při nasazení na finální HTTPS doménu. Do allowlistu přidat její kořenovou URL bez širokých wildcardů. Produkční doména zatím není potvrzená.

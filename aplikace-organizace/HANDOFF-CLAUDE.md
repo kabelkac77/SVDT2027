@@ -7,7 +7,7 @@ Stav k 2026-09-28. Tento dokument je výchozí mapa; aktuální změny ověř pr
 Otevři Claude Code v **této existující pracovní složce**:
 
 ```sh
-cd /Users/vojtechhrach/Documents/ChatGPT/SVDT-codex
+cd /cesta/k/SVDT2027
 claude
 ```
 
@@ -102,7 +102,7 @@ Kvůli extrémně pomalému čtení závislostí v Documents byla použitá ově
 
 ## Databáze, podklady a provozní přístupy
 
-Supabase projekt `svdt-organizace`, URL `https://eiutxbuzbrpetgfirkma.supabase.co`. Veřejný klientský klíč není administrátorský přístup. Kód nevlastní oprávnění pro export celé DB nebo změnu konfigurace Auth. Migrace/členství byly spuštěné ručně uživatelem; neopakuj bootstrap naslepo.
+Supabase projekt `svdt-organizace`, URL `https://<project-ref>.supabase.co`. Veřejný klientský klíč není administrátorský přístup. Kód nevlastní oprávnění pro export celé DB nebo změnu konfigurace Auth. Migrace/členství byly spuštěné ručně uživatelem; neopakuj bootstrap naslepo.
 
 Tabulky Partnerů: events, editions, edition_members, people, organizations, partner_prospects, edition_partnerships, partner_deliverables, audit_log. Role admin/manager/viewer platí ročníkově. Organizace/osoby jsou sdílené, čtení je omezené členstvím. Zápisy přes kontrolované RPC, ne přímý insert z prohlížeče. Nový sociální účet bez členství uvidí pouze zprávu o chybějícím přístupu.
 
@@ -111,7 +111,7 @@ Privátní podklady na tomto Macu: `.local/partners-intake.json`, `.local/financ
 Dočasně schválený cíl záloh:
 
 ```text
-/Users/vojtechhrach/Library/Mobile Documents/com~apple~CloudDocs/Vojta/Cowarna/2027/AKCE/SVDT-2027/APLIKACE-ORGANIZACE-ZALOHY
+[cesta v neveřejném PROVOZ.md]
 ```
 
 Zápis na disk neprokazuje dokončený iCloud upload. První archiv neobsahuje databázi, Auth, Storage objekty, lokální podklady, secrets ani Git historii. Denní záloha musí mít vlastní implementaci, přístupy a test obnovy. Přesný model Synology není známý.
@@ -133,3 +133,7 @@ Projektové skills jsou připravené v repozitáři bez externích instalací. P
 Git, npm, Playwright a SQL testy pro začátek stačí. Google Drive/MCP a další účty nepřipojuj plošně. Současné lokální podklady umožňují pokračovat bez přístupu k původním Drive odkazům. Pro Supabase lze později použít CLI/MCP s omezeným rozsahem; klíče nedávej do verzovaných konfigurací. Skills instalované pro Codex nepovažuj automaticky za nainstalované pro Claude.
 
 Oficiální formát ověřen při přípravě: [Claude Code memory](https://code.claude.com/docs/en/memory), [Claude Code skills](https://code.claude.com/docs/en/skills). Nebyly nastaveny automatické hooks, výjimky z oprávnění ani globální konfigurace.
+
+## Rozdělení veřejné a neveřejné části — 2026-09-29
+
+Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `aplikace-organizace/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-neverejne/aplikace-organizace-neverejne/`. Toto rozhodnutí nahrazuje dřívější plošný zákaz verzovat podklady: do soukromého repozitáře jsou výslovně schválené, do veřejného nadále nesmějí. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.
