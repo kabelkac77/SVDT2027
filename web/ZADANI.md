@@ -207,6 +207,44 @@ Pro návrat uchovat předchozí balíček a předmigrační zálohu. Návrat kó
 
 Technické reference: [lokální WordPress přes wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/), [oficiální postupy migrace WordPressu](https://developer.wordpress.org/advanced-administration/upgrade/migrating/). Ověřeno 28. 9. 2026.
 
+## 12. Návaznost na interní organizační aplikaci SVDT
+
+- Počítat se samostatnou interní aplikací pro správu brigádníků, financí a dalších organizačních agend. ✔ 28. 9. 2026
+- Detailní rozsah bude mít vlastní zadání; tato kapitola určuje hranici vůči veřejnému webu. Nevytváří hotový seznam funkcí ani závazek dodat účetní systém.
+- Kontext: chat „povidani SVDT 2027“. Z dostupných posledních zpráv ověřena práce na organizační hierarchii, kapacitách a otevřených rolích; kompletní dřívější diskuse o aplikaci nebyla tímto načtením dostupná. Brigádníci a finance jsou potvrzené aktuálním požadavkem zadavatele.
+
+### Adresa a rozdělení systémů — doporučení
+
+| Adresa | Účel | Technologie / stav |
+| --- | --- | --- |
+| svdtpribram.cz | Veřejná prezentace, program, partnerství, trať a vstup do registrace | CMS podle rozhodnutí v kapitole 2 |
+| aplikace.svdtpribram.cz | Interní organizační aplikace, pracovní název „SVDT — organizace“ | Samostatná aplikace mimo WordPress; doporučení k potvrzení |
+| eshop.svdtpribram.cz | Obchod | Shoptet podle potvrzeného rámce |
+
+Subdoména aplikace.svdtpribram.cz je navržená, nikoli zřízená. Je srozumitelná a dostatečně obecná pro další agendy. Cesta /aplikace může později sloužit jako snadno zapamatovatelný přesměrovávací odkaz. Provoz celé aplikace pod cestou /aplikace je také možný, ale potřebuje směrování oddělené služby; pro tento projekt zatím nepřináší jasnou výhodu oproti subdoméně.
+
+### Oddělení provozu a oprávnění
+
+Interní aplikaci doporučujeme vyvíjet a nasazovat nezávisle na šabloně a pluginech WordPressu, s vlastní databází/přístupovými údaji, rolemi, zálohami a testovacím prostředím. Nemusí mít vlastní fyzický server, ale vyžaduje skutečné oddělení přístupů. Samotná subdoména není bezpečnostní hranice.
+
+Účty organizačního týmu nesmějí automaticky získat oprávnění správce WordPressu. Navrhnout role podle činnosti: brigádník vidí své přidělení; vedoucí týmu přidělené lidi; finance jen oprávněné osoby. Konkrétní role, schvalování, vícefaktorové ověření privilegovaných účtů a záznam změn dopracovat v zadání aplikace. Přihlášení a cookies nesdílet plošně mezi všemi subdoménami; případné společné přihlášení řešit cíleně.
+
+Design vychází ze společné značky, ale pracovní obrazovky potřebují čitelné formuláře, tabulky a střídmý pohyb. Marketingové efekty veřejného webu nejsou vzorem pro každodenní práci s rozpočtem.
+
+### Sdílené údaje a registrace jezdců
+
+Před implementací určit pro každý údaj jediný zdroj pravdy. Veřejný web spravuje publikační obsah; interní aplikace organizační agendy. Sdílet pouze potřebné údaje přes popsané rozhraní, nikoli přímým přístupem obou aplikací do všech databázových tabulek. Osobní a finanční údaje se nesmějí objevit ve veřejném výstupu či cache.
+
+Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní aplikaci. Veřejný formulář může být na hlavním webu, zatímco evidence, platby a prezence patří do společné registrační služby a jejího neveřejného rozhraní. Umístění tohoto modulu do interní aplikace nebo samostatné služby je **návrh k rozhodnutí** (čeká: na nás). Nevytvářet dvě nezávislé evidence registrací a plateb ve WordPressu a aplikaci. Brigádník, jezdec a redaktor jsou odlišné role; společný uživatelský účet není automatický požadavek.
+
+### Další kroky a hranice tohoto projektu
+
+- Název a finální subdoména: **K potvrzení** (čeká: zadavatel).
+- Úplné zadání organizační aplikace z předchozí diskuse, rozsah financí, týmů a oprávnění: **K doplnění** (čeká: zadavatel).
+- Technologie, hosting, datový model a vazba na registraci: **K doplnění** (čeká: na nás).
+- Aplikace dostane vlastní projektovou složku a zadání při zahájení její přípravy; web/ zůstává pro veřejný web a jeho integrační rozhraní.
+- Veřejný web lze spustit před interní aplikací. Její budoucí vznik sám o sobě není důvodem nahrazovat redakční systém vlastním CMS.
+
 ## Záznam rozhodnutí
 
 - 28. 9. 2026: zadavatel požaduje samostatnou složku `web/`, společné zadání a respektování design systému i ostatních částí repozitáře.
@@ -215,3 +253,5 @@ Technické reference: [lokální WordPress přes wp-env](https://developer.wordp
 - 28. 9. 2026: zadavatel upřesnil, že Divi není omezení nového řešení a administrace je nutná. Zachování WordPressu je doporučená varianta, nikoli potvrzená platforma; doplněno srovnání a návrh přestavby veřejné části.
 
 - 28. 9. 2026: zadavatel požaduje vývoj nového webu v sandboxu/lokálně a snadný kompletní přechod na produkci. Doplněn návrh lokál → neveřejný staging → produkce, oddělení kódu a dat, první migrace, následná vydání a návrat. Prostředí zatím nezaložena.
+
+- 28. 9. 2026: zadavatel doplnil budoucí interní aplikaci pro brigádníky, finance a organizaci. Doplněna návaznost veřejného webu, doporučení samostatné aplikace na subdoméně a společného návrhu registrací; přesná adresa a technologie zůstávají otevřené.
