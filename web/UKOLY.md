@@ -14,7 +14,7 @@ Aktualizováno 28. 9. 2026. Pracovní fronta navazující na [ZADANI.md](ZADANI.
 
 ## Nejbližší postup
 
-1. **WEB-001:** zjistit současný hosting a možnosti testovacího prostředí. Ze screenshotů potvrzen **Active24 Smart s rozšířením**, dostupné SSL, denní zálohy, 512MB PHP limit a shell konzole. SVDT nyní používá Apache 2.4 / PHP 7.4; WordPress 6.9.9 je údaj zadavatele. Nabídka PHP 8.2–8.5 je doložená; navržený základ sandboxu je 8.4. Další krok: ověřit databázi, velikost samotného SVDT a samostatné nastavení náhledu; rezerva úložiště je omezená.
+1. **WEB-001:** zjistit současný hosting a možnosti testovacího prostředí. Ze screenshotů potvrzen **Active24 Smart s rozšířením**, dostupné SSL, denní zálohy, 512MB PHP limit a shell konzole. SVDT nyní používá Apache 2.4 / PHP 7.4; WordPress 6.9.9 je údaj zadavatele. Nabídka PHP 8.2–8.5 je doložená; navržený základ sandboxu je po ověření podpory WordPressu 8.5; kompatibilitu konkrétních pluginů a šablony otestujeme. Další krok: ověřit databázi, velikost samotného SVDT a samostatné nastavení náhledu; rezerva úložiště je omezená.
 2. **WEB-002:** uzavřít volbu CMS a způsob nasazování na základě doporučení v zadání.
 3. **WEB-003 a WEB-004:** určit přesný obsah první verze, navigaci a způsob správy CZ/EN. Inventura veřejného obsahu může začít i během čekání na hosting.
 4. Po uzavření základu přejít na návrhy homepage a partnerství.
