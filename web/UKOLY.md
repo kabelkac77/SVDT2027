@@ -17,9 +17,9 @@ Aktualizováno 28. 9. 2026. Pracovní fronta navazující na [ZADANI.md](ZADANI.
 1. **WEB-001:** zjistit současný hosting a možnosti testovacího prostředí. Ze screenshotů potvrzen **Active24 Smart s rozšířením**, dostupné SSL, denní zálohy, 512MB PHP limit a shell konzole. SVDT nyní používá Apache 2.4 / PHP 7.4; WordPress 6.9.9 je údaj zadavatele. Nabídka PHP 8.2–8.5 je doložená; navržený základ sandboxu je po ověření podpory WordPressu 8.5; kompatibilitu konkrétních pluginů a šablony otestujeme. Další krok: ověřit databázi, velikost samotného SVDT a samostatné nastavení náhledu; rezerva úložiště je omezená.
 2. **WEB-002:** WordPress s vlastní šablonou bez Divi je potvrzen. Doplnit technické provedení a způsob nasazování; samostatná bloková šablona bez child theme a oddělený funkční plugin jsou potvrzené v zadání.
 3. **WEB-003 a WEB-004 — připravený výstup:** [STRUKTURA_V1.md](STRUKTURA_V1.md) obsahuje návrh stránek, navigace, homepage, CZ/EN, redakčního modelu a převodu známých URL. Zapracovat připomínky; pro úplnou inventuru doplnit export WordPressu a médií.
-4. Další návrhový výstup: vizuální rozložení homepage a partnerství (WEB-007/WEB-008). Rozpory partnerských cen/čísel zatím řešit souběžně; v návrhu je nepředkládat jako schválené.
+4. **WEB-007 — hlavní krok:** připraveno [VIZUALNI_NAVRH.md](VIZUALNI_NAVRH.md) pro Claude Design. Následuje vložení podkladů a první návrh homepage 1440/390 px s otevřeným mobilním menu. Po připomínkách pokračovat partnerstvím a stránkou jezdce. Rozpory partnerských cen/čísel řešit souběžně; v návrhu je nepředkládat jako schválené.
 
-Hlavní obsahový krok je nyní WEB-004: návrh struktury je připravený k připomínkám. Související WEB-003 má pracovní inventuru známých adres, ale čeká na úplný export obsahu. WEB-001 a WEB-002 zůstávají rozpracované technické přípravy. Lokální prostředí ani nový web zatím nejsou vytvořené.
+Hlavní krok je nyní WEB-007: předávací zadání vizuálního návrhu je hotové, obrazovky zbývají. WEB-004 má návrh struktury připravený k připomínkám. Související WEB-003 má pracovní inventuru známých adres, ale čeká na úplný export obsahu. WEB-001 a WEB-002 zůstávají rozpracované technické přípravy. Lokální prostředí ani nový web zatím nejsou vytvořené.
 
 ## A. Základ a rozhodnutí — první verze
 
@@ -42,7 +42,7 @@ WEB-005 a WEB-006 lze připravovat při práci na struktuře. Pro první návrhy
 
 | ID | Úkol / vazba | Stav | Kdo / závislost | Hotovo znamená |
 | --- | --- | --- | --- | --- |
-| WEB-007 | Navrhnout homepage pro mobil i desktop (W02) | Čeká | Na nás; WEB-003, WEB-004 | Konkrétní návrh s pořadím sekcí, CTA a mobilním ořezem fotografie; společný design systém |
+| WEB-007 | Navrhnout homepage pro mobil i desktop (W02) | Probíhá | [Zadání pro Claude Design](VIZUALNI_NAVRH.md) hotové 28. 9. 2026; první návrh obrazovek zbývá. Vychází z pracovní struktury WEB-004; úplná inventura WEB-003 běží souběžně | Konkrétní návrh s pořadím sekcí, CTA a mobilním ořezem fotografie; společný design systém |
 | WEB-008 | Navrhnout Chci se stát partnerem (W03) | Čeká | Na nás; WEB-006, společné prvky WEB-007 | Krátká srozumitelná nabídka s postupně dostupnými detaily a kontaktem |
 | WEB-009 | Navrhnout stránku jezdce a šablony ostatních stránek | Čeká | Na nás; WEB-004, WEB-007 | Čitelné praktické informace, program, dokumenty, archiv a navigace; bez prázdných budoucích modulů |
 | WEB-010 | Zapracovat připomínky a uzavřít návrh první verze | Čeká | Na nás + zadavatel; WEB-007 až WEB-009 | Zapsané připomínky vyřešené a odsouhlasené předlohy pro implementaci |
@@ -92,6 +92,7 @@ Nový nápad přidat s dalším stabilním ID, stručným přínosem a závislos
 | Složka web, zadání a rozcestník podkladů | Hotovo — 28. 9. 2026 | [README](README.md), [ZADANI](ZADANI.md), [ODKAZY](ODKAZY.md) |
 | Oddělení prvního spuštění od následných rozšíření | Hotovo — 28. 9. 2026 | ZADANI.md, kapitola 10 |
 | Pracovní návrh struktury V1 a známých URL | Hotovo — návrh 28. 9. 2026; schválení a úplná inventura zbývají | [STRUKTURA_V1.md](STRUKTURA_V1.md) |
+| Předávací zadání vizuálního návrhu pro Claude Design | Hotovo — zadání 28. 9. 2026; návrh obrazovek zbývá | [VIZUALNI_NAVRH.md](VIZUALNI_NAVRH.md) |
 | Založení pracovní fronty a zásobníku | Hotovo — 28. 9. 2026 | Tento dokument |
 
 Dokončená příprava neznamená hotový návrh obrazovek, implementaci ani nasazení.
