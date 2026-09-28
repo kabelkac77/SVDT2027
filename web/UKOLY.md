@@ -14,18 +14,18 @@ Aktualizováno 28. 9. 2026. Pracovní fronta navazující na [ZADANI.md](ZADANI.
 
 ## Nejbližší postup
 
-1. **WEB-001:** zjistit současný hosting a možnosti testovacího prostředí. Od zadavatele nyní chybí název poskytovatele/tarifu.
+1. **WEB-001:** zjistit současný hosting a možnosti testovacího prostředí. Poskytovatel potvrzen: **Active24, klasický multihosting**. Zbývá ověřit konkrétní platformu a dostupné funkce v administraci.
 2. **WEB-002:** uzavřít volbu CMS a způsob nasazování na základě doporučení v zadání.
 3. **WEB-003 a WEB-004:** určit přesný obsah první verze, navigaci a způsob správy CZ/EN. Inventura veřejného obsahu může začít i během čekání na hosting.
 4. Po uzavření základu přejít na návrhy homepage a partnerství.
 
-Nyní není označený žádný implementační úkol jako Probíhá. Lokální prostředí ani nový web zatím nejsou vytvořené.
+Probíhá přípravná inventura WEB-001; poskytovatel je známý, účet dosud neprověřen. Žádný implementační úkol ještě neprobíhá. Lokální prostředí ani nový web zatím nejsou vytvořené.
 
 ## A. Základ a rozhodnutí — první verze
 
 | ID | Úkol / vazba | Stav | Kdo / závislost | Hotovo znamená |
 | --- | --- | --- | --- | --- |
-| WEB-001 | Ověřit hosting, doménu, zálohy a možnost stagingu | Čeká | Zadavatel: poskytovatel/tarif; na nás: ověření možností | Zapsané možnosti hostingu a návrh odděleného náhledu bez zásahu do produkce |
+| WEB-001 | Ověřit hosting, doménu, zálohy a možnost stagingu | Probíhá | Active24, klasický multihosting potvrzen 28. 9. 2026; na nás: ověření konkrétní platformy, PHP/databáze, kapacity, HTTPS, přenosu a obnovy v administraci | Zapsané možnosti hostingu a návrh odděleného náhledu bez zásahu do produkce |
 | WEB-002 | Potvrdit CMS, architekturu a způsob nasazení | Čeká | Na nás + zadavatel; WEB-001 | Zapsaná volba a důvody v zadání; WordPress je zatím doporučení, Divi není podmínka |
 | WEB-003 | Inventura stránek, adres a podkladů; rozsah V1 (W01) | Připraveno | Na nás; zadavatel doplní neveřejné podklady | Seznam ponechat / přepsat / archivovat / přesměrovat a konkrétní seznam stránek první verze |
 | WEB-004 | Navigace, CZ/EN a redakční obsahový model (W01) | Čeká | Na nás + zadavatel; WEB-003 | Mapa stránek, jazykový postup, správa ročníku/programu/partnerů a hranice vůči interní aplikaci |
