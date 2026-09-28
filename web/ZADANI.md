@@ -16,6 +16,7 @@ Stejný způsob evidence jako v `DT-grafika-TV/ZADANI.md`:
 ## 2. Potvrzený rámec
 
 - Nový web vzniká odděleně v lokálním/testovacím prostředí; cílem je přenos kompletní ověřené verze na ostrou doménu. ✔ 28. 9. 2026
+- Pořadí realizace: **nejprve odladit kroky 1–3 a spustit základní web; mapu, registrace, live a další rozšíření řešit následně**. ✔ 28. 9. 2026
 - Projekt webu má vlastní složku `web/` v tomto repozitáři a respektuje jeho ostatní části. ✔ 28. 9. 2026
 - Současný web je postavený na **WordPressu + Divi**. Pro nové řešení není Divi podmínkou. Redakční systém a pohodlná administrace jsou nutné; platforma nového webu zůstává k rozhodnutí. ✔ 28. 9. 2026
 - Zachovat vizuální identitu a dodržovat společný [design systém](../design-system/readme.md). ✔ 28. 9. 2026
@@ -134,21 +135,37 @@ Před přechodem ověřit souběžné přihlášení na poslední místo, opožd
 
 ## 10. Postup a podmínky dokončení
 
-| Etapa | Výstup | Termín |
+**Potvrzené pořadí: kroky 1 → 2 → 3 → kontrola a spuštění první verze → následná rozšíření.** ✔ 28. 9. 2026
+
+Toto rozhodnutí nahrazuje dřívější návrh zapojit mapu a integrace před prvním spuštěním. Rozšíření nejsou podmínkou dokončení základního webu. Technické rozhraní pro ně zohledníme v návrhu, jejich implementaci odložíme.
+
+| Etapa | Výstup | Zařazení / termín |
 | --- | --- | --- |
-| 1 | Volba architektury, inventura obsahu a potvrzený rozsah první verze | K doplnění |
-| 2 | Návrh homepage a partnerské stránky pro mobil i desktop, CZ/EN obsah | K doplnění |
-| 3 | Úpravy v testovací kopii, základní mapa a ověření obsahu | K doplnění |
-| 4 | Integrace podle dostupnosti: registrace, live, případně 3D | K doplnění |
-| 5 | Přejímka, záloha, nasazení a stručný redakční návod | Před akcí; přesný den k potvrzení |
+| 1. Základ a rozhodnutí | Technologie, hosting, inventura obsahu, struktura a rozsah první verze; hranice vůči interní aplikaci | První verze; přesný termín k doplnění |
+| 2. Návrh | Homepage, partnerství a stránka pro jezdce; mobil i desktop, společný design systém a CZ/EN obsah | První verze; po kroku 1 |
+| 3. Funkční web v sandboxu | Administrace, dohodnuté obsahové stránky, CZ/EN, program, partneři a média; průběžné připomínky a odladění | První verze; po odsouhlasení návrhu |
+| Kontrola a spuštění | Finální obsah, funkční a mobilní přejímka, zkušební migrace, záloha, přepnutí domény a redakční návod | Bez čekání na etapu 4 |
+| 4. Následná rozšíření | Mapa, případné 3D, vlastní registrace s platbami, live výsledky, mezičasy a stream | Až po spuštění první verze; pořadí podle priorit a připravenosti |
+| Další rozvoj | Nové potřeby z provozu a návaznost interní organizační aplikace | Průběžně evidovat; nezařazovat automaticky do první verze |
 
-- Verze Divi, vlastní kód, pluginy, jazyky, cache a staging: **K doplnění** (čeká: na nás).
-- Odpovědnosti za obsah, EN překlad a provoz webu v den závodu: **K doplnění** (čeká: zadavatel).
-- Rozpočet, pořadí etap a data spuštění: **K potvrzení** (čeká: zadavatel). Termíny TV projektu nejsou automaticky termíny webu.
+### Hranice první verze
 
-Navržená přejímka: správné údaje 2027 a oddělený archiv, průchozí CZ/EN cesty, responzivní kontrola 360/390/768/1024/1440 px, funkční odkazy a formuláře, klávesnice a reduced motion, ověřený kontrast, měření výkonu, náhradní zobrazení mapy a live. U registrace navíc transakční scénáře výše. Nasazení zahrne ověřenou zálohu a postup návratu. Konkrétní měřitelné podmínky doplnit v dílčích zadáních.
+První verze je plnohodnotný obsahový web s administrací. W01–W03 tvoří její základ, W07 zahrnuje návaznost odkazem na stávající Shoptet. W04–W06 patří do následné etapy. Propojení na interní aplikaci není podmínkou spuštění.
 
-Nejbližší práce: rozhodnutí o architektuře a způsobu redakční správy, inventura obsahu a návrh konkrétního pořadí homepage s vazbou na W01–W03. Vlastní registrace ani 3D nemají blokovat přípravu partnerské nabídky.
+Pokud bude v době spuštění potřeba registrace či výsledky, použít aktuální potvrzený externí odkaz. Pro rok 2027 neodkazovat automaticky na registraci 2026; dostupnost řešení pro nový ročník ověřit. Navigace nesmí vést do prázdných budoucích modulů. Existující použitelný statický podklad lze zachovat po ověření aktuálnosti, ale vývoj nové mapy první verzi neblokuje.
+
+- Inventura současného WordPressu, převod obsahu, hosting a staging: **K doplnění** (čeká: na nás).
+- Odpovědnosti za obsah, EN překlad a provoz webu: **K doplnění** (čeká: zadavatel).
+- Rozpočet a data spuštění: **K potvrzení** (čeká: zadavatel). Pořadí etap je potvrzené; termíny TV projektu nejsou automaticky termíny webu.
+- Konkrétní pořadí a rozsah rozšíření po spuštění: **K potvrzení** (čeká: zadavatel) — podle provozních potřeb a připravenosti podkladů.
+
+### Přejímka podle vydání
+
+První verze: správné údaje 2027 a oddělený archiv, průchozí CZ/EN cesty v dohodnutém rozsahu, responzivní kontrola 360/390/768/1024/1440 px, funkční odkazy a kontaktní formuláře, ověřená redakční správa, klávesnice a reduced motion, kontrast a měření výkonu. Před nasazením ověřit zálohu, migraci a postup návratu.
+
+Následná vydání přidají vlastní přejímku podle funkce: náhradní zobrazení mapy, dostupnost a stáří live dat, případně transakční scénáře registrací a plateb. Tyto testy nejsou podmínkou první verze, která příslušné funkce neobsahuje.
+
+Nejbližší práce: rozhodnutí o architektuře a způsobu redakční správy, inventura obsahu a návrh konkrétního pořadí homepage s vazbou na W01–W03. Nové nápady zapisovat do následného rozvoje; změnu rozsahu první verze výslovně zaznamenat.
 
 ## 11. Vývoj, neveřejný náhled a nasazení
 
@@ -255,3 +272,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: zadavatel požaduje vývoj nového webu v sandboxu/lokálně a snadný kompletní přechod na produkci. Doplněn návrh lokál → neveřejný staging → produkce, oddělení kódu a dat, první migrace, následná vydání a návrat. Prostředí zatím nezaložena.
 
 - 28. 9. 2026: zadavatel doplnil budoucí interní aplikaci pro brigádníky, finance a organizaci. Doplněna návaznost veřejného webu, doporučení samostatné aplikace na subdoméně a společného návrhu registrací; přesná adresa a technologie zůstávají otevřené.
+
+- 28. 9. 2026: zadavatel potvrdil nejprve odladění kroků 1–3 a spuštění základního webu. Etapa 4 (mapa a integrace) i další vzniklé potřeby následují až po spuštění. Přesunuta přejímka a nasazení před rozšíření, vymezen rozsah první verze a samostatné testy dalších vydání.
