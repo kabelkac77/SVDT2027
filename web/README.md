@@ -6,16 +6,17 @@ Zadání a postupný rozvoj [svdtpribram.cz](https://svdtpribram.cz/) pro ročn�
 
 | Soubor | Účel |
 | --- | --- |
-| [ZADANI.md](ZADANI.md) | Jediný zdroj aktuálních požadavků, rozhodnutí, otevřených bodů a stavu webového projektu |
+| [ZADANI.md](ZADANI.md) | Zdroj požadavků, rozsahu, rozhodnutí a otevřených bodů webového projektu |
+| [UKOLY.md](UKOLY.md) | Nejbližší kroky, stav konkrétních úkolů, závislosti a zásobník po spuštění |
 | [REVIZE_2026-09-28.md](REVIZE_2026-09-28.md) | Výchozí obsahový a vizuální audit; historický podklad, nikoli automaticky schválený rozsah |
 | [ODKAZY.md](ODKAZY.md) | Rozcestník společných pravidel, návazností a externích podkladů |
 | [Společný design systém](../design-system/readme.md) | Vizuální pravidla, tokeny a komponenty pro celý projekt |
 
 ## Jak budeme pracovat
 
-1. Před prací přečíst `ZADANI.md`, příslušnou část společného design systému a dokumentaci navazujícího projektu.
+1. Vybrat nejbližší připravený krok v `UKOLY.md`. Před prací přečíst `ZADANI.md`, příslušnou část společného design systému a dokumentaci navazujícího projektu.
 2. Nové rozhodnutí nebo odpověď zapsat do `ZADANI.md`, včetně data. Návrh nezaměňovat za potvrzený požadavek; hotové zadání není hotová implementace.
-3. Dílčí složku vytvořit až při zahájení konkrétní části. Dostane vlastní `README.md`, dílčí zadání a jasně rozlišené zdroje, podklady a exporty. Její stav se stručně promítne do hlavního zadání.
+3. Dílčí složku vytvořit až při zahájení konkrétní části. Dostane vlastní `README.md`, dílčí zadání a jasně rozlišené zdroje, podklady a exporty. Konkrétní stav práce vést v `UKOLY.md`; dokončený milník se stručně promítne do hlavního zadání.
 4. Design systém nekopírovat do `web/`. Odkazovat na společný zdroj; případné webové rozšíření popsat a sladit s ním.
 5. Zachovat návaznosti na broadcast, 3D, prezentaci a merch. Jejich specifická rozhodnutí nepřenášet automaticky na web a jejich soubory neměnit jako vedlejší účinek práce na webu.
 6. Pracovní návrhy označit jako návrhy, ukázková data jako fiktivní. Hesla, klíče, skutečné přihlášky, platební údaje ani export databáze WordPressu do veřejného repozitáře nepatří.
