@@ -61,26 +61,21 @@ Podklady pro srovnání: [WordPress — vlastní bloky](https://developer.wordpr
 - Město a modely překážek znovu použít, pokud to formát a licence dovolí. Webový export musí mít vlastní optimalizaci a jednoduchou náhradní mapu.
 - Při rozporu podkladů uvést konkrétní konflikt a zdroj rozhodnutí. Neměnit potichu společný design systém ani zadání jiného projektu.
 
-## 4. Obsah a struktura — návrh k rozhodnutí
+## 4. Obsah a struktura — návrh první verze
 
-Navrhovaná navigace: **Pro diváky / Pro jezdce / Trať / Live / Partnerství**, doplněná o Shop a CZ/EN. Afterparty patří do programu, archiv a média mají dostupné sekundární odkazy. Přesné názvy a pořadí se potvrdí při návrhu struktury.
+Konkrétní pracovní návrh je v [STRUKTURA_V1.md](STRUKTURA_V1.md): mapa stránek, první vydání navigace, pořadí homepage, obsah partnerské a jezdecké stránky, známé adresy k převodu a redakční model. Připraveno 28. 9. 2026 pro WEB-003/WEB-004; návrh čeká na připomínky a není hotovou implementací.
 
-Homepage má vést k rozhodnutí, nikoli opakovat všechny podstránky:
+Navržená navigace V1: **Pro diváky / Pro jezdce / Program / Partnerství**, doplněná o Shop a CZ/EN. Live a nová interaktivní trať přijdou až s následnou etapou. Toto upřesnění nahrazuje dřívější obecný návrh menu s položkami Trať a Live už při prvním spuštění.
 
-1. Datum, místo, krátká hodnota akce a hlavní akce podle fáze ročníku.
-2. Stručné představení s jedním hlavním videem nebo fotografií.
-3. Rozcestí divák / jezdec a několik jasně definovaných údajů.
-4. Výběr programu a náhled trati s odkazem na podrobnosti.
-5. Přiměřená prezentace partnerů, pozvánka k partnerství a případný merch.
-6. Praktické kontakty a odkazy.
+Homepage: **úvod → cesty jezdce/diváka → atmosféra s jedním videem → výběr programu → nabídka partnerství → kompaktní partneři → patička**. Obchodní nabídka Partnerství je oddělená od poděkování Partnerům. Známé adresy zachovat, změny řídit cíleným plánem; úplná inventura WordPressu a médií zbývá.
 
-Rozlišit fáze pozvánka → registrace → závodní den → výsledky/archiv. Jedna redakčně spravovaná hodnota data, kapacity a programu se promítá do souvisejících míst; archiv nesmí přepsat změna nového ročníku.
+Pravidla fází ročníku, obsahu CZ/EN a zveřejňování neúplných údajů jsou rozepsaná ve struktuře. Ta rozpracovává potvrzený rozsah V1 a nepřidává mapu, registrace ani live mezi podmínky spuštění.
 
 ## 5. Části projektu a aktuální stav
 
 | ID | Část | Cílový výsledek | Stav / návaznost |
 | --- | --- | --- | --- |
-| W01 | Struktura a obsah | Mapa stránek, pořadí sekcí, CZ/EN cesta, jednotné údaje | Revize hotová; návrh struktury k rozhodnutí |
+| W01 | Struktura a obsah | Mapa stránek, pořadí sekcí, CZ/EN cesta, jednotné údaje | Revize hotová; pracovní struktura V1 připravená v STRUKTURA_V1.md, úplná inventura a připomínky zbývají |
 | W02 | Nová veřejná část a mobilní vzhled | Opakovatelné styly, správný hero výřez, kratší homepage, čitelný program | Vizuální audit hotový v uvedeném rozsahu; nastavení administrace neprověřeno |
 | W03 | Partnerství | Stručná nabídka, doložená čísla, ukázky plnění, kontakt | Požadavek potvrzen; obsah a ceny k upřesnění |
 | W04 | Trať a překážky | Použitelná mapa, body zájmu, volitelné 3D | Návrh; závisí na trase, modelech a webovém exportu |
@@ -326,3 +321,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: zadavatel potvrdil WordPress s vlastní šablonou a bloky bez Divi. Doplněno doporučení samostatné blokové šablony SVDT a odděleného funkčního pluginu; child theme není pro navržené provedení potřebná. Předchozí otevřená volba CMS je tím uzavřená.
 
 - 28. 9. 2026: zadavatel přijal navržené provedení vlastní samostatné šablony SVDT. Uzavřena volba samostatné blokové šablony bez child theme a odděleného funkčního pluginu. Další obsahový krok: WEB-003/WEB-004 — rozsah stránek, navigace a pořadí homepage; implementace následuje po návrhu podle potvrzených etap.
+
+- 28. 9. 2026: připraven STRUKTURA_V1.md pro WEB-003/WEB-004. Obsahuje navigaci V1 bez odložených live/mapových funkcí, šest sekcí homepage, podstránky, redakční model a pracovní převod známých URL. Návrh dosud nebyl odsouhlasen; kompletní export obsahu a migrační inventura zbývají.
