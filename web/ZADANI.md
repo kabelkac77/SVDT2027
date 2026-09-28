@@ -15,6 +15,7 @@ Stejný způsob evidence jako v `DT-grafika-TV/ZADANI.md`:
 
 ## 2. Potvrzený rámec
 
+- Nový web vzniká odděleně v lokálním/testovacím prostředí; cílem je přenos kompletní ověřené verze na ostrou doménu. ✔ 28. 9. 2026
 - Projekt webu má vlastní složku `web/` v tomto repozitáři a respektuje jeho ostatní části. ✔ 28. 9. 2026
 - Současný web je postavený na **WordPressu + Divi**. Pro nové řešení není Divi podmínkou. Redakční systém a pohodlná administrace jsou nutné; platforma nového webu zůstává k rozhodnutí. ✔ 28. 9. 2026
 - Zachovat vizuální identitu a dodržovat společný [design systém](../design-system/readme.md). ✔ 28. 9. 2026
@@ -120,7 +121,7 @@ Live musí rozlišit čekání, vysílání, přerušení, nedostupná/zastaral�
 
 ## 9. Vlastní registrace — návrh k rozhodnutí
 
-WordPress/Divi může tvořit uživatelské rozhraní; transakční logika potřebuje udržovanou funkční část a ověřenou platební bránu. Data karty nemá zpracovávat vlastní formulář. Výběr brány, pluginu nebo vlastního řešení následuje po potvrzení rozsahu.
+Zvolená webová platforma může tvořit uživatelské rozhraní; transakční logika potřebuje udržovanou funkční část a ověřenou platební bránu. Data karty nemá zpracovávat vlastní formulář. Výběr brány, pluginu nebo vlastního řešení následuje po potvrzení rozsahu.
 
 Minimální návrh zahrnuje dočasnou rezervaci kapacity, kategorie a věková pravidla, jezdce odlišného od plátce/rodiče, ověřenou zprávu brány, potvrzovací e-mail, správu přihlášky, storno, export časomíře a prezenci. Zaplacení, splnění podmínek účasti a přítomnost na prezenci jsou různé stavy.
 
@@ -149,9 +150,68 @@ Navržená přejímka: správné údaje 2027 a oddělený archiv, průchozí CZ/
 
 Nejbližší práce: rozhodnutí o architektuře a způsobu redakční správy, inventura obsahu a návrh konkrétního pořadí homepage s vazbou na W01–W03. Vlastní registrace ani 3D nemají blokovat přípravu partnerské nabídky.
 
+## 11. Vývoj, neveřejný náhled a nasazení
+
+Potvrzený směr: vývoj mimo ostrý web. Následující provedení je doporučený postup pro preferovanou variantu WordPress; konečné nástroje závisejí na volbě platformy a možnostech hostingu. Žádné prostředí ani automatické nasazování zatím nebylo vytvořeno.
+
+### Tři oddělená prostředí
+
+| Prostředí | Účel | Data a integrace |
+| --- | --- | --- |
+| Lokální vývoj | Tvorba šablony, bloků, administrace a funkcí | Fiktivní data, zachytávání e-mailů, testovací platby |
+| Neveřejný staging | Sdílený náhled, redakční plnění, kontrola na telefonu a zkouška nasazení | Samostatná databáze, přístup chráněný přihlášením, noindex jako doplněk; oddělené testovací klíče |
+| Produkce | Veřejný web na svdtpribram.cz | Schválený obsah, produkční služby a skutečné přihlášky |
+
+Lokální WordPress navrhuji spouštět v reprodukovatelném prostředí, například přes wp-env/Docker; před zavedením ověřit dostupnost nástroje a sladit verze WordPressu, PHP a databáze s cílovým hostingem. Sdílený staging umístit pokud možno na stejný typ hostingu jako produkci. Ukázková subdoména typu preview.svdtpribram.cz je jen návrh, nikoli založená adresa.
+
+Staging nesmí používat produkční databázi, rozesílat e-maily jezdcům ani přijímat ostré platby. Webhooky platební brány ověřovat na dostupné HTTPS testovací adrese; veřejná výjimka pro callback musí být omezená a zprávy ověřené. Samotný noindex není ochrana přístupu.
+
+### Co se bude skutečně vyvíjet
+
+Po potvrzení WordPressu stavět od prvních funkčních stránek vlastní šablonu a bloky v reálném WordPressu, včetně editace obsahu. Krátké vizuální studie lze dělat samostatně, ale nemají se stát celým hotovým webem, který se teprve nakonec předělává do CMS.
+
+Ve web/ budou při zahájení implementace oddělené zdroje šablony, pluginu pro obsahové typy a případných funkčních modulů, konfigurace lokálního prostředí, sestavení, migrací a návod k nasazení. Konkrétní složky nevytvářet prázdné předem. Obsahové typy a registrace nevázat na šablonu, aby změna vzhledu neodstranila data.
+
+### Kód, obsah a konfigurace
+
+- Git obsahuje vlastní kód, závislosti s pevnými verzemi, bezpečné příklady konfigurace, migrační postupy a fiktivní testovací data. Společný design systém zůstává zdrojem pravidel.
+- Databáze, nahrané fotografie a videa jsou samostatná data s vlastním zálohováním a přenosem. Git commit sám o sobě nepřenáší kompletní WordPress.
+- Hesla, klíče, databázové exporty s osobními údaji a provozní konfigurace zůstávají mimo veřejný repozitář.
+- Doména, připojení k databázi, pošta a brány se nastavují pro prostředí zvlášť. Adresu localhost ani staging nevkládat natvrdo do kódu.
+- Na staging a do produkce má jít tentýž otestovaný balíček z označené verze v Gitu. Přesný způsob přenosu (nasazovací nástroj hostingu / SSH / jiný podporovaný postup) určit po kontrole hostingu; GitHub Pages není hosting PHP a databáze WordPressu.
+- Automatické nasazování je budoucí možnost. Změna dokumentace v main nesmí sama přepnout veřejný web.
+
+### První kompletní přechod
+
+1. Sepsat obsah a adresy současného webu, vybrat zachované podklady a plán převodu obsahu svázaného s Divi. Starý web během vývoje dál funguje.
+2. Nový web naplnit na stagingu a provést zkušební migraci kódu, databáze a médií do cílového prostředí. Změny adres ve WordPressu převádět nástrojem, který rozumí serializovaným datům.
+3. Před přepnutím udělat úplnou zálohu starého webu, ověřit obnovu, připravit přesměrování a evidovat rozdíly obsahu vzniklé během vývoje.
+4. Domluvit krátké uzavření redakčních změn a případných zápisů, přenést finální rozdíly a ověřit novou instalaci. Pokud již běží registrace, připravit samostatný převod a párování rozpracovaných plateb; databázi nelze prostě nahradit starší kopií.
+5. Po schválení konkrétní připravené verze přepnout web na hlavní doméně. Způsob přepnutí závisí na hostingu: změna cílové složky/instalace nebo DNS při stěhování serveru. E-shop na Shoptetu a poštovní DNS záznamy zachovat.
+6. Ověřit HTTPS, CZ/EN adresy, média, přesměrování, formuláře, doručování pošty, cache, indexaci a případné produkční platební napojení. Testovací ochranu odstranit pouze z produkce; staging zůstává neveřejný.
+
+Doba přepnutí a případný výpadek se určí až po zkušební migraci; neslibovat bezvýpadkové nasazení bez ověřené infrastruktury.
+
+### Další aktualizace a návrat
+
+Po spuštění je produkce zdrojem skutečných přihlášek, plateb a aktuálního redakčního obsahu. Další vydání přenášejí kód a řízené změny datové struktury, nikoli celou starší databázi ze stagingu. Obsahové změny přenášet cíleně; osobní údaje při případné kopii do testu anonymizovat.
+
+Pro návrat uchovat předchozí balíček a předmigrační zálohu. Návrat kódu musí být slučitelný s databází. Jakmile nová verze přijme skutečné přihlášky nebo platby, prosté obnovení staré databáze by je ztratilo; nejdříve zastavit dotčené zápisy a uchovat či vypořádat nové transakce podle připraveného postupu.
+
+### Co zjistit před založením prostředí
+
+- Hosting, dostupné PHP/databáze, staging, SSH a možnosti záloh: **K doplnění** (čeká: zadavatel).
+- Zvolená platforma a místní vývojový nástroj: **K potvrzení** (čeká: na nás) — navazuje na rozhodnutí zadavatele o CMS.
+- Kdo schvaluje obsah a má přístup do náhledu: **K doplnění** (čeká: zadavatel).
+- Ověřený postup sestavení, migrace a návratu: **K doplnění** (čeká: na nás).
+
+Technické reference: [lokální WordPress přes wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/), [oficiální postupy migrace WordPressu](https://developer.wordpress.org/advanced-administration/upgrade/migrating/). Ověřeno 28. 9. 2026.
+
 ## Záznam rozhodnutí
 
 - 28. 9. 2026: zadavatel požaduje samostatnou složku `web/`, společné zadání a respektování design systému i ostatních částí repozitáře.
 - 28. 9. 2026: založeno zadání, rozcestník a odkazy; převzat audit po vizuální kontrole. Detailní návrhy auditu zůstávají návrhy, dokud nejsou potvrzené. Žádná změna veřejného webu ani přechod registrací zatím neproběhly.
 
 - 28. 9. 2026: zadavatel upřesnil, že Divi není omezení nového řešení a administrace je nutná. Zachování WordPressu je doporučená varianta, nikoli potvrzená platforma; doplněno srovnání a návrh přestavby veřejné části.
+
+- 28. 9. 2026: zadavatel požaduje vývoj nového webu v sandboxu/lokálně a snadný kompletní přechod na produkci. Doplněn návrh lokál → neveřejný staging → produkce, oddělení kódu a dat, první migrace, následná vydání a návrat. Prostředí zatím nezaložena.
