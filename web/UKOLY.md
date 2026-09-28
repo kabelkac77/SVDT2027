@@ -14,7 +14,7 @@ Aktualizováno 28. 9. 2026. Pracovní fronta navazující na [ZADANI.md](ZADANI.
 
 ## Nejbližší postup
 
-1. **WEB-001:** zjistit současný hosting a možnosti testovacího prostředí. Ze screenshotů potvrzen **Active24 Smart s rozšířením**, dostupné SSL, denní zálohy, 512MB PHP limit a shell konzole. Další krok: zjistit velikost samotného SVDT, verzi PHP a možnosti oddělené databáze/náhledu; rezerva úložiště je omezená.
+1. **WEB-001:** zjistit současný hosting a možnosti testovacího prostředí. Ze screenshotů potvrzen **Active24 Smart s rozšířením**, dostupné SSL, denní zálohy, 512MB PHP limit a shell konzole. SVDT nyní používá Apache 2.4 / PHP 7.4; WordPress 6.9.9 je údaj zadavatele. Další krok: ověřit nabízené nové PHP pro oddělený náhled, databázi a velikost samotného SVDT; rezerva úložiště je omezená.
 2. **WEB-002:** uzavřít volbu CMS a způsob nasazování na základě doporučení v zadání.
 3. **WEB-003 a WEB-004:** určit přesný obsah první verze, navigaci a způsob správy CZ/EN. Inventura veřejného obsahu může začít i během čekání na hosting.
 4. Po uzavření základu přejít na návrhy homepage a partnerství.
@@ -25,7 +25,7 @@ Probíhá přípravná inventura WEB-001; základní parametry jsou doložené s
 
 | ID | Úkol / vazba | Stav | Kdo / závislost | Hotovo znamená |
 | --- | --- | --- | --- | --- |
-| WEB-001 | Ověřit hosting, doménu, zálohy a možnost stagingu | Probíhá | Active24 Smart doložen screenshoty 28. 9. 2026; na nás: velikost SVDT, PHP/databáze, oddělený náhled, skutečný přenos a obnova | Zapsané možnosti hostingu a návrh odděleného náhledu bez zásahu do produkce |
+| WEB-001 | Ověřit hosting, doménu, zálohy a možnost stagingu | Probíhá | Active24 Smart doložen screenshoty 28. 9. 2026; PHP 7.4 potvrzeno, WordPress 6.9.9 dle zadavatele; na nás: velikost SVDT, nové PHP, databáze, oddělený náhled, skutečný přenos a obnova | Zapsané možnosti hostingu a návrh odděleného náhledu bez zásahu do produkce |
 | WEB-002 | Potvrdit CMS, architekturu a způsob nasazení | Čeká | Na nás + zadavatel; WEB-001 | Zapsaná volba a důvody v zadání; WordPress je zatím doporučení, Divi není podmínka |
 | WEB-003 | Inventura stránek, adres a podkladů; rozsah V1 (W01) | Připraveno | Na nás; zadavatel doplní neveřejné podklady | Seznam ponechat / přepsat / archivovat / přesměrovat a konkrétní seznam stránek první verze |
 | WEB-004 | Navigace, CZ/EN a redakční obsahový model (W01) | Čeká | Na nás + zadavatel; WEB-003 | Mapa stránek, jazykový postup, správa ročníku/programu/partnerů a hranice vůči interní aplikaci |
@@ -33,6 +33,10 @@ Probíhá přípravná inventura WEB-001; základní parametry jsou doložené s
 | WEB-006 | Vyřešit obsah partnerské nabídky (W03) | Připraveno | Na nás + zadavatel | Sjednocené balíčky/ceny z Canvy, vysvětlené metriky a období, kontaktní cesta; neověřená tvrzení se nepublikují |
 
 WEB-005 a WEB-006 lze připravovat při práci na struktuře. Pro první návrhy mohou být chybějící podklady označené; před veřejným spuštěním musí být nahrazené nebo odpovídající obsah vynechaný.
+
+### Průběžná údržba současného webu
+
+- **WEB-021 — Posoudit přechod současného webu z PHP 7.4. Stav: Čeká.** Na nás: inventura Divi/pluginů, záloha a test kompatibility na kopii; závisí na dostupném přístupu a testovacím prostředí. Výsledek: ověřený postup aktualizace nebo konkrétní seznam překážek. Produkční přepnutí provést až po testu a dohodě o nasazení. Nejde o nové rozšíření etapy 4 ani o důvod odkládat návrh nového webu.
 
 ## B. Návrh — první verze
 
