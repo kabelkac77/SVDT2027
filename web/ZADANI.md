@@ -51,6 +51,10 @@ Podklady pro srovnání: [WordPress — vlastní bloky](https://developer.wordpr
 
 ## 3. Pravidla společného designu a návazností
 
+**Vizuální kontinuita je potvrzený požadavek:** návrh má výrazně vycházet ze současného svdtpribram.cz, aby značka neměnila vzhled každý ročník. **Nadřazeným vizuálním zdrojem je design systém v tomto repozitáři**; při rozporu má přednost před současným webem. ✔ 28. 9. 2026
+
+Zachovat rozpoznatelný charakter, práci se závodní fotografií, tmavými plochami a výraznou typografií tam, kde odpovídají design systému. Změny mají řešit doložené problémy hierarchie, délky, mobilního zobrazení a konzistence. Nová technická šablona neznamená novou vizuální identitu. Nejprve navrhnout jeden směr navazující na současný web; případné alternativy omezit na konkrétní rozložení, ne na změnu značky.
+
 - Základem je kořenový `design-system/`, jeho tokeny, komponenty a webový UI kit. Nevytvářet nezávislou kopii systému v `web/`.
 - Exo, výrazné verzálkové nadpisy, tabulární číslice; rozlišovat brand červenou `#E30613` a akcentní `#FF1A1A` podle jejich určení. Použít skutečné dodané logo, ne rekonstruovanou náhradu z ukázky.
 - Respektovat pravidla komponent, kontrast, překrytí fotografie, mezery, rádiusy a omezený pohyb. Běžné dekorativní stíny nepřidávat. Reduced motion musí být součástí návrhu.
@@ -323,3 +327,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: zadavatel přijal navržené provedení vlastní samostatné šablony SVDT. Uzavřena volba samostatné blokové šablony bez child theme a odděleného funkčního pluginu. Další obsahový krok: WEB-003/WEB-004 — rozsah stránek, navigace a pořadí homepage; implementace následuje po návrhu podle potvrzených etap.
 
 - 28. 9. 2026: připraven STRUKTURA_V1.md pro WEB-003/WEB-004. Obsahuje navigaci V1 bez odložených live/mapových funkcí, šest sekcí homepage, podstránky, redakční model a pracovní převod známých URL. Návrh dosud nebyl odsouhlasen; kompletní export obsahu a migrační inventura zbývají.
+
+- 28. 9. 2026: zadavatel upřesnil, že vizuální návrh má silně navazovat na současný web; design systém na GitHubu má při rozporu přednost. Volba nástroje pro návrh zatím není rozhodnutá a nemění tato pravidla.
