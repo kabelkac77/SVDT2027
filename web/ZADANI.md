@@ -1,0 +1,157 @@
+# Zadání — web SVDT 2027
+
+Pracovní základ pro úpravy svdtpribram.cz. Založeno 28. 9. 2026 podle požadavků zadavatele, [revize webu](REVIZE_2026-09-28.md) a aktuálního repozitáře. Tento dokument je jediným zdrojem aktuálního stavu webového projektu; audit uchovává výchozí zjištění.
+
+## 1. Stav a způsob doplňování
+
+Stejný způsob evidence jako v `DT-grafika-TV/ZADANI.md`:
+
+- Potvrzené informace zapisovat jako fakta se značkou ✔ a datem.
+- **K doplnění**, **K potvrzení** a **Rozpracováno** doplnit stranou `(čeká: zadavatel / na nás / časomíra / režie)` a konkrétní chybějící informací.
+- **Návrh k rozhodnutí** není schválený rozsah ani závazek dodat funkci.
+- Datum odeslání dotazu zapsat pouze tehdy, když byl skutečně odeslán.
+- Změny rozhodnutí připsat do záznamu na konci; neplatný požadavek označit jako nahrazený.
+- Hotový dokument, prototyp, otestovaná funkce a nasazení jsou různé stavy.
+
+## 2. Potvrzený rámec
+
+- Projekt webu má vlastní složku `web/` v tomto repozitáři a respektuje jeho ostatní části. ✔ 28. 9. 2026
+- Současný web je postavený na **WordPressu + Divi**. Pro nové řešení není Divi podmínkou. Redakční systém a pohodlná administrace jsou nutné; platforma nového webu zůstává k rozhodnutí. ✔ 28. 9. 2026
+- Zachovat vizuální identitu a dodržovat společný [design systém](../design-system/readme.md). ✔ 28. 9. 2026
+- Cílem je přehlednost, modernost a jednodušší orientace; důležitou cílovou skupinou jsou noví zahraniční riders. ✔ 28. 9. 2026
+- Připravit sekci **Chci se stát partnerem** z aktuální Canva prezentace, obohacenou o vhodná webová média bez zahlcení návštěvníka. ✔ 28. 9. 2026
+- E-shop zůstává na **Shoptetu**; jeho přestavba a vlastní revize jsou samostatná práce. Web s návazností počítá. ✔ 28. 9. 2026
+- Požadováno je posouzení interaktivní mapy, 3D překážek, motion grafiky, live výsledků, mezičasů a streamu. Dostupnost podkladů a rozsah ostré implementace ještě nejsou potvrzené.
+- Vlastní registrace s kartovými platbami je **návrh k rozhodnutí** (čeká: zadavatel). Byla posouzena proveditelnost; nahrazení nazavody.cz zatím není schválené.
+
+Z [TV zadání](../DT-grafika-TV/ZADANI.md) přebíráme referenci na 11. ročník a datum 22. 5. 2027, nikoli automaticky jeho technické požadavky, rozpočet nebo termíny realizace. Při publikaci ověřit aktuální potvrzené údaje. Starší údaje 2026 v ukázkách design systému nejsou zdrojem obsahu pro rok 2027. Status MČR, pravidla, program a partneři vyžadují potvrzení pro příslušný ročník.
+
+### Architektura nového webu — aktuální doporučení
+
+Po upřesnění zadavatele není cílem pouze přerovnat sekce Divi. Doporučením je znovu postavit veřejnou část webu, její strukturu a komponenty, se zachováním značky a využitelných podkladů. Rozsah přestavby i finální technologie jsou **návrh k rozhodnutí** (čeká: zadavatel); zahájení migrace ani ostrého vývoje tím není potvrzené.
+
+| Varianta | Přínos pro SVDT | Náklady a omezení | Doporučení |
+| --- | --- | --- | --- |
+| WordPress + vlastní šablona a bloky, bez závislosti na Divi | Známá administrace, vlastní design a strukturovaný obsah, standardní redakční nástroje | Vývoj šablony a funkcí, průběžná údržba a aktualizace | Preferovaná výchozí cesta |
+| WordPress jako obsahový systém + oddělený web | Zachová redakci a umožní samostatnou aplikaci | Dva propojené celky; náhledy, publikování, cache a přihlášení vyžadují další práci | Pouze pokud oddělení přinese konkrétní výhodu |
+| Payload + vlastní web | Přizpůsobitelná administrace, strukturovaná data a aplikace ve společném technologickém základu | Nové prostředí, migrace a větší závislost na vývojáři | Relevantní alternativa při dlouhodobém rozvoji závodního portálu |
+| Vlastní CMS od nuly | Úplná kontrola | Vývoj médií, oprávnění, verzování, publikování a dalších základních funkcí navíc | Nedoporučeno pro současný rozsah |
+
+Jde o technické doporučení, nikoli uzavřené rozhodnutí. Interaktivní 3D ani live výsledky samy o sobě nevyžadují odchod z WordPressu. Registrace bude mít oddělenou doménovou logiku a správu stavů bez ohledu na CMS; běžný obsahový editor nenahrazuje transakční systém.
+
+Administrace má spravovat ročníky, program, místa trati, partnery, média a překlady přes pojmenovaná pole a připravené komponenty. Běžný editor má měnit datum nebo partnera jednou, bez zásahu do kódu a bez možnosti náhodně rozbít design. Požadovány jsou role, náhled před publikací a dohledatelné změny. Přesný rozsah správy registrací a prezence závisí na rozhodnutí o W06.
+
+Při přestavbě zachovat použitelné texty, fotografie, historii a pokud možno adresy. Změněné adresy dostanou přesměrování; starý web zůstane v provozu do ověření nové verze. Inventura musí odhalit obsah svázaný s Divi, který bude nutné převést. Ověřit administraci, správu CZ/EN, hosting a provozní odpovědnost před definitivním výběrem platformy.
+
+Podklady pro srovnání: [WordPress — vlastní bloky](https://developer.wordpress.org/block-editor/), [WordPress REST API](https://developer.wordpress.org/rest-api/), [Payload — přehled](https://payloadcms.com/docs/getting-started/what-is-payload). Posouzeno 28. 9. 2026.
+
+## 3. Pravidla společného designu a návazností
+
+- Základem je kořenový `design-system/`, jeho tokeny, komponenty a webový UI kit. Nevytvářet nezávislou kopii systému v `web/`.
+- Exo, výrazné verzálkové nadpisy, tabulární číslice; rozlišovat brand červenou `#E30613` a akcentní `#FF1A1A` podle jejich určení. Použít skutečné dodané logo, ne rekonstruovanou náhradu z ukázky.
+- Respektovat pravidla komponent, kontrast, překrytí fotografie, mezery, rádiusy a omezený pohyb. Běžné dekorativní stíny nepřidávat. Reduced motion musí být součástí návrhu.
+- React ukázky z UI kitu jsou vizuální reference; samy o sobě nevyžadují změnu WordPressu ani přepis do Reactu. Styl převést do opakovaně použitelných komponent zvolené platformy.
+- Samostatné CZ/EN stránky jsou **návrh k rozhodnutí** (čeká: zadavatel): odchylka od vzoru menšího EN překladu pod CZ textem v design systému. Zapsat rozhodnutí před realizací; vizuální pravidla tím neměnit.
+- 3D a datové vizualizace jsou funkční rozšíření nad fotografický vizuální základ. Jejich styl vyřešit v dílčím zadání; nepřenášet automaticky televizní žlutou trať, TV rozměry nebo broadcast animace do webového rozhraní.
+- Broadcast zůstává samostatný provozní systém. Web může čerpat schválený veřejný datový výstup; nemá poskytovat veřejný přístup k řízení režie.
+- Město a modely překážek znovu použít, pokud to formát a licence dovolí. Webový export musí mít vlastní optimalizaci a jednoduchou náhradní mapu.
+- Při rozporu podkladů uvést konkrétní konflikt a zdroj rozhodnutí. Neměnit potichu společný design systém ani zadání jiného projektu.
+
+## 4. Obsah a struktura — návrh k rozhodnutí
+
+Navrhovaná navigace: **Pro diváky / Pro jezdce / Trať / Live / Partnerství**, doplněná o Shop a CZ/EN. Afterparty patří do programu, archiv a média mají dostupné sekundární odkazy. Přesné názvy a pořadí se potvrdí při návrhu struktury.
+
+Homepage má vést k rozhodnutí, nikoli opakovat všechny podstránky:
+
+1. Datum, místo, krátká hodnota akce a hlavní akce podle fáze ročníku.
+2. Stručné představení s jedním hlavním videem nebo fotografií.
+3. Rozcestí divák / jezdec a několik jasně definovaných údajů.
+4. Výběr programu a náhled trati s odkazem na podrobnosti.
+5. Přiměřená prezentace partnerů, pozvánka k partnerství a případný merch.
+6. Praktické kontakty a odkazy.
+
+Rozlišit fáze pozvánka → registrace → závodní den → výsledky/archiv. Jedna redakčně spravovaná hodnota data, kapacity a programu se promítá do souvisejících míst; archiv nesmí přepsat změna nového ročníku.
+
+## 5. Části projektu a aktuální stav
+
+| ID | Část | Cílový výsledek | Stav / návaznost |
+| --- | --- | --- | --- |
+| W01 | Struktura a obsah | Mapa stránek, pořadí sekcí, CZ/EN cesta, jednotné údaje | Revize hotová; návrh struktury k rozhodnutí |
+| W02 | Nová veřejná část a mobilní vzhled | Opakovatelné styly, správný hero výřez, kratší homepage, čitelný program | Vizuální audit hotový v uvedeném rozsahu; nastavení administrace neprověřeno |
+| W03 | Partnerství | Stručná nabídka, doložená čísla, ukázky plnění, kontakt | Požadavek potvrzen; obsah a ceny k upřesnění |
+| W04 | Trať a překážky | Použitelná mapa, body zájmu, volitelné 3D | Návrh; závisí na trase, modelech a webovém exportu |
+| W05 | Live centrum | Stream, výsledky, mezičasy, stav aktuálnosti a výpadku | Návrh; závisí na časomíře a poskytovateli přenosu |
+| W06 | Registrace a platby | CZ/EN přihláška, kapacita, platba, správa a prezence | Posouzena proveditelnost; realizace k rozhodnutí |
+| W07 | Návaznost e-shopu | Jednotný vstup do Shoptetu a vizuální návaznost | Rozsah hlavního webu; vlastní revize obchodu později |
+
+Dílčí složky zakládat až při zahájení práce. Tabulka nepředstírá existenci implementace.
+
+## 6. Prioritní zásahy z vizuálního auditu
+
+- Opravit mobilní ořez hero fotografie a nadbytečné svislé mezery.
+- Zkrátit homepage: odstranit opakování a zmenšit partnerský blok při dodržení smluvené viditelnosti.
+- Dokončit EN obsah včetně CTA, programu, obrázkových podkladů a navazujících kroků.
+- Nahradit obrázkový program skutečným textem; mapu umožnit zvětšit, důležité pokyny zpřístupnit i bez mapy.
+- Zjednodušit hierarchii tlačítek a doplnit kotvy na dlouhé stránce jezdce.
+- Sjednotit karty a ověřit kontrast časů ve výsledcích.
+
+Podrobnosti, rozměry a hranice ověření jsou v kapitole 17 auditu. Nejde o změřené Core Web Vitals ani úplný audit přístupnosti.
+
+## 7. Partnerství
+
+Návštěvník má rychle pochopit akci, publikum, přínos spolupráce a další krok. Z prezentace vytvořit webový příběh, nikoli vložených 18 slidů. Základ: stručný úvod → nejvýše několik doložených metrik → ukázky plnění → možnosti spolupráce → kontaktní výzva. Detaily rozbalovat nebo přesunout níže.
+
+- Ceny a rozsah balíčků: **K potvrzení** (čeká: zadavatel) — audit našel odlišné částky v souhrnu a detailech V4.
+- Metriky a jejich období: **K doplnění** (čeká: zadavatel) — oddělit dosah, zobrazení a zhlédnutí konkrétního videa.
+- Fotky, videa, práva a ukázky aktivací: **K doplnění** (čeká: zadavatel).
+- Kontaktní formulář, příjemce a potvrzení odeslání: **K doplnění** (čeká: zadavatel).
+
+## 8. Mapa, motion a live
+
+Nejprve čitelná 2D mapa a seznam bodů; volitelné 3D spouštět až na vyžádání. Program, registrace ani navigace nesmějí vyžadovat načtení 3D. Pohyb má vysvětlovat trať nebo plnění pro partnera; nesmí blokovat scrollování a čtení.
+
+- Trasa 2027, body, uzavírky a bezpečné divácké přístupy: **K doplnění** (čeká: zadavatel).
+- Modely a formát lehkého webového exportu: **K doplnění** (čeká: na nás) — navázat na [3D zadání](../DT-grafika-TV/3D/zadani.md).
+- Veřejné rozhraní časomíry, identifikátory, frekvence, opravy a stavy DNF/DNS/DSQ: **K doplnění** (čeká: časomíra).
+- Dostupnost a význam splitů: **K potvrzení** (čeká: časomíra) — počet a umístění neurčuje vzhled současné grafické komponenty.
+- Stream, poskytovatel, možnost vložení a záložní odkaz: **K potvrzení** (čeká: režie).
+
+Live musí rozlišit čekání, vysílání, přerušení, nedostupná/zastaralá data a konečné výsledky. Ukázková data nikdy neprezentovat jako živá. Veřejná návštěvnost nesmí zatěžovat řídicí systém přenosu.
+
+## 9. Vlastní registrace — návrh k rozhodnutí
+
+WordPress/Divi může tvořit uživatelské rozhraní; transakční logika potřebuje udržovanou funkční část a ověřenou platební bránu. Data karty nemá zpracovávat vlastní formulář. Výběr brány, pluginu nebo vlastního řešení následuje po potvrzení rozsahu.
+
+Minimální návrh zahrnuje dočasnou rezervaci kapacity, kategorie a věková pravidla, jezdce odlišného od plátce/rodiče, ověřenou zprávu brány, potvrzovací e-mail, správu přihlášky, storno, export časomíře a prezenci. Zaplacení, splnění podmínek účasti a přítomnost na prezenci jsou různé stavy.
+
+- Převod z nazavody.cz pro 2027: **K rozhodnutí** (čeká: zadavatel).
+- Kategorie, kapacity, startovné, licence, nezletilí a storna: **K potvrzení** (čeká: zadavatel).
+- Brána, měna, poplatky, účetní návaznost a provozní odpovědnost: **K doplnění** (čeká: zadavatel).
+- Technický návrh a testovací prostředí: **K doplnění** (čeká: na nás).
+
+Před přechodem ověřit souběžné přihlášení na poslední místo, opožděnou či opakovanou zprávu brány, neúspěšnou platbu, refundaci, více dětí jednoho rodiče, export a obnovu ze zálohy. Podrobnosti obsahuje kapitola 16 auditu.
+
+## 10. Postup a podmínky dokončení
+
+| Etapa | Výstup | Termín |
+| --- | --- | --- |
+| 1 | Volba architektury, inventura obsahu a potvrzený rozsah první verze | K doplnění |
+| 2 | Návrh homepage a partnerské stránky pro mobil i desktop, CZ/EN obsah | K doplnění |
+| 3 | Úpravy v testovací kopii, základní mapa a ověření obsahu | K doplnění |
+| 4 | Integrace podle dostupnosti: registrace, live, případně 3D | K doplnění |
+| 5 | Přejímka, záloha, nasazení a stručný redakční návod | Před akcí; přesný den k potvrzení |
+
+- Verze Divi, vlastní kód, pluginy, jazyky, cache a staging: **K doplnění** (čeká: na nás).
+- Odpovědnosti za obsah, EN překlad a provoz webu v den závodu: **K doplnění** (čeká: zadavatel).
+- Rozpočet, pořadí etap a data spuštění: **K potvrzení** (čeká: zadavatel). Termíny TV projektu nejsou automaticky termíny webu.
+
+Navržená přejímka: správné údaje 2027 a oddělený archiv, průchozí CZ/EN cesty, responzivní kontrola 360/390/768/1024/1440 px, funkční odkazy a formuláře, klávesnice a reduced motion, ověřený kontrast, měření výkonu, náhradní zobrazení mapy a live. U registrace navíc transakční scénáře výše. Nasazení zahrne ověřenou zálohu a postup návratu. Konkrétní měřitelné podmínky doplnit v dílčích zadáních.
+
+Nejbližší práce: rozhodnutí o architektuře a způsobu redakční správy, inventura obsahu a návrh konkrétního pořadí homepage s vazbou na W01–W03. Vlastní registrace ani 3D nemají blokovat přípravu partnerské nabídky.
+
+## Záznam rozhodnutí
+
+- 28. 9. 2026: zadavatel požaduje samostatnou složku `web/`, společné zadání a respektování design systému i ostatních částí repozitáře.
+- 28. 9. 2026: založeno zadání, rozcestník a odkazy; převzat audit po vizuální kontrole. Detailní návrhy auditu zůstávají návrhy, dokud nejsou potvrzené. Žádná změna veřejného webu ani přechod registrací zatím neproběhly.
+
+- 28. 9. 2026: zadavatel upřesnil, že Divi není omezení nového řešení a administrace je nutná. Zachování WordPressu je doporučená varianta, nikoli potvrzená platforma; doplněno srovnání a návrh přestavby veřejné části.
