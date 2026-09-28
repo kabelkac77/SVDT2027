@@ -16,10 +16,10 @@ Aktualizováno 28. 9. 2026. Pracovní fronta navazující na [ZADANI.md](ZADANI.
 
 1. **WEB-001:** zjistit současný hosting a možnosti testovacího prostředí. Ze screenshotů potvrzen **Active24 Smart s rozšířením**, dostupné SSL, denní zálohy, 512MB PHP limit a shell konzole. SVDT nyní používá Apache 2.4 / PHP 7.4; WordPress 6.9.9 je údaj zadavatele. Nabídka PHP 8.2–8.5 je doložená; navržený základ sandboxu je po ověření podpory WordPressu 8.5; kompatibilitu konkrétních pluginů a šablony otestujeme. Další krok: ověřit databázi, velikost samotného SVDT a samostatné nastavení náhledu; rezerva úložiště je omezená.
 2. **WEB-002:** WordPress s vlastní šablonou bez Divi je potvrzen. Doplnit technické provedení a způsob nasazování; samostatná bloková šablona bez child theme a oddělený funkční plugin jsou potvrzené v zadání.
-3. **WEB-003 a WEB-004 — další obsahový krok:** určit přesný obsah první verze, navigaci, pořadí sekcí homepage a způsob správy CZ/EN. Inventura veřejného obsahu může začít i během čekání na hosting.
-4. Po uzavření základu přejít na návrhy homepage a partnerství.
+3. **WEB-003 a WEB-004 — připravený výstup:** [STRUKTURA_V1.md](STRUKTURA_V1.md) obsahuje návrh stránek, navigace, homepage, CZ/EN, redakčního modelu a převodu známých URL. Zapracovat připomínky; pro úplnou inventuru doplnit export WordPressu a médií.
+4. Další návrhový výstup: vizuální rozložení homepage a partnerství (WEB-007/WEB-008). Rozpory partnerských cen/čísel zatím řešit souběžně; v návrhu je nepředkládat jako schválené.
 
-Hlavní přípravný krok je WEB-001; související WEB-002 má uzavřenou volbu CMS a čeká na dopracování nasazení. U WEB-001 základní parametry jsou doložené screenshoty, přímá kontrola nastavení a provozní zkoušky zbývají. Žádný implementační úkol ještě neprobíhá. Lokální prostředí ani nový web zatím nejsou vytvořené.
+Hlavní obsahový krok je nyní WEB-004: návrh struktury je připravený k připomínkám. Související WEB-003 má pracovní inventuru známých adres, ale čeká na úplný export obsahu. WEB-001 a WEB-002 zůstávají rozpracované technické přípravy. Lokální prostředí ani nový web zatím nejsou vytvořené.
 
 ## A. Základ a rozhodnutí — první verze
 
@@ -27,8 +27,8 @@ Hlavní přípravný krok je WEB-001; související WEB-002 má uzavřenou volbu
 | --- | --- | --- | --- | --- |
 | WEB-001 | Ověřit hosting, doménu, zálohy a možnost stagingu | Probíhá | Active24 Smart doložen screenshoty 28. 9. 2026; PHP 7.4 potvrzeno, WordPress 6.9.9 dle zadavatele; PHP 8.2–8.5 dostupné; na nás: velikost SVDT, databáze, oddělený náhled a jeho PHP, skutečný přenos a obnova | Zapsané možnosti hostingu a návrh odděleného náhledu bez zásahu do produkce |
 | WEB-002 | Potvrdit CMS, architekturu a způsob nasazení | Probíhá | CMS a provedení potvrzené 28. 9. 2026: WordPress + samostatná bloková šablona bez Divi/child theme a funkční plugin; na nás: dopracovat prostředí a nasazení podle WEB-001 | Volba CMS je zapsaná; dokončení vyžaduje také konkrétní postup prostředí a vydání |
-| WEB-003 | Inventura stránek, adres a podkladů; rozsah V1 (W01) | Připraveno | Na nás; zadavatel doplní neveřejné podklady | Seznam ponechat / přepsat / archivovat / přesměrovat a konkrétní seznam stránek první verze |
-| WEB-004 | Navigace, CZ/EN a redakční obsahový model (W01) | Čeká | Na nás + zadavatel; WEB-003 | Mapa stránek, jazykový postup, správa ročníku/programu/partnerů a hranice vůči interní aplikaci |
+| WEB-003 | Inventura stránek, adres a podkladů; rozsah V1 (W01) | Probíhá | [Pracovní inventura](STRUKTURA_V1.md) hotová 28. 9. 2026; zbývá úplný export stránek, jazyků a médií | Seznam ponechat / přepsat / archivovat / přesměrovat a konkrétní seznam stránek první verze |
+| WEB-004 | Navigace, CZ/EN a redakční obsahový model (W01) | Probíhá | [Návrh v1](STRUKTURA_V1.md) připraven 28. 9. 2026; na nás + zadavatel: připomínky a dokončení návaznosti na inventuru | Mapa stránek, jazykový postup, správa ročníku/programu/partnerů a hranice vůči interní aplikaci |
 | WEB-005 | Shromáždit a ověřit obsah 2027 | Připraveno | Zadavatel + na nás | Evidence zdrojů, chybějících údajů, práv k médiím a odpovědností; neznámé údaje označené, nikoli domyšlené |
 | WEB-006 | Vyřešit obsah partnerské nabídky (W03) | Připraveno | Na nás + zadavatel | Sjednocené balíčky/ceny z Canvy, vysvětlené metriky a období, kontaktní cesta; neověřená tvrzení se nepublikují |
 
@@ -91,6 +91,7 @@ Nový nápad přidat s dalším stabilním ID, stručným přínosem a závislos
 | Obsahová a vizuální revize v popsaném rozsahu | Hotovo — 28. 9. 2026 | [Revize](REVIZE_2026-09-28.md) |
 | Složka web, zadání a rozcestník podkladů | Hotovo — 28. 9. 2026 | [README](README.md), [ZADANI](ZADANI.md), [ODKAZY](ODKAZY.md) |
 | Oddělení prvního spuštění od následných rozšíření | Hotovo — 28. 9. 2026 | ZADANI.md, kapitola 10 |
+| Pracovní návrh struktury V1 a známých URL | Hotovo — návrh 28. 9. 2026; schválení a úplná inventura zbývají | [STRUKTURA_V1.md](STRUKTURA_V1.md) |
 | Založení pracovní fronty a zásobníku | Hotovo — 28. 9. 2026 | Tento dokument |
 
 Dokončená příprava neznamená hotový návrh obrazovek, implementaci ani nasazení.
