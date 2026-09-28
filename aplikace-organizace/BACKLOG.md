@@ -1,150 +1,63 @@
-# SVDT 2027 — BACKLOG
+# MASTER BACKLOG
 
-## A. Podklady, které má Vojta dodat
-- [ ] Loňský / aktuální Excel rozpočet.
-- [ ] Databáze personálu z minulých ročníků.
-- [ ] Databáze jezdců z minulých ročníků.
-- [ ] Seznam / tabulka partnerů a historie spolupráce.
-- [ ] Tabulky celoročních brigád, pokud existují.
-- [ ] Historické mapy trati, zón, evakuačních přístupů a produkce.
-- [ ] Seznam dodavatelů / kontaktů, pokud existuje.
-- [ ] Loňské harmonogramy.
-- [ ] Existující formuláře pro partnery/dodavatele.
-- [ ] Relevantní dokumenty k registraci/prezenci riderů.
-- [ ] Feedback IZS/záchranky z minulého ročníku.
-- [ ] Jakékoliv existující checklisty stavby/deinstalace.
-
-## B. Organizace — otevřené role
-- [ ] Potvrdit Mirka (?) jako Race Coordinatora.
-- [ ] Najít zálohu Race Coordinatora.
-- [ ] Jindra (?) jako Vlasta +1 — ověřit.
-- [ ] Vojta +1 — obsadit.
-- [ ] Zástup IZS Coordinatora.
-- [ ] Zástup Track Managera.
-- [ ] Zástup manažera traťových komisařů.
-- [ ] Waste / Cleaning Manager.
-- [ ] Production / Logistics Lead pro Vlastu.
-- [ ] Owner předání kompletně postaveného areálu do provozu.
+## Organizace
+- [ ] Potvrdit Mirka (?) jako Race Coordinatora + najít zálohu.
+- [ ] Jindra (?) jako Vlasta +1; obsadit Vojta +1.
+- [ ] Zástupy IZS Coordinator, Track Manager, Marshals Manager.
+- [ ] Waste/Cleaning Manager.
+- [ ] Production/Logistics Lead.
+- [ ] Owner předání postaveného areálu.
 - [ ] Owner kontroly naložení skladu/dodávek.
+- [ ] Finální zařazení Crew Base.
 
-## C. Race / safety protokoly
+## Race / safety
 - [ ] Timekeeping Emergency Protocol s dodavatelem.
-- [ ] Ověřit rerun / timing pravidla se svazem nebo hlavním rozhodčím.
-- [ ] Rozhodnout a otestovat záložní kamery start + cíl.
-- [ ] Jednostránkový Radio Protocol.
-- [ ] Ranní radio-check workflow.
-- [ ] Aktualizovat evakuační plán podle reality.
-- [ ] Před aktualizací sebrat feedback záchranky + IZS.
-- [ ] Weather / Crisis Protocol.
-- [ ] Definovat konkrétní weather thresholds později.
-- [ ] Lost Child Protocol formalizovat.
-- [ ] Krátký postup chybějící crew / rider před startem.
-- [ ] Formalizovat Open Track / Go-No-Go checklist.
-- [ ] Formalizovat restart po incidentu.
-- [ ] Incident logging standard: co přesně se hlásí rádiem a co zapisuje Race Control.
-- [ ] Backup při výpadku elektřiny.
-- [ ] Backup při výpadku internetu.
-- [ ] Backup při úplném výpadku rádia.
+- [ ] Rerun/timing pravidla se svazem/rozhodčím.
+- [ ] Záložní kamery start+cíl.
+- [ ] Radio Protocol + radio-check.
+- [ ] Aktualizace evakuačního plánu + feedback IZS.
+- [ ] Weather/Crisis Protocol + thresholdy.
+- [ ] Lost Child Protocol.
+- [ ] Missing crew/rider postup.
+- [ ] Go/No-Go checklist.
+- [ ] Restart protocol.
+- [ ] Incident reporting standard.
+- [ ] Power/internet fallback.
+- [ ] Rider uplift 2027.
+- [ ] Jídlo/střídání/únava komisařů.
+- [ ] Rozmístění komisařů i podle broadcast záběrů.
 
-## D. Race Control
-- [ ] Potvrdit Točírnu jako fyzické místo.
-- [ ] Ověřit napájení, internet a radio coverage.
-- [ ] Seznam vybavení Race Control.
-- [ ] Přístupová pravidla.
-- [ ] Role Race Control Assistant — rozhodnout, zda 2027 ano/ne.
-- [ ] Nastavit krátké pravidelné check-iny Vojta ↔ Race Coordinator.
+## Race Control
+- [ ] Potvrdit Točírnu; ověřit power/internet/radio coverage.
+- [ ] Equipment list + access rules.
+- [ ] Race Control Assistant ano/ne.
+- [ ] Check-in rytmus Vojta ↔ Race Coordinator.
 
-## E. Crew / provoz
-- [ ] Rozhodnout finální organizační zařazení Crew Base (Vojta vs. Vlasta).
-- [ ] Jídlo traťových komisařů: distribuce na stanoviště vs. několik výdejních bodů.
-- [ ] Riziko únavy komisařů a možnosti střídání.
-- [ ] Rider uplift / vývoz na start — rozhodnout podle času/rozpočtu.
-- [ ] Parkování riderů — člověk pod Race Coordinator.
-- [ ] VIP parking — pod VIP manager.
-- [ ] Zásobování v den akce — pod Vlastu / +1, lokálně zónoví manažeři.
-- [ ] Rozmístění komisařů a dalších prvků kontrolovat i podle broadcast kamer.
-
-## F. Aplikace — architektura před kódováním
-- [ ] Dopracovat post-event fázi.
-- [ ] Finální datový model / ER diagram.
+## App architektura
+- [ ] Finální ER diagram.
 - [ ] Permissions matrix.
-- [ ] Rozhodnout multi-event scope (SVDT + možnost budoucího Pikniku).
-- [ ] Offline strategy.
-- [ ] Audit log strategy.
-- [ ] Notification strategy.
-- [ ] File/document storage strategy.
-- [ ] Import/export strategy.
-- [ ] Integrace a API boundaries.
-- [ ] Map proof-of-concept — vysoká priorita.
+- [ ] Offline, audit log, notifications, file storage, import/export strategy.
+- [ ] Prověřit Synology API.
+- [ ] Map proof-of-concept.
+- [ ] Multi-event scope do budoucna.
 
-## G. Mapový modul
-- [ ] Srovnat mapové technologie a udělat prototyp.
-- [ ] Otestovat výkon na mobilu/desktopu s desítkami vrstev.
-- [ ] Fullscreen + search + filters.
-- [ ] Logické skupiny vrstev.
-- [ ] Offline cache.
-- [ ] Tisk/export PDF s výběrem vrstev.
-- [ ] Scan/foto papírové mapy → AI návrh změn → ruční potvrzení.
-- [ ] Live state a plán v jedné mapě bez matoucí duplicity.
-- [ ] Live Crew Tracking — pravidla, souhlasy, retence a oprávnění.
+## Map
+- [ ] Srovnat technologie + prototyp desítek vrstev.
+- [ ] Mobile/desktop performance + offline cache.
+- [ ] PDF print/export.
+- [ ] Scan papírové mapy → AI návrh změn.
+- [ ] Live Crew Tracking pravidla/souhlasy/retence.
 
-## H. AI 2027 experiment
-- [ ] AI gateway / rozpočtové limity.
-- [ ] AI nesmí být kritická závislost.
-- [ ] Hlasový vstup pro Vojtu / Race Control.
-- [ ] AI strukturování incident logu.
-- [ ] AI změny mapy pouze jako návrh + potvrzení.
-- [ ] Weather assistant.
-- [ ] Readiness / „co hoří“ briefing.
-- [ ] Otestovat v pátek / sobotu ráno před závodem.
-- [ ] Po akci vyhodnotit, co má smysl standardizovat pro 2028.
+## AI
+- [ ] AI gateway + limity.
+- [ ] Voice input, incident assistance, map proposals, weather, readiness briefing.
+- [ ] Test před závodem + post-event evaluation.
 
-## I. Partners — první modul
-- [ ] Interní seznam partnerů.
-- [ ] Pole: owner, stav (osloven/potvrzen/zamítnut), poznámka, datum dalšího kroku.
-- [ ] Centrální profil organizace.
-- [ ] Ročníkové partnerství.
-- [ ] Partner fulfillment: nesplněno / v řešení / splněno.
-- [ ] Partner Portal.
-- [ ] Partner questionnaire.
-- [ ] VIP QR.
-- [ ] Partner documents / invoices visible externally pouze jejich vlastní.
-- [ ] Post-event partner report.
-- [ ] Feedback.
+## První implementace
+### Partneři
+- [ ] detailní schema, interní V1, Partner Portal, questionnaire, fulfillment, VIP QR, post-event report.
+### Finance
+- [ ] načíst Excel, schema plan/actual, faktury/přílohy/payment status, později Fio API.
 
-## J. Finance — druhý modul
-- [ ] Po dodání Excelu navrhnout datový model.
-- [ ] Plan vs Actual.
-- [ ] Income / Expense.
-- [ ] Faktury + přílohy.
-- [ ] Payment status.
-- [ ] Vazby na partnera/dodavatele/person.
-- [ ] Později Fio API.
-- [ ] Automatické párování + fronta nejasných transakcí.
-- [ ] Bezpečné uložení tokenu mimo GitHub.
-
-## K. Další budoucí moduly
-- [ ] Personnel database + Crew Portal.
-- [ ] Riders + Registration + Rider Portal.
-- [ ] Suppliers + Supplier Form.
-- [ ] Zones.
-- [ ] Tasks.
-- [ ] Master Schedule + role views.
-- [ ] Year-round Brigády.
-- [ ] Build Plan.
-- [ ] Media Plan + Media Portal.
-- [ ] Branding map layer.
-- [ ] Public/Spectator app.
-- [ ] Weather.
-- [ ] Accreditation / wristbands.
-- [ ] Accommodation flag.
-- [ ] Parking / vehicle access.
-- [ ] Lessons Learned / Knowledge Base.
-- [ ] Feedback.
-- [ ] Post-event closeout.
-
-## Nejbližší další krok
-1. Dopracovat **post-event** fázi.
-2. Udělat finální architektonický snapshot / ER model.
-3. Začít stavět **Partners**.
-4. Následně **Finance**.
+## Další moduly
+Personnel/Crew Portal; Riders/Registration; Suppliers; Zones; Tasks; Schedule; Brigády; Build Plan; Media Plan/Portal; Branding; Spectator app; Weather; Accreditation; Accommodation; Parking; Knowledge Base; Feedback; Post-event closeout.
