@@ -65,6 +65,10 @@ Zachovat rozpoznatelný charakter, práci se závodní fotografií, tmavými plo
 - Město a modely překážek znovu použít, pokud to formát a licence dovolí. Webový export musí mít vlastní optimalizaci a jednoduchou náhradní mapu.
 - Při rozporu podkladů uvést konkrétní konflikt a zdroj rozhodnutí. Neměnit potichu společný design systém ani zadání jiného projektu.
 
+### Předání vizuálního návrhu
+
+Připraveno [VIZUALNI_NAVRH.md](VIZUALNI_NAVRH.md) jako konkrétní zadání pro Claude Design: zdroje, jejich priorita, pravidla značky, obrazovky, pracovní obsah a kontrola výsledku. Nejbližší krok je jeden návrh homepage pro desktop a mobil s otevřeným menu; partnerství a jezdecká stránka navážou po připomínkách. Příprava zadání je hotová; návrh v externím nástroji dosud nevznikl a není odsouhlasený. Oddělené jazykové stránky zůstávají návrhem k potvrzení.
+
 ## 4. Obsah a struktura — návrh první verze
 
 Konkrétní pracovní návrh je v [STRUKTURA_V1.md](STRUKTURA_V1.md): mapa stránek, první vydání navigace, pořadí homepage, obsah partnerské a jezdecké stránky, známé adresy k převodu a redakční model. Připraveno 28. 9. 2026 pro WEB-003/WEB-004; návrh čeká na připomínky a není hotovou implementací.
@@ -166,7 +170,7 @@ První verze: správné údaje 2027 a oddělený archiv, průchozí CZ/EN cesty 
 
 Následná vydání přidají vlastní přejímku podle funkce: náhradní zobrazení mapy, dostupnost a stáří live dat, případně transakční scénáře registrací a plateb. Tyto testy nejsou podmínkou první verze, která příslušné funkce neobsahuje.
 
-Nejbližší práce: upřesnění redakční správy, inventura obsahu a návrh konkrétního pořadí homepage s vazbou na W01–W03. Nové nápady zapisovat do následného rozvoje; změnu rozsahu první verze výslovně zaznamenat.
+Nejbližší práce: první vizuální kolo homepage a mobilního menu podle VIZUALNI_NAVRH.md; souběžně dokončovat inventuru obsahu a technickou přípravu. Pracovní pořadí homepage a redakční model už obsahuje STRUKTURA_V1.md. Nové nápady zapisovat do následného rozvoje; změnu rozsahu první verze výslovně zaznamenat.
 
 ## 11. Vývoj, neveřejný náhled a nasazení
 
@@ -329,3 +333,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: připraven STRUKTURA_V1.md pro WEB-003/WEB-004. Obsahuje navigaci V1 bez odložených live/mapových funkcí, šest sekcí homepage, podstránky, redakční model a pracovní převod známých URL. Návrh dosud nebyl odsouhlasen; kompletní export obsahu a migrační inventura zbývají.
 
 - 28. 9. 2026: zadavatel upřesnil, že vizuální návrh má silně navazovat na současný web; design systém na GitHubu má při rozporu přednost. Volba nástroje pro návrh zatím není rozhodnutá a nemění tato pravidla.
+
+- 28. 9. 2026: po pokynu pokračovat připraveno VIZUALNI_NAVRH.md pro návrh v Claude Design. První kolo omezeno na homepage a mobilní menu; další stránky následují po připomínkách. Výslovně vyřešena priorita design systému nad starší poznámkou jeho readme o přednosti živého kódu. Návrh v externím nástroji zatím nebyl vytvořen.
