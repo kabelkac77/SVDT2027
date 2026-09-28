@@ -192,9 +192,13 @@ Podklady doplněny 28. 9. 2026: screenshoty administrace poskytnuté zadavatelem
 - Balíček Smart s rozšířením úložné kapacity a počtu domén.
 - Úložiště má omezenou rezervu pro souběh starého webu, náhledu a migračních souborů. Před vytvořením kopie zjistit velikost samotného SVDT včetně médií a databáze; nekopírovat celý multihosting.
 - Rozhraní uvádí Let's Encrypt WildCard SSL, denní zálohování webu a e-mailů, PHP paměťový limit 512 MB a shell konzoli. Přítomnost funkce v přehledu není ověření vystavení certifikátu pro nový náhled, obnovy zálohy ani SSH/WP-CLI.
-- Rozšířená podpora PHP je aktivní. Skutečná verze PHP pro SVDT ani důvod aktivace nejsou na snímcích vidět; neodvozovat z toho automaticky zastaralost konkrétního webu. Nastavení celého multihostingu neměnit bez kontroly ostatních webů.
+- Nový screenshot služeb potvrzuje pro svdtpribram.cz **Apache 2.4 / PHP 7.4**; rozhraní označuje PHP jako staré. Rozšířená podpora PHP je aktivní podle předchozího snímku, její konkrétní rozsah oprav ale nebyl ověřen. Nastavení celého multihostingu neměnit bez kontroly ostatních webů.
+- Verze WordPressu **6.9.9** je údaj dodaný zadavatelem 28. 9. 2026; snímek hostingu ji nezobrazuje a nebyla nezávisle ověřena v administraci WordPressu.
+- Snímek potvrzuje dostupné rozhraní WebFTP a phpMyAdmin pro MySQL/MariaDB; neprokazuje konkrétní verzi databáze ani kvótu pro novou databázi.
+- Nové prostředí nestavět na PHP 7.4. Při potvrzení WordPressu zvolit podporovanou verzi dostupnou na hostingu a ověřenou s novou šablonou a pluginy; předběžně PHP 8.4, případně jinou kompatibilní podporovanou větev. WordPress doporučuje PHP 8.3+, MariaDB 10.11+ nebo MySQL 8.0+. Konkrétní cílovou verzi uzavřít po kontrole nabídky hostingu. Zdroje: [WordPress requirements](https://wordpress.org/about/requirements/), [podpora PHP](https://www.php.net/supported-versions.php), ověřeno 28. 9. 2026.
+- Přechod současného Divi webu na nové PHP posoudit odděleně na kopii, s inventurou pluginů a možností návratu; nepřepínat produkci naslepo. Založení nového sandboxu není dokončením údržby starého webu.
 - Graf CPU za zobrazené období ukazuje nízké využití, ale nepotvrzuje výkon při závodní špičce ani parametry budoucího webu.
-- Zbývá ověřit: verzi PHP/databáze pro SVDT, možnost nové samostatné databáze a náhledu, pravidla započítávání subdomén, skutečný způsob přenosu/nasazení, rozsah záloh včetně databáze, dobu uchování a postup obnovy.
+- Zbývá ověřit: nabízené nové verze PHP a možnost odděleného nastavení náhledu, verzi databáze pro SVDT, možnost nové samostatné databáze a náhledu, pravidla započítávání subdomén, skutečný způsob přenosu/nasazení, rozsah záloh včetně databáze, dobu uchování a postup obnovy.
 
 
 
@@ -299,3 +303,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: zadavatel uvedl Active24, klasický multihosting. Poskytovatel je známý; konkrétní funkce a kapacity zbývá ověřit. Pro první verzi zatím neplánována migrace hostingu.
 
 - 28. 9. 2026: doplněny doložené parametry Active24 Smart ze screenshotů. Před kopírováním je nutné ověřit velikost SVDT a rezervu pro staging; WEB-001 zůstává rozpracovaný. Hosting ani jeho placené parametry nebyly změněné.
+
+- 28. 9. 2026: ze screenshotu potvrzen Apache 2.4 / PHP 7.4 a rozhraní WebFTP/phpMyAdmin; WordPress 6.9.9 evidován jako údaj zadavatele. Nové prostředí má použít podporovanou větev PHP po ověření kompatibility a nabídky hostingu; produkční nastavení nebylo změněno.
