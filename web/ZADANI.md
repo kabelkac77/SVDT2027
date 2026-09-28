@@ -209,7 +209,7 @@ Název tarifu sám o sobě nepotvrzuje SSH, automatické nasazování ani podpor
 
 ### Vlastní šablona a funkční plugin
 
-Potvrzený směr je vlastní WordPress šablona bez Divi. Doporučené provedení: samostatná bloková šablona SVDT bez závislosti na cizí rodičovské šabloně. Child theme dává smysl při přizpůsobování konkrétní existující šablony; pro vlastní vzhled odvozený ze společného design systému zatím nemáme důvod zavádět další rodičovskou závislost. Viz [WordPress — child themes](https://developer.wordpress.org/themes/advanced-topics/child-themes/).
+Potvrzený směr je vlastní WordPress šablona bez Divi. Potvrzené provedení: **samostatná bloková šablona SVDT bez rodičovské šablony a oddělený funkční plugin pro správu obsahu**. Zadavatel přijal navržené řešení. ✔ 28. 9. 2026 Child theme dává smysl při přizpůsobování konkrétní existující šablony; pro vlastní vzhled odvozený ze společného design systému zatím nemáme důvod zavádět další rodičovskou závislost. Viz [WordPress — child themes](https://developer.wordpress.org/themes/advanced-topics/child-themes/).
 
 - **Šablona SVDT:** vzhled, rozložení, hlavička/patička, šablony stránek a styly podle společného design systému; přednastavené vzory bloků pro redakci.
 - **Funkční plugin SVDT:** obsahové typy a pole pro ročníky, partnery a program, potřebné vlastní bloky a související logika. Údaje nemají zmizet ze správy při změně vzhledu.
@@ -324,3 +324,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: po dotazu zadavatele ověřena aktuální oficiální podpora: WordPress 6.9 a 7.0 plně podporují PHP 8.5 ([vyjádření WordPress Core z 22. 5. 2026](https://make.wordpress.org/core/2026/05/22/php-support-clarification-2026/)). Předchozí doporučení 8.4 bylo konzervativní, bez doložené překážky pro 8.5. Nově doporučeným základem nového sandboxu je 8.5; šablonu a pluginy ověříme samostatně. Starší záznamy doporučení 8.4 jsou tímto nahrazené; produkční PHP nebylo změněno.
 
 - 28. 9. 2026: zadavatel potvrdil WordPress s vlastní šablonou a bloky bez Divi. Doplněno doporučení samostatné blokové šablony SVDT a odděleného funkčního pluginu; child theme není pro navržené provedení potřebná. Předchozí otevřená volba CMS je tím uzavřená.
+
+- 28. 9. 2026: zadavatel přijal navržené provedení vlastní samostatné šablony SVDT. Uzavřena volba samostatné blokové šablony bez child theme a odděleného funkčního pluginu. Další obsahový krok: WEB-003/WEB-004 — rozsah stránek, navigace a pořadí homepage; implementace následuje po návrhu podle potvrzených etap.
