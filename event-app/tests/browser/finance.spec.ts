@@ -1,0 +1,32 @@
+import {test,expect} from '@playwright/test';
+
+test('Finance a Partneři sdílejí ročník a organizace, úhrada přežije reload',async({page})=>{
+  await page.goto('/demo');
+  await page.getByRole('button',{name:'Finance ↗',exact:true}).click();
+  await page.getByRole('button',{name:'Ukázkový příspěvek partnera',exact:true}).click();
+  await page.getByLabel('Částka úhrady (Kč)',{exact:true}).fill('10000');
+  await page.getByLabel('Datum úhrady',{exact:true}).fill('2027-01-20');
+  await page.getByRole('button',{name:'Zapsat vypořádání'}).click();
+  await expect(page.getByText(/Zbývá vypořádat:/)).toContainText(/40\s*000/);
+  await page.reload();
+  await page.getByRole('button',{name:'Finance ↗',exact:true}).click();
+  await page.getByRole('button',{name:'Ukázkový příspěvek partnera',exact:true}).click();
+  await expect(page.getByText(/Zbývá vypořádat:/)).toContainText(/40\s*000/);
+  await page.getByRole('button',{name:/Otevřít partnera/}).click();
+  await expect(page.getByRole('heading',{name:'Ukázka · Horský servis',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Finance ↗',exact:true}).click();
+  await page.getByRole('button',{name:'+ Přidat položku',exact:true}).click();
+  await page.getByLabel('Název',{exact:true}).fill('Test pronájem');
+  await page.getByLabel('Plán (Kč)',{exact:true}).fill('5000');
+  await page.getByLabel('Potvrzená částka (Kč)',{exact:false}).fill('4500');
+  await page.getByRole('button',{name:'Uložit položku'}).click();
+  await page.getByLabel('Způsob vypořádání').selectOption('personal');
+  await page.getByLabel('Částka úhrady (Kč)',{exact:true}).fill('1000');
+  await page.getByLabel('Datum úhrady',{exact:true}).fill('2027-01-21');
+  await page.getByLabel('Poznámka k úhradě').fill('Ukázkový správce');
+  await page.getByRole('button',{name:'Zapsat vypořádání'}).click();
+  await expect(page.getByText(/Proplatit osobní výdaje:/)).toContainText(/1\s*000/);
+  await page.getByRole('combobox',{name:'Ročník',exact:true}).selectOption('2026');
+  await page.getByRole('button',{name:'Finance ↗',exact:true}).click();
+  await expect(page.getByRole('button',{name:'+ Přidat položku',exact:true})).toHaveCount(0);
+});

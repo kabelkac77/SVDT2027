@@ -1,5 +1,7 @@
 # Modul Partneři
 
+Detailní implementační model a obrazovky: [10-PARTNERI-MODEL-A-FLOW.md](10-PARTNERI-MODEL-A-FLOW.md).
+
 ## Interní V1
 - centrální profil organizace,
 - owner,

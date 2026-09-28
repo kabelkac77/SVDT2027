@@ -1,5 +1,44 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-09-28 — příprava předání Claude Code
+
+- Uživatel požádal o kompletní podklady, MD a skills pro předání další práce Claudovi. Připraven kořenový `CLAUDE.md`, společný `AGENTS.md`, `HANDOFF-CLAUDE.md` a čtyři projektové skills (start, implementace, review, design).
+- Instrukce odkazují na stávající source of truth, nevytvářejí druhou architekturu. Role: Claude Code implementace, Codex nezávislé review a návaznosti, uživatel priority/akceptace; implementátor také průběžně aktualizuje MD.
+- Předání lokálního pracovního stavu není automatické předání přes GitHub: dosavadní necommitnuté soubory musí být zachované. WhatsApp/Twilio zůstávají odložené, iCloud je dočasný cíl záloh. Příprava nepovoluje automatické produkční nasazení ani komunikaci mezi chaty.
+## 2026-09-28 — WhatsApp/Twilio odloženy a přesný cíl záloh
+
+- Nejnovější pokyn uživatele: WhatsApp a Twilio přesunout do backlogu a zatím neřešit. Předchozí schválení implementace tím není pokynem k další práci nebo aktivaci. Existující klientský kód zůstává vypnutý; konfigurace, placený provoz a ověření doručení jsou odložené.
+- Uživatel určil přesný cíl záloh: `/Users/vojtechhrach/Library/Mobile Documents/com~apple~CloudDocs/Vojta/Cowarna/2027/AKCE/SVDT-2027/APLIKACE-ORGANIZACE-ZALOHY`. Nahrazuje původně navržené `iCloud Drive/SVDT-zalohy`.
+
+## 2026-09-28 — dočasný cíl záloh iCloud Drive
+
+- Uživatel zvolil prozatím vlastní iCloud Drive; Synology musí nejprve identifikovat. Cíl `iCloud Drive/SVDT-zalohy`, datované kopie. Nahrazuje otevřenou volbu úložiště pro přechodné období; Synology + Drive zůstává doporučením do budoucna.
+- První archiv zdrojů nesmí být vydáván za kompletní zálohu dat. Automatické denní dumpy/CSV/XLSX ještě nejsou nakonfigurované; lokální kopie v iCloud složce neprokazuje dokončený upload.
+
+## 2026-09-28 — WhatsApp schválen
+
+- Uživatel následně schválil také přihlášení přes WhatsApp a akceptoval orientační cenu jednoho ověření. Nahrazuje původní omezení „pouze nacenit“. Cesta: Supabase Phone OTP přes Twilio Verify, bez automatického SMS fallbacku v aplikaci.
+- Implementovaný klientský průchod čeká na konfiguraci Twilio/WhatsApp Business a Supabase. Produkční zapnutí až po ověření doručení a nastavení omezení spotřeby. Žádná placená zpráva ani nákup čísla tímto krokem neproběhly.
+- Synology + šifrovaná kopie Google Drive je doporučení pro zálohy, ne potvrzení nastaveného provozu. Model NAS a dostupnost zatím nejsou známé.
+
+## 2026-09-28 — denní zálohy a čitelné exporty
+
+- Uživatel požaduje jednou denně zálohovat aplikaci i její data a mít je dostupná v CSV nebo Excelu. Konkrétní úložiště, plánovač, čas a retence jsou otevřené; zálohy zatím neběží.
+- Návrh procesu v `SPOLUPRACE-A-ZALOHY.md` rozlišuje Git, obnovitelný databázový dump, přílohy a čitelné exporty. CSV/XLSX samo neobnovuje celou aplikaci.
+- Rozdělení Claude Code → implementace a Codex → zadání/review/MD je zatím návrh k diskusi, nikoli automatické předání vývoje.
+
+## 2026-09-28 — jednoduché přihlášení
+
+- Uživatel požaduje jednoduché přihlášení brigádníků a dalších uživatelů přes běžné účty, bez dalšího vlastního opt-in/double-opt-in kolečka. Povinný marketingový souhlas není součást přihlášení. Ověření identity a případné potvrzení u poskytovatele zůstávají.
+- Původní návrh Google/Apple + e-mailový kód nahrazen následným výslovným pokynem uživatele: implementovat **Google, Apple a Facebook**. Existující e-mail/heslo zůstává záloha. WhatsApp zatím pouze nacenit, neobjednávat ani neaktivovat.
+- Kód sociálního přihlášení připraven; skutečná aktivace závisí na nastavení poskytovatelů v Supabase. UI zobrazuje jen povolené poskytovatele podle veřejného Auth settings endpointu; návrat vždy na kořen aktuálního originu. Přihlášení samo neuděluje interní role ani přístup k financím. Podrobnosti a checklist v `PRIHLASOVANI.md`.
+
+## 2026-09-28 — propojené zkoušení
+
+- Dle pokynu uživatele nyní propojujeme funkční flow; finální UI/design připraví Claude.
+- `/demo` propojuje Partnery a Finance přes organizace a ročníky. Používá fiktivní lokální data; nejde o sdílený finanční backend.
+- Zkušební finance ukládají CZK v haléřích a rozlišují plán, potvrzenou částku, úhradu, barter a osobní proplacení. Proplacení osobního výdaje nezdvojuje náklad. Model, flow a zbývající rozsah: `11-FINANCE-MODEL-A-FLOW.md`.
+
 Potvrzené rozhodnutí nemažeme; změněné označíme jako nahrazené.
 
 - Jedno datové jádro, více portálů/pohledů.
@@ -25,3 +64,25 @@ Potvrzené rozhodnutí nemažeme; změněné označíme jako nahrazené.
 - Vojta a Vlasta mají admin práva potvrdit/změnit stav za jiné role; audit log uloží autora změny.
 - Povolení/smlouvy/dokumenty budou evidovatelné a uploadovatelné.
 - READY může potvrdit vlastník oblasti nebo admin Vojta/Vlasta.
+
+## 2026-09-28 — navázání implementace v Codexu
+
+- Každé nové důležité rozhodnutí se zapisuje současně do příslušného `.md` a podle rozsahu sem. Source of truth nesmí zůstávat pouze v chatu (výslovný pokyn Vojty).
+- Implementační detail Partnerů: centrální Organization + ročníkový PartnerProspect pro ownera/stav/poznámku/další kontakt. EditionPartnership vzniká až při potvrzení, atomicky a bez duplicit. Historie se při opravě stavu nemaže.
+- Detail modelu, flow, oprávnění, souběhu a hranic interní V1 je v `10-PARTNERI-MODEL-A-FLOW.md`.
+- Pro první implementaci z pracovních kandidátů volíme Next.js + TypeScript a Supabase Auth/PostgreSQL. Interní mutace přes transakční RPC; čtení přes RLS, audit a kontrola verzí. Produkční provisioning/hosting zůstává otevřený.
+- Interní V1 je první dodávka Partnerů; externí portal/questionnaire/VIP QR/report zůstávají navazujícím rozsahem. Finance se modelují podle dodaného Excelu, ne podle odhadnuté tabulky.
+- Dodaný `PARTNERS_2026.xlsx` se filtruje podle listu/akce/ročníku podle `10-PARTNERI-IMPORT.md`. Historie 2026 ani checkbox loga nepotvrzuje spolupráci 2027. Importní kandidáti mají samostatnou frontu; nepřidáváme automaticky stav „osloven“. Kontakty a obchodní podklady nepatří do Git ani veřejného dema.
+
+## 2026-09-28 — přijetí rozpočtu Financí
+
+- Dodaný rozpočet je historický zdroj 2026. Pravidla a přesné zdrojové oblasti jsou v `11-FINANCE-PODKLAD.md`; převzetí do 2027 neznamená potvrzení závazků či úhrad.
+- Finance budou oddělovat plán, potvrzenou částku, jednotlivé úhrady a proplacení osobních výdajů. Potvrzení partnerství samo nevytváří příjem. Barter není peněžní tok.
+- Souhrny a jejich detaily se neimportují současně jako samostatné transakce. Překryvy hlavní akce/afterparty a položky jiné akce vyžadují kontrolované rozdělení; nejasnosti zůstávají ve frontě.
+- Skutečné finanční a osobní údaje zůstávají mimo Git a demo. Finanční oprávnění se navrhnou samostatně; přístup k Partnerům automaticky neuděluje přístup k Financím.
+
+## 2026-09-28 — aktualizace GitHubu a předání Claude
+
+- Na výslovný pokyn uživatele integrujeme aplikaci, testy, SQL migrace, MD a projektové Claude skills do stávajícího veřejného repozitáře `kabelkac77/SVDT2027`, cílová větev `main`, bez změny viditelnosti a bez force-push.
+- Soukromé zdrojové Excel/JSON podklady, `.env.local`, servisní klíče a lokální zálohy se nepublikují. GitHub není záloha databáze.
+- WhatsApp/Twilio zůstávají v backlogu a vypnuté. Denní export databáze do CSV/XLSX a automatické zálohování jsou nadále nedokončené.

@@ -1,9 +1,9 @@
 # INPUTS NEEDED — co má Vojta dodat
 
-- [ ] Stávající/loňský Excel rozpočtu.
-- [ ] Databáze personálu z minulých ročníků.
+- [x] Stávající/loňský Excel rozpočtu — dodán a načten 2026-09-28, viz `11-FINANCE-PODKLAD.md`.
+- [x] Databáze personálu z minulých ročníků — dodán `Personal - SVDT2026.xlsx` 2026-09-28; zatím neanalyzován, určen pro pozdější personální modul.
 - [ ] Databáze jezdců z minulých let.
-- [ ] Seznam/tabulka partnerů + historie spolupráce.
+- [x] Seznam/tabulka partnerů + historie spolupráce — PARTNERS_2026.xlsx, dodáno 2026-09-28; filtrace viz `10-PARTNERI-IMPORT.md`.
 - [ ] Tabulky celoročních brigád.
 - [ ] Historické mapy trati, zón, produkce a IZS přístupů.
 - [ ] Seznam dodavatelů a kontaktů.

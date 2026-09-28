@@ -1,5 +1,7 @@
 # SVDT APP — hrubá architektura
 
+Stav implementace k 2026-09-28: pro interní V1 byly zvoleny Next.js a Supabase. Níže uvedené portály a další moduly jsou cílová architektura; skutečně dodaný rozsah a otevřené integrace viz `IMPLEMENTATION-STATUS.md` a `HANDOFF-CLAUDE.md`. Starší označení technologií jako kandidátů čti v tomto kontextu.
+
 ## Princip
 Jedno centrální datové jádro a nad ním různé pohledy:
 - interní management,

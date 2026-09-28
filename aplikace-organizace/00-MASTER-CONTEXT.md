@@ -26,3 +26,6 @@ CONFIRMED = odsouhlasené; OPEN = rozhodnout/ověřit; BACKLOG = později; INPUT
 2. Dokumentace je source of truth.
 3. Neměň zásadní architekturu bez explicitního důvodu.
 4. Začni detailem a implementací modulu Partneři, poté Finance.
+
+## Průběžná rozhodnutí
+Každé nové důležité rozhodnutí z Codexu zapiš ve stejném pracovním kroku do příslušného `.md` a podle rozsahu také do `DECISIONS.md`. Rozhodnutí nesmí zůstat pouze v chatu. Rozlišuj potvrzené zadání, implementační rozhodnutí a otevřené návrhy; starší rozhodnutí nemaž, ale označ případné nahrazení.
