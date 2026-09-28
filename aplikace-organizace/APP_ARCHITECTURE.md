@@ -463,3 +463,54 @@ Kritické změny vždy potvrzuje člověk. AI pro 2027 testovat jako copilot a p
 3. **Finance**.
 
 Architektura ale musí už od začátku umožnit přidání všech výše uvedených modulů bez zásadního přepisování datového modelu.
+
+
+## Další potvrzené architektonické požadavky
+
+### Personál / Crew Portal
+Centrální databáze lidí napříč ročníky. Ročníkově role, zóna, nadřízený, směna/nástup, radio ID, odměna, check-in/out a skutečné hodiny. Crew Portal ukazuje kdy/kam/co/komu se hlásím, mapu, instrukce, dokumenty, odměnu a důležité zprávy. Budoucí Crew Shop může odečítat zvýhodněný merch z odměny s transparentním finančním záznamem.
+
+### Riders
+Centrální databáze z minulých let, login přes e-mail, aktualizace profilu místo opakovaného vyplňování. Ročníkově registrace, platba, licence, kategorie, číslo, prezence, start, výsledek. Budoucí Stripe/QR/bankovní platby, automatické e-maily, rider notifikace a API pro broadcast/timing.
+
+### Suppliers
+Vlastní databáze + formulář: kontakt, příjezd, vozidlo/vjezd, parking, vykládka, elektřina, stan, pomoc, technické požadavky. Externí gastro = supplier; vlastní bary = interní zóna.
+
+### Year-round Brigády
+Datum, místo, cíl dne, kdo může/potvrdil/dorazil, hodiny a fotky. Vazba na člověka a projekt/překážku.
+
+### Build Plan
+Plnohodnotný jednoduchý modul pro středu–sobotu před závodem: objekt/úsek, zóna, owner, crew, technika, jeřáb/manipulátor, materiál, dependencies a stav včetně BLOCKED. Musí zobrazit dopad zpoždění na navazující práce.
+
+### Tasks
+Jeden lehký systém úkolů: owner, deadline, stav, komentář a vazba na libovolný objekt.
+
+### Schedule
+Jeden centrální časový model, pohledy podle role: rider, moderátor, divák, stavba, produkce, Race Control, zóna.
+
+### Communications
+Interní notifikace; možná WhatsApp integrace. Globální stavový banner (RUNNING/HOLD/změna programu/krize) + push pro kritické zprávy.
+
+### Weather
+Chytrá vrstva pro Race Control/Vojtu/Vlastu, agregace více zdrojů a zvýrazněná varování.
+
+### Accreditation
+Typy pásek/přístupů: VIP/partner, crew, případně media/video. U crew lze evidovat barovou útratu na jméno. Volitelné ubytování, parking a vjezd.
+
+### Public/Spectator
+Veřejná/divácká část a web čerpají stejné ověřené jádro: program, mapa, výsledky, hlášení, stav závodu a relevantní weather/risk info.
+
+### Media Plan
+Seznam požadovaných foto/video výstupů navázaný na zóny, program a partner fulfillment; přiřazení konkrétním lidem a kontrola pokrytí.
+
+### Documents / permits
+Dokumenty lze nahrávat a vázat na objekty. Povolení/smlouvy/zábory/pojištění mají ownera a termíny/expirace.
+
+### Readiness
+Oblasti mohou potvrdit READY vlastníci. Vojta/Vlasta jako admin mohou potvrdit za někoho; audit log uloží autora.
+
+### Offline
+Kritické mobilní použití musí mít offline režim; rozsah definovat v technickém návrhu.
+
+### Storage
+Synology Drive (~6 TB) je kandidát pro velké mediální/file úložiště; prověřit API. Aplikace minimálně drží metadata, oprávnění, stav a odkazy.
