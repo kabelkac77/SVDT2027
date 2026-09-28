@@ -8,25 +8,25 @@ Aktualizováno 28. 9. 2026. Pracovní fronta navazující na [ZADANI.md](ZADANI.
 - Stavy: **Připraveno**, **Čeká**, **Probíhá**, **Hotovo**, **Odloženo**. Čeká znamená konkrétní nesplněnou závislost; Odloženo označuje práci mimo první vydání.
 - ID úkolu se nemění. Při dokončení připsat datum a odkaz na výstup nebo záznam ověření. Samotné napsání zadání neznamená dokončenou funkci.
 - „Na nás“ označuje přípravu a realizaci v tomto projektu; „zadavatel“ dodává podklady a rozhodnutí. Konkrétní další osoby zatím nejsou přiřazené.
-- Vždy vybrat jeden hlavní rozpracovaný krok. Nezávislé podklady lze sbírat průběžně.
+- Vždy vybrat jeden hlavní rozpracovaný krok; další rozpracované přípravné body uvést jako související. Nezávislé podklady lze sbírat průběžně.
 - Nové nápady zapisovat do zásobníku dole. Do první verze je nepřidávat automaticky.
 - Termíny doplníme po rozhodnutí o platformě a dostupnosti podkladů. Tento seznam neslibuje konkrétní datum spuštění.
 
 ## Nejbližší postup
 
 1. **WEB-001:** zjistit současný hosting a možnosti testovacího prostředí. Ze screenshotů potvrzen **Active24 Smart s rozšířením**, dostupné SSL, denní zálohy, 512MB PHP limit a shell konzole. SVDT nyní používá Apache 2.4 / PHP 7.4; WordPress 6.9.9 je údaj zadavatele. Nabídka PHP 8.2–8.5 je doložená; navržený základ sandboxu je po ověření podpory WordPressu 8.5; kompatibilitu konkrétních pluginů a šablony otestujeme. Další krok: ověřit databázi, velikost samotného SVDT a samostatné nastavení náhledu; rezerva úložiště je omezená.
-2. **WEB-002:** uzavřít volbu CMS a způsob nasazování na základě doporučení v zadání.
+2. **WEB-002:** WordPress s vlastní šablonou bez Divi je potvrzen. Doplnit technické provedení a způsob nasazování; doporučená samostatná bloková šablona a funkční plugin jsou popsané v zadání.
 3. **WEB-003 a WEB-004:** určit přesný obsah první verze, navigaci a způsob správy CZ/EN. Inventura veřejného obsahu může začít i během čekání na hosting.
 4. Po uzavření základu přejít na návrhy homepage a partnerství.
 
-Probíhá přípravná inventura WEB-001; základní parametry jsou doložené screenshoty, přímá kontrola nastavení a provozní zkoušky zbývají. Žádný implementační úkol ještě neprobíhá. Lokální prostředí ani nový web zatím nejsou vytvořené.
+Hlavní přípravný krok je WEB-001; související WEB-002 má uzavřenou volbu CMS a čeká na dopracování nasazení. U WEB-001 základní parametry jsou doložené screenshoty, přímá kontrola nastavení a provozní zkoušky zbývají. Žádný implementační úkol ještě neprobíhá. Lokální prostředí ani nový web zatím nejsou vytvořené.
 
 ## A. Základ a rozhodnutí — první verze
 
 | ID | Úkol / vazba | Stav | Kdo / závislost | Hotovo znamená |
 | --- | --- | --- | --- | --- |
 | WEB-001 | Ověřit hosting, doménu, zálohy a možnost stagingu | Probíhá | Active24 Smart doložen screenshoty 28. 9. 2026; PHP 7.4 potvrzeno, WordPress 6.9.9 dle zadavatele; PHP 8.2–8.5 dostupné; na nás: velikost SVDT, databáze, oddělený náhled a jeho PHP, skutečný přenos a obnova | Zapsané možnosti hostingu a návrh odděleného náhledu bez zásahu do produkce |
-| WEB-002 | Potvrdit CMS, architekturu a způsob nasazení | Čeká | Na nás + zadavatel; WEB-001 | Zapsaná volba a důvody v zadání; WordPress je zatím doporučení, Divi není podmínka |
+| WEB-002 | Potvrdit CMS, architekturu a způsob nasazení | Probíhá | CMS potvrzen 28. 9. 2026: WordPress + vlastní šablona bez Divi; na nás: dopracovat prostředí a nasazení podle WEB-001 | Volba CMS je zapsaná; dokončení vyžaduje také konkrétní postup prostředí a vydání |
 | WEB-003 | Inventura stránek, adres a podkladů; rozsah V1 (W01) | Připraveno | Na nás; zadavatel doplní neveřejné podklady | Seznam ponechat / přepsat / archivovat / přesměrovat a konkrétní seznam stránek první verze |
 | WEB-004 | Navigace, CZ/EN a redakční obsahový model (W01) | Čeká | Na nás + zadavatel; WEB-003 | Mapa stránek, jazykový postup, správa ročníku/programu/partnerů a hranice vůči interní aplikaci |
 | WEB-005 | Shromáždit a ověřit obsah 2027 | Připraveno | Zadavatel + na nás | Evidence zdrojů, chybějících údajů, práv k médiím a odpovědností; neznámé údaje označené, nikoli domyšlené |
