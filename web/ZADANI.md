@@ -16,7 +16,7 @@ Stejný způsob evidence jako v `DT-grafika-TV/ZADANI.md`:
 
 ## 2. Potvrzený rámec
 
-- Současný hosting: **Active24, klasický multihosting** dle zadavatele. Přesná varianta/platforma, limity a dostupné funkce dosud neověřené. ✔ 28. 9. 2026
+- Současný hosting: **Active24 Smart s rozšířením kapacity**, podle screenshotů administrace dodaných zadavatelem. Základní parametry doložené níže; konkrétní serverové nastavení a funkčnost nástrojů dosud neověřené. ✔ 28. 9. 2026
 - Nový web vzniká odděleně v lokálním/testovacím prostředí; cílem je přenos kompletní ověřené verze na ostrou doménu. ✔ 28. 9. 2026
 - Pořadí realizace: **nejprve odladit kroky 1–3 a spustit základní web; mapu, registrace, live a další rozšíření řešit následně**. ✔ 28. 9. 2026
 - Projekt webu má vlastní složku `web/` v tomto repozitáři a respektuje jeho ostatní části. ✔ 28. 9. 2026
@@ -187,6 +187,17 @@ Staging nesmí používat produkční databázi, rozesílat e-maily jezdcům ani
 
 ### Upřesnění pro Active24
 
+Podklady doplněny 28. 9. 2026: screenshoty administrace poskytnuté zadavatelem. Jde o doložené údaje rozhraní, nikoli provedenou provozní zkoušku. Screenshoty a fakturační údaje se do veřejného repozitáře neukládají.
+
+- Balíček Smart s rozšířením úložné kapacity a počtu domén.
+- Úložiště má omezenou rezervu pro souběh starého webu, náhledu a migračních souborů. Před vytvořením kopie zjistit velikost samotného SVDT včetně médií a databáze; nekopírovat celý multihosting.
+- Rozhraní uvádí Let's Encrypt WildCard SSL, denní zálohování webu a e-mailů, PHP paměťový limit 512 MB a shell konzoli. Přítomnost funkce v přehledu není ověření vystavení certifikátu pro nový náhled, obnovy zálohy ani SSH/WP-CLI.
+- Rozšířená podpora PHP je aktivní. Skutečná verze PHP pro SVDT ani důvod aktivace nejsou na snímcích vidět; neodvozovat z toho automaticky zastaralost konkrétního webu. Nastavení celého multihostingu neměnit bez kontroly ostatních webů.
+- Graf CPU za zobrazené období ukazuje nízké využití, ale nepotvrzuje výkon při závodní špičce ani parametry budoucího webu.
+- Zbývá ověřit: verzi PHP/databáze pro SVDT, možnost nové samostatné databáze a náhledu, pravidla započítávání subdomén, skutečný způsob přenosu/nasazení, rozsah záloh včetně databáze, dobu uchování a postup obnovy.
+
+
+
 Pro první verzi zatím neplánovat stěhování hostingu. Doporučený směr je lokální vývoj a oddělený náhled na Active24 s vlastní databází; proveditelnost konkrétního umístění potvrdit v účtu před založením. Oficiální dokumentace popisuje [subdomény](https://www.active24.cz/centrum-napovedy/vytvareni-subdomen) i [oddělené subservery multihostingu](https://faq.active24.com/cz/090035-Multihosting---spr%C3%A1va-multihostingov%C3%BDch-bal%C3%AD%C4%8Dk%C5%AF), ale postup závisí na platformě účtu. Parametry dnešní nabídky nelze automaticky přisoudit staršímu tarifu.
 
 Název tarifu sám o sobě nepotvrzuje SSH, automatické nasazování ani podporu běžící Node.js aplikace. Budoucí interní aplikace může mít jiný hosting při zachování subdomény aplikace.svdtpribram.cz. Toto rozhodnutí nebrání přípravě obsahového webu.
@@ -225,7 +236,7 @@ Pro návrat uchovat předchozí balíček a předmigrační zálohu. Návrat kó
 
 ### Co zjistit před založením prostředí
 
-- Hosting: **Active24, klasický multihosting** ✔ 28. 9. 2026. Technická inventura: **Rozpracováno** (čeká: na nás) — ověřit v administraci konkrétní platformu, verze PHP/databáze, volnou kapacitu pro samostatný testovací web a databázi, HTTPS, ochranu náhledu, přenos souborů a zálohy/obnovu. Přístup zatím není ověřený.
+- Hosting: **Active24, klasický multihosting** ✔ 28. 9. 2026. Technická inventura: **Rozpracováno** (čeká: na nás) — screenshoty dokládají balíček Smart a nabídku SSL, denních záloh, 512MB PHP limitu a shell konzole; zbývající ověření jsou vypsaná v oddílu Upřesnění pro Active24. Přímý přístup ani obnova zatím nebyly ověřené.
 - Zvolená platforma a místní vývojový nástroj: **K potvrzení** (čeká: na nás) — navazuje na rozhodnutí zadavatele o CMS.
 - Kdo schvaluje obsah a má přístup do náhledu: **K doplnění** (čeká: zadavatel).
 - Ověřený postup sestavení, migrace a návratu: **K doplnění** (čeká: na nás).
@@ -286,3 +297,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: na žádost zadavatele založen UKOLY.md: nejbližší postup, úkoly první verze, přejímka/nasazení a odložený zásobník. Zadání zůstává zdrojem požadavků a rozhodnutí; pracovní stav úkolů má vlastní evidenci.
 
 - 28. 9. 2026: zadavatel uvedl Active24, klasický multihosting. Poskytovatel je známý; konkrétní funkce a kapacity zbývá ověřit. Pro první verzi zatím neplánována migrace hostingu.
+
+- 28. 9. 2026: doplněny doložené parametry Active24 Smart ze screenshotů. Před kopírováním je nutné ověřit velikost SVDT a rezervu pro staging; WEB-001 zůstává rozpracovaný. Hosting ani jeho placené parametry nebyly změněné.
