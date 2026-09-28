@@ -2,6 +2,12 @@
 
 Pracovní návrh v1 — 28. 9. 2026. Výstup pro WEB-003 a WEB-004, podklad pro následný vizuální návrh. Navazuje na [zadání](ZADANI.md), [audit](REVIZE_2026-09-28.md) a [úkoly](UKOLY.md). Jde o konkrétní návrh k připomínkám, nikoli schválenou grafiku či hotovou implementaci.
 
+## Vizuální zadání pro navazující návrh
+
+Potvrzeno zadavatelem 28. 9. 2026: výrazně vycházet ze současného webu, zachovat dlouhodobou rozpoznatelnost napříč ročníky. Při rozporu vzhledu aktuálního webu a společného design systému má **přednost design systém v Gitu**. Přestavba technického základu není požadavek na novou identitu.
+
+Následný návrh ukáže jednu hlavní evoluci současného vzhledu: lepší hierarchii, kratší obsah, správný mobilní výřez a konzistentní komponenty. U viditelných změn popsat konkrétní důvod. Výstup má zahrnout desktop, mobil a otevřené mobilní menu; pro další ročník se má měnit obsah, nikoli znovu navrhovat celý styl. Návrhový nástroj zatím není určen.
+
 ## 1. Hranice první verze
 
 První vydání návštěvníkovi vysvětlí akci, pomůže naplánovat účast a umožní oslovit organizátory kvůli partnerství. Redakce spravuje obsah v potvrzeném WordPressu s vlastní šablonou a funkčním pluginem.
