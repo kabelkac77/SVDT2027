@@ -1,6 +1,6 @@
 # Zadání — web SVDT 2027
 
-Pracovní základ pro úpravy svdtpribram.cz. Založeno 28. 9. 2026 podle požadavků zadavatele, [revize webu](REVIZE_2026-09-28.md) a aktuálního repozitáře. Tento dokument je jediným zdrojem aktuálního stavu webového projektu; audit uchovává výchozí zjištění.
+Pracovní základ pro úpravy svdtpribram.cz. Založeno 28. 9. 2026 podle požadavků zadavatele, [revize webu](REVIZE_2026-09-28.md) a aktuálního repozitáře. Tento dokument je zdrojem požadavků, rozsahu a rozhodnutí webového projektu; audit uchovává výchozí zjištění. Konkrétní pořadí práce, závislosti a stav jednotlivých úkolů vede [UKOLY.md](UKOLY.md).
 
 ## 1. Stav a způsob doplňování
 
@@ -12,6 +12,7 @@ Stejný způsob evidence jako v `DT-grafika-TV/ZADANI.md`:
 - Datum odeslání dotazu zapsat pouze tehdy, když byl skutečně odeslán.
 - Změny rozhodnutí připsat do záznamu na konci; neplatný požadavek označit jako nahrazený.
 - Hotový dokument, prototyp, otestovaná funkce a nasazení jsou různé stavy.
+- Pracovní frontu a zásobník vést v [UKOLY.md](UKOLY.md). Změny rozsahu a rozhodnutí zapisovat sem; dokončení konkrétní práce s datem a dokladem do úkolů. Souhrnný stav částí v kapitole 5 aktualizovat při dosažení milníku.
 
 ## 2. Potvrzený rámec
 
@@ -274,3 +275,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: zadavatel doplnil budoucí interní aplikaci pro brigádníky, finance a organizaci. Doplněna návaznost veřejného webu, doporučení samostatné aplikace na subdoméně a společného návrhu registrací; přesná adresa a technologie zůstávají otevřené.
 
 - 28. 9. 2026: zadavatel potvrdil nejprve odladění kroků 1–3 a spuštění základního webu. Etapa 4 (mapa a integrace) i další vzniklé potřeby následují až po spuštění. Přesunuta přejímka a nasazení před rozšíření, vymezen rozsah první verze a samostatné testy dalších vydání.
+
+- 28. 9. 2026: na žádost zadavatele založen UKOLY.md: nejbližší postup, úkoly první verze, přejímka/nasazení a odložený zásobník. Zadání zůstává zdrojem požadavků a rozhodnutí; pracovní stav úkolů má vlastní evidenci.
