@@ -115,9 +115,9 @@ Pro každou zvolenou část později určujeme: účel, zobrazovaná data, podob
 - Rozdělení na povinné a volitelné údaje pro jednotlivé grafiky: **K doplnění** (čeká: na nás) — vyplyne z dílčího zadání grafických částí.
 - Konkrétní portréty, vlajky a další obrazové podklady: **Rozpracováno** (čeká: zadavatel) — dodají Vlasta a Lachtan, termín zatím neurčen.
 - Kdo dodá seznam závodníků a kontroluje jeho správnost: **Hrášek** ✔ 11. 9. 2026
-- Formát a termín dodání seznamu závodníků: **K doplnění** (čeká: zadavatel)
+- Formát a termín dodání seznamu závodníků: **Excel / Google Sheet z registračního systému na webu** ✔ 28. 9. 2026 — letos by registrace měly běžet přes systém na webu, data budou dostupná v požadovaném formátu; termín dodání se upřesní.
 - Pravidla pro dlouhá jména, diakritiku a chybějící údaje: **K doplnění** (čeká: na nás) — obsah validují Hrášek a Lipánek.
-- Texty pro informační grafiku a další obsah: **K doplnění** (čeká: zadavatel)
+- Texty pro informační grafiku a další obsah: **Informační grafika bude** ✔ 28. 9. 2026 — konkrétní texty se upřesní.
 
 - G04 — vizuální generátor: **implementován editor, ukázkový čas, průhledný PNG export a společné Actions** ✔ 13. 9. 2026
 - G04 — rozměry a vizuální shoda s původním návrhem: **K potvrzení** (čeká: zadavatel) — pracovní rozměr 344 × 112 px; původní obrázek nebyl dostupný pro přesné porovnání.
@@ -183,7 +183,7 @@ Pro každou zvolenou část později určujeme: účel, zobrazovaná data, podob
 - Systém musí umožnit nezávislé Preview a kontrolu správné varianty pro každý cílový výstup.
 - Přesný počet, rozměry, orientace a mapování LED panelů: **K doplnění** (čeká: LED)
 - Způsob předání TV grafiky do mixážního nebo odbavovacího systému: **K doplnění** (čeká: režie) — určuje technologii výstupu celého systému.
-- Požadavek na stream jako další samostatný výstup: **K doplnění** (čeká: zadavatel)
+- Požadavek na stream jako další samostatný výstup: **Možný, závisí na smlouvě s televizí** ✔ 28. 9. 2026
 
 ### 8.3 Provozní prostředí
 
@@ -202,8 +202,8 @@ Pro každou zvolenou část později určujeme: účel, zobrazovaná data, podob
 - Fotografie slouží jako reference rozložení závodních informací; výslednou grafiku převést do identity SVDT. Detailní rozložení bude předmětem dílčího zadání.
 - Umístění grafiky, bezpečné okraje a prostor pro logo televize: **K doplnění** (čeká: režie)
 - Velikost textů a čitelnost nad světlými i tmavými záběry: **Rozpracováno** (čeká: na nás) — ověřitelné až na výstupu režie.
-- Barevné významy náskoku, ztráty, lídra a dalších stavů: **K doplnění** (čeká: zadavatel)
-- Průhlednost podkladů, animace a délka jejich trvání: **K doplnění** (čeká: zadavatel) — požadavky na animace doplní zadavatel.
+- Barevné významy náskoku, ztráty, lídra a dalších stavů: **Náskok: zelená #00B140 / Ztráta: červená #E30613 / Lídr: zlatá #FFD700 / Neutrální: bílá** ✔ 28. 9. 2026
+- Průhlednost podkladů, animace a délka jejich trvání: **Střední délka animací 0,5–1 s; poloprůhledné pozadí** ✔ 28. 9. 2026
 - Návrh k rozhodnutí: doplnit do pravidel značky použití zelené pro náskok; archiv ji nyní vyhrazuje formulářovým stavům.
 
 ## 10. Loga, fotografie, písma a partneři
@@ -343,3 +343,5 @@ Rámec podle termínů potvrzených 11. 9. 2026. Dílčí termíny uvnitř jedno
 - 13. 9. 2026: vytvořena složka `časomíra/` pro G04: HTML/CSS editor, ukázková data, validace času, skrytí karty, nastavení v URL a PNG renderer. Umístění vpravo dole, rovný levý okraj, bez reliéfu. Přidáno do společného menu, `npm run render` a Actions včetně vstupu `timer_time`. Doplněny README a stav G04 v Dashboardu. Živá data, produkční formát a animace nejsou tímto označeny za hotové.
 
 - 17. 9. 2026: G08 implementováno ve `split-time/` podle návrhu 04. Dva kumulované mezičasy vůči lídrovi, bez zobrazení startu, stopky a čísla 1/2, zelený náskok a červená ztráta, pořadí vedle cílového rozdílu. Editor dat a exporty zapojeny do společného menu a Actions. Živá integrace a animace zbývají.
+
+- 28. 9. 2026: zapracovány odpovědi zadavatele (otázky Q6–Q11). Formát seznamu závodníků: Excel/Google Sheet z registračního systému na webu. Informační grafika bude, texty se upřesní. Rozměry G04 (Q8) zůstávají otevřené. Stream je možný, závisí na smlouvě s televizí. Barevné stavové kódy: náskok zelená #00B140, ztráta červená #E30613, lídr zlatá #FFD700, neutrální bílá. Animace střední délky 0,5–1 s, poloprůhledné pozadí.
