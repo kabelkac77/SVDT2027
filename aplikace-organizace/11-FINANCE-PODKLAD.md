@@ -1,6 +1,6 @@
 # Finance — pravidla převodu podkladů
 
-Zdrojové sešity, odkazy, podrobná mapa buněk a neveřejné výsledky kontroly jsou v `vojtechhrach/SVDT2027-neverejne/aplikace-organizace-neverejne/11-FINANCE-PODKLAD.md`.
+Zdrojové sešity, odkazy, podrobná mapa buněk a neveřejné výsledky kontroly jsou v `vojtechhrach/SVDT2027-soukrome/Aplikace-organizace-soukrome/11-FINANCE-PODKLAD.md`.
 
 - Historický rozpočet je zdroj struktury, nikoli automaticky potvrzené závazky nebo platby nového ročníku.
 - Rozlišovat plán, potvrzenou částku, úhrady a proplacení osobních výdajů. Neznámé hodnoty nejsou nuly.

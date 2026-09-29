@@ -89,4 +89,8 @@ Potvrzené rozhodnutí nemažeme; změněné označíme jako nahrazené.
 
 ## 2026-09-29 — oddělení neveřejných podkladů
 
-Na pokyn uživatele: veřejná část v `kabelkac77/SVDT2027/aplikace-organizace`, neveřejná část v novém soukromém `vojtechhrach/SVDT2027-neverejne/aplikace-organizace-neverejne`. Podrobné rozbory zdrojů, data a konkrétní provozní údaje jsou neveřejné. Kód, obecné modely a pravidla vývoje zůstávají veřejné. Klíče a hesla nepatří ani do soukromého Gitu. Úprava aktuálních MD nemaže dřívější historii veřejného repozitáře.
+Na pokyn uživatele: veřejná část v `kabelkac77/SVDT2027/aplikace-organizace`, neveřejná část v novém soukromém `vojtechhrach/SVDT2027-soukrome/Aplikace-organizace-soukrome`. Podrobné rozbory zdrojů, data a konkrétní provozní údaje jsou neveřejné. Kód, obecné modely a pravidla vývoje zůstávají veřejné. Klíče a hesla nepatří ani do soukromého Gitu. Úprava aktuálních MD nemaže dřívější historii veřejného repozitáře.
+
+### Upřesnění názvů 2026-09-29
+
+Uživatel upřesnil soukromý repozitář na `vojtechhrach/SVDT2027-soukrome` a složku na `Aplikace-organizace-soukrome` (velké A). Soukromá viditelnost i obsah zůstávají zachované.

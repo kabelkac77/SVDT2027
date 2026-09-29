@@ -23,4 +23,4 @@ Dokumentace je živá. Nová rozhodnutí se mají průběžně zapisovat sem, ab
 
 ## Veřejné a neveřejné podklady
 
-Tato složka obsahuje veřejnou specifikaci. Zdrojová data, podrobné rozbory a konkrétní provozní údaje jsou v soukromém [SVDT2027-neverejne](https://github.com/vojtechhrach/SVDT2027-neverejne/tree/main/aplikace-organizace-neverejne). Přístup k němu se přiděluje samostatně. Hesla a klíče nejsou součástí žádného repozitáře.
+Tato složka obsahuje veřejnou specifikaci. Zdrojová data, podrobné rozbory a konkrétní provozní údaje jsou v soukromém [SVDT2027-soukrome](https://github.com/vojtechhrach/SVDT2027-soukrome/tree/main/Aplikace-organizace-soukrome). Přístup k němu se přiděluje samostatně. Hesla a klíče nejsou součástí žádného repozitáře.

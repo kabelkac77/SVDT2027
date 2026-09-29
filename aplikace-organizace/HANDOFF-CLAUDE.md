@@ -136,4 +136,4 @@ Oficiální formát ověřen při přípravě: [Claude Code memory](https://code
 
 ## Rozdělení veřejné a neveřejné části — 2026-09-29
 
-Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `aplikace-organizace/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-neverejne/aplikace-organizace-neverejne/`. Toto rozhodnutí nahrazuje dřívější plošný zákaz verzovat podklady: do soukromého repozitáře jsou výslovně schválené, do veřejného nadále nesmějí. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.
+Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `aplikace-organizace/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-soukrome/Aplikace-organizace-soukrome/`. Toto rozhodnutí nahrazuje dřívější plošný zákaz verzovat podklady: do soukromého repozitáře jsou výslovně schválené, do veřejného nadále nesmějí. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.
