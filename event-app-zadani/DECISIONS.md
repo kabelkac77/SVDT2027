@@ -2,7 +2,7 @@
 
 ## 2026-09-28 — příprava předání Claude Code
 
-- Uživatel požádal o kompletní podklady, MD a skills pro předání další práce Claudovi. Připraven kořenový `CLAUDE.md`, společný `AGENTS.md`, `HANDOFF-CLAUDE.md` a čtyři projektové skills (start, implementace, review, design).
+- Uživatel požádal o kompletní podklady, MD a skills pro předání další práce Claudovi. Připraven `event-app/CLAUDE.md`, místní `event-app/AGENTS.md`, `HANDOFF-CLAUDE.md` a čtyři projektové skills (start, implementace, review, design).
 - Instrukce odkazují na stávající source of truth, nevytvářejí druhou architekturu. Role: Claude Code implementace, Codex nezávislé review a návaznosti, uživatel priority/akceptace; implementátor také průběžně aktualizuje MD.
 - Předání lokálního pracovního stavu není automatické předání přes GitHub: dosavadní necommitnuté soubory musí být zachované. WhatsApp/Twilio zůstávají odložené, iCloud je dočasný cíl záloh. Příprava nepovoluje automatické produkční nasazení ani komunikaci mezi chaty.
 ## 2026-09-28 — WhatsApp/Twilio odloženy a přesný cíl záloh
@@ -89,8 +89,30 @@ Potvrzené rozhodnutí nemažeme; změněné označíme jako nahrazené.
 
 ## 2026-09-29 — oddělení neveřejných podkladů
 
-Na pokyn uživatele: veřejná část v `kabelkac77/SVDT2027/aplikace-organizace`, neveřejná část v novém soukromém `vojtechhrach/SVDT2027-soukrome/Aplikace-organizace-soukrome`. Podrobné rozbory zdrojů, data a konkrétní provozní údaje jsou neveřejné. Kód, obecné modely a pravidla vývoje zůstávají veřejné. Klíče a hesla nepatří ani do soukromého Gitu. Úprava aktuálních MD nemaže dřívější historii veřejného repozitáře.
+Na pokyn uživatele: veřejná část v `kabelkac77/SVDT2027/event-app-zadani`, neveřejná část v novém soukromém `vojtechhrach/SVDT2027-soukrome/event-app-podklady-soukrome`. Podrobné rozbory zdrojů, data a konkrétní provozní údaje jsou neveřejné. Kód, obecné modely a pravidla vývoje zůstávají veřejné. Klíče a hesla nepatří ani do soukromého Gitu. Úprava aktuálních MD nemaže dřívější historii veřejného repozitáře.
 
 ### Upřesnění názvů 2026-09-29
 
-Uživatel upřesnil soukromý repozitář na `vojtechhrach/SVDT2027-soukrome` a složku na `Aplikace-organizace-soukrome` (velké A). Soukromá viditelnost i obsah zůstávají zachované.
+Uživatel upřesnil soukromý repozitář na `vojtechhrach/SVDT2027-soukrome` a složku na `event-app-podklady-soukrome`. Soukromá viditelnost i obsah zůstávají zachované.
+
+### Rozsah instrukcí pro agenty
+
+Uživatel rozhodl, že instrukce a skills nejsou výchozí pro celý repozitář. `CLAUDE.md`, `AGENTS.md` a `.claude/skills/` jsou proto v `event-app/` a platí pouze při otevření této složky aplikace. Kořenový `.gitignore` zůstává, protože chrání kořenovou soukromou pracovní složku `.local/`.
+
+## 2026-09-29 — naplnění Partnerů pro SVDT 2027
+
+- Claude Code zatím projekt nepřevzal; podklady a projektové instrukce jsou pouze připravené k předání.
+- Na výslovný pokyn uživatele se do ročníku 2027 importují vyfiltrovaní partneři ze zdrojového Excelu a nové návrhy z pracovního partner CRM. Historické údaje 2026 se ukládají odděleně jako historie organizace: částka, plnění a pozice. Nejsou potvrzením spolupráce 2027.
+- Stav `neosloven` rozlišuje nový pracovní seznam od skutečně oslovených, potvrzených a zamítnutých partnerů. Existující IČO ani již zadané kontakty se při opakovaném importu nepřepisují; zdroje bez IČO jej nedoplňují odhadem.
+
+## 2026-09-29 — pracovní tabulka Partnerů
+
+- Seznam Partnerů je primárně pracovní evidence, proto má kompaktní tabulkový režim: malou výšku řádků, pevné sloupce a stručné souhrnné filtry. Detail partnera zůstává samostatnou stránkou.
+- Uživatel s rolí admin nebo manager upravuje přímo v tabulce stav, ownera, datum dalšího kontaktu, hlavní kontakt a interní poznámku. Každá změna se ukládá samostatně přes existující kontrolovaný zápis a audit; detail slouží pro širší profil organizace a plnění.
+- Pracovní tabulka má sloupce pro úkol, stav, fakturaci, potvrzenou/odhadovanou/skutečnou částku, historickou částku 2025, poznámku, logo a podklady, druh partnerství, ownera, kontakt a plnění. Historická částka čte pouze importovanou historii organizace. Fakturace, současné částky, úkoly, typ partnerství a soubory zatím nemají produkční partnerský model, proto se zobrazují prázdné a nevydávají se za finanční údaje; jejich zdrojem bude navazující Finance a evidence souborů.
+
+## 2026-10-03 — názvy aplikačních složek
+
+- Veřejný zdroj zadání je `event-app-zadani/`; název odlišuje dokumentaci a rozhodnutí od zdrojového kódu v `event-app/`.
+- Neveřejné zdrojové podklady jsou v `event-app-podklady-soukrome/` v repozitáři `vojtechhrach/SVDT2027-soukrome/`. Název výslovně říká, že nejde o druhou aplikaci ani o bezpečné místo pro klíče.
+- `AGENTS.md`, `CLAUDE.md` a projektové skills patří výhradně do `event-app/`. Všechny interní odkazy byly změněny spolu s přejmenováním; GitHub workflow ani běhový kód cestu zadání nepoužívají.

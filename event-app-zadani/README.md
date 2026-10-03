@@ -3,7 +3,7 @@
 Tato složka je source of truth pro organizační strukturu SVDT 2027 a připravovanou eventovou aplikaci.
 
 ## Dokumenty
-- HANDOFF-CLAUDE.md — vstup pro Claude Code, aktuální stav, mapa kódu, testy a priority; instrukce v kořeni `CLAUDE.md`/`AGENTS.md`.
+- HANDOFF-CLAUDE.md — vstup pro Claude Code, aktuální stav, mapa kódu, testy a priority; instrukce jsou pouze v `../event-app/CLAUDE.md` a `../event-app/AGENTS.md`.
 - CONTEXT.md — organizační kontext, role, procesy a rozhodnutí.
 - APP_ARCHITECTURE.md — hrubá architektura aplikace.
 - BACKLOG.md — otevřené body, podklady a další práce.
@@ -23,4 +23,4 @@ Dokumentace je živá. Nová rozhodnutí se mají průběžně zapisovat sem, ab
 
 ## Veřejné a neveřejné podklady
 
-Tato složka obsahuje veřejnou specifikaci. Zdrojová data, podrobné rozbory a konkrétní provozní údaje jsou v soukromém [SVDT2027-soukrome](https://github.com/vojtechhrach/SVDT2027-soukrome/tree/main/Aplikace-organizace-soukrome). Přístup k němu se přiděluje samostatně. Hesla a klíče nejsou součástí žádného repozitáře.
+Tato složka obsahuje veřejnou specifikaci. Zdrojová data, podrobné rozbory a konkrétní provozní údaje jsou v soukromém [SVDT2027-soukrome](https://github.com/vojtechhrach/SVDT2027-soukrome/tree/main/event-app-podklady-soukrome). Přístup k němu se přiděluje samostatně. Hesla a klíče nejsou součástí žádného repozitáře.

@@ -1,6 +1,6 @@
 # Podklad Partnerů — pravidla importu
 
-Zdrojové soubory, odkazy na tabulky, konkrétní listy/řádky, kontakty a výsledky filtrace jsou v soukromém repozitáři `vojtechhrach/SVDT2027-soukrome`, složka `Aplikace-organizace-soukrome/10-PARTNERI-IMPORT.md`.
+Zdrojové soubory, odkazy na tabulky, konkrétní listy/řádky, kontakty a výsledky filtrace jsou v soukromém repozitáři `vojtechhrach/SVDT2027-soukrome`, složka `event-app-podklady-soukrome/10-PARTNERI-IMPORT.md`.
 
 - Filtrovat podle akce a ročníku; historie nedokládá potvrzenou spolupráci v novém ročníku.
 - Nejasné přiřazení, sdílené částky a nejednoznačné identity předat k ruční kontrole.

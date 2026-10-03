@@ -1,6 +1,6 @@
 # SVDT — interní Partneři V1
 
-Zdroj zadání: `../aplikace-organizace/`. Model, oprávnění a hranice dodávky: `10-PARTNERI-MODEL-A-FLOW.md`; podklady: `10-PARTNERI-IMPORT.md`.
+Zdroj zadání: `../event-app-zadani/`. Model, oprávnění a hranice dodávky: `10-PARTNERI-MODEL-A-FLOW.md`; podklady: `10-PARTNERI-IMPORT.md`.
 
 ## Lokální spuštění
 
@@ -19,7 +19,7 @@ npm run dev
 
 1. V existujícím nebo novém Supabase projektu aplikovat `supabase/migrations/202609280001_partners.sql` standardním migračním postupem. Migrace je pro prázdné tabulky tohoto modulu, není opakovatelný reset. Produkční projekt ani hosting nebyly tímto commitem vytvořeny.
 2. Zkopírovat `.env.example` do `.env.local`, vyplnit project URL a veřejný publishable key. Nikdy nepoužívat service_role/secret key v `NEXT_PUBLIC_*` ani v Git.
-3. Připravit přihlašování dle `../aplikace-organizace/PRIHLASOVANI.md`: Google, Apple, Facebook přes Supabase OAuth; e-mail/heslo zůstává záloha pro připravené účty. Tlačítka se zobrazí po aktivaci v Supabase. Pro první sociální přihlášení nových uživatelů musí Auth dovolovat vytvoření účtu; tento účet nezískává členství. Crew samoobsluha ani zvání z UI zatím nejsou implementované.
+3. Připravit přihlašování dle `../event-app-zadani/PRIHLASOVANI.md`: Google, Apple, Facebook přes Supabase OAuth; e-mail/heslo zůstává záloha pro připravené účty. Tlačítka se zobrazí po aktivaci v Supabase. Pro první sociální přihlášení nových uživatelů musí Auth dovolovat vytvoření účtu; tento účet nezískává členství. Crew samoobsluha ani zvání z UI zatím nejsou implementované.
 4. Přidat Event, Edition a členství v SQL editoru jako správce. Příklad níže používá placeholder pro UUID **existujícího Auth uživatele**; nejprve jej nahraď.
 
 ```sql
@@ -66,6 +66,6 @@ Klientské Supabase SDK udržuje přihlášení; žádná citlivá data nejsou s
 
 Design tokeny se importují přímo z `../design-system/tokens/svdt-tokens.css`; Exo fonty jsou lokální kopie repozitářových assetů s přiloženou OFL licencí. Zelená označuje úspěšný stav, červená značku a hlavní akci. Menší rozestupy jsou přizpůsobení provoznímu UI.
 
-**Navazující rozsah:** externí Partner Portal, více kontaktů, questionnaire, uploady/Document, VIP QR, post-event report; finanční backend a kontrolovaný import. Finance lze zkoušet lokálně dle `../aplikace-organizace/11-FINANCE-MODEL-A-FLOW.md`. Offline synchronizace, real-time odběry a PWA cache zatím nejsou implementované. Toto není hotová produkční eventová aplikace.
+**Navazující rozsah:** externí Partner Portal, více kontaktů, questionnaire, uploady/Document, VIP QR, post-event report; finanční backend a kontrolovaný import. Finance lze zkoušet lokálně dle `../event-app-zadani/11-FINANCE-MODEL-A-FLOW.md`. Offline synchronizace, real-time odběry a PWA cache zatím nejsou implementované. Toto není hotová produkční eventová aplikace.
 
 Implementační reference: [Next.js App Router](https://nextjs.org/docs/app/getting-started/installation), [Supabase JS](https://supabase.com/docs/reference/javascript/introduction), [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).

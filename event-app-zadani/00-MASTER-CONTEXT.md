@@ -1,6 +1,6 @@
 # SVDT 2027 — MASTER CONTEXT
 
-Tento soubor je vstupní bod pro nový Codex/AI chat. Před implementací načti celý adresář `aplikace-organizace/`.
+Tento soubor je vstupní bod pro nový Codex/AI chat. Před implementací načti celý adresář `event-app-zadani/`.
 
 ## Cíl
 Profesionalizovat organizaci SVDT 2027, delegovat operativu a postavit centrální event-management aplikaci.

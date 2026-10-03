@@ -44,4 +44,4 @@ Historický běh před doplněním OAuth: prošel produkční build, 7 databázo
 
 ## Předání Claude Code
 
-Připravené `CLAUDE.md`, společné `AGENTS.md`, čtyři projektové skills v `.claude/skills/` a `HANDOFF-CLAUDE.md`. Samotné předání nepřidává implementaci modulu, migraci ani produkční změnu. Následný pokyn uživatele z 2026-09-28 zahrnuje publikování aplikace, dokumentace a skills do stávajícího GitHub repozitáře. Projektové instrukce jsou lokální soubory; jejich načtení skutečnou Claude relací zatím nebylo ověřeno.
+Připravené `event-app/CLAUDE.md`, místní `event-app/AGENTS.md`, čtyři projektové skills v `event-app/.claude/skills/` a `HANDOFF-CLAUDE.md`. Instrukce se týkají pouze aplikace, nikoli ostatních složek repozitáře. Samotné předání nepřidává implementaci modulu, migraci ani produkční změnu. Následný pokyn uživatele z 2026-09-28 zahrnuje publikování aplikace, dokumentace a skills do stávajícího GitHub repozitáře. Jejich načtení skutečnou Claude relací zatím nebylo ověřeno.

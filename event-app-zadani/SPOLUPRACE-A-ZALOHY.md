@@ -27,7 +27,7 @@ Není doloženo, který model bude na tomto repozitáři univerzálně silnějš
 4. Revize diffu i chování: únik dat mezi rolemi/ročníky, transakce a finanční součty, migrace a možnost obnovy, regresní testy a mobilní průchod. Kritické auth/finance části prověřit ještě před nasazením.
 5. Opravy, uživatelské vyzkoušení a nasazení schváleného stavu. U releasu uchovat commit/tag, použité migrace a postup návratu. Vracející se starý frontend nemusí fungovat s nekompatibilně změněnou databází; migrace navrhovat kompatibilně.
 
-Společný zdroj pravdy je `aplikace-organizace/`. Při zavedení spolupráce připravit krátké vstupní instrukce pro oba nástroje odkazující sem, ne dvě kopie architektury. Návrhy, potvrzená rozhodnutí, implementovaný kód a ověřený provoz musí být v dokumentaci rozlišeny.
+Společný zdroj pravdy je `event-app-zadani/`. Při zavedení spolupráce připravit krátké vstupní instrukce pro oba nástroje odkazující sem, ne dvě kopie architektury. Návrhy, potvrzená rozhodnutí, implementovaný kód a ověřený provoz musí být v dokumentaci rozlišeny.
 
 Aplikace, dokumentace a předání pro Claude se verzují společně. Před každou integrací prověřit rozdíly vůči vzdálené větvi; neprovádět force-push přes práci z jiného chatu. Soukromé Excel podklady, `.env.local` a klíče nikdy necommitovat.
 
@@ -51,7 +51,7 @@ Ověřené podklady: [Synology Hyper Backup](https://kb.synology.com/index.php/e
 
 ### Příprava Claude Code — další krok
 
-Uživatel požaduje pomoc s nastavením Claude Code, skills a Markdown instrukcí pro tento projekt. Připravit stručný vstup `CLAUDE.md` a kompatibilní pokyny pro Codex s odkazy na stejný zdroj pravdy, konkrétními příkazy testů a pravidly migrací/RLS, citlivých podkladů a aktualizací dokumentace. Instrukce odvodit ze skutečného repozitáře. Skills a konektory zvolit cíleně podle aktuálního úkolu; přístupy k produkci a klíče nepřenášet automaticky. Projektová příprava je nyní hotová: `CLAUDE.md`, společné `AGENTS.md`, čtyři lokální skills a `HANDOFF-CLAUDE.md`. Globální nastavení, externí pluginy a přihlášení Claude se neměnily; načtení v Claude relaci zatím nebylo ověřeno. Nezaměňovat přípravu s automatickým předáváním zpráv mezi agenty.
+Uživatel požaduje pomoc s nastavením Claude Code, skills a Markdown instrukcí pro tento projekt. Připravit stručný vstup `event-app/CLAUDE.md` a kompatibilní pokyny pro Codex s odkazy na stejný zdroj pravdy, konkrétními příkazy testů a pravidly migrací/RLS, citlivých podkladů a aktualizací dokumentace. Instrukce odvodit ze skutečného repozitáře. Skills a konektory zvolit cíleně podle aktuálního úkolu; přístupy k produkci a klíče nepřenášet automaticky. Projektová příprava je nyní hotová pouze pro aplikaci: `event-app/CLAUDE.md`, `event-app/AGENTS.md`, čtyři lokální skills a `HANDOFF-CLAUDE.md`. Globální nastavení, externí pluginy a přihlášení Claude se neměnily; načtení v Claude relaci zatím nebylo ověřeno. Nezaměňovat přípravu s automatickým předáváním zpráv mezi agenty.
 
 | Co | Způsob | Účel |
 | --- | --- | --- |
@@ -85,4 +85,4 @@ Rozsah exportu musí odpovídat skutečně nasazeným modulům. Dnešní Finance
 
 ## Rozdělení veřejné a neveřejné části — 2026-09-29
 
-Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `aplikace-organizace/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-soukrome/Aplikace-organizace-soukrome/`. Toto rozhodnutí nahrazuje dřívější plošný zákaz verzovat podklady: do soukromého repozitáře jsou výslovně schválené, do veřejného nadále nesmějí. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.
+Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `event-app-zadani/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-soukrome/event-app-podklady-soukrome/`. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.

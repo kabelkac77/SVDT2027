@@ -1,8 +1,8 @@
 # SVDT — společná pravidla vývoje
 
-Tato pravidla se týkají organizační aplikace v této složce a její dokumentace `../aplikace-organizace/`. Ostatní projekty v repozitáři neměň bez souvisejícího zadání.
+Tato pravidla se týkají organizační aplikace v této složce a její dokumentace `../event-app-zadani/`. Ostatní projekty v repozitáři neměň bez souvisejícího zadání.
 
-- Source of truth je `../aplikace-organizace/`. Při převzetí práce začni `HANDOFF-CLAUDE.md`, aktuálním `IMPLEMENTATION-STATUS.md` a `DECISIONS.md`; potom čti model konkrétního modulu. Původní architektura popisuje i budoucí záměr, nikoli jen hotový software. Nejnovější výslovný pokyn uživatele má přednost; rozpor oprav v dokumentaci.
+- Source of truth je `../event-app-zadani/`. Při převzetí práce začni `HANDOFF-CLAUDE.md`, aktuálním `IMPLEMENTATION-STATUS.md` a `DECISIONS.md`; potom čti model konkrétního modulu. Původní architektura popisuje i budoucí záměr, nikoli jen hotový software. Nejnovější výslovný pokyn uživatele má přednost; rozpor oprav v dokumentaci.
 - Nové důležité rozhodnutí zapiš současně do příslušného `.md` a případně `DECISIONS.md`. Implementátor aktualizuje dokumentaci v téže změně. Rozlišuj návrh, implementaci, lokální test a skutečně ověřený provoz.
 - Cíl: Partneři → Finance → další moduly. Finální vzhled připravuje Claude Design. Při funkčních změnách zachovej stávající tokeny a ovládání; rozsáhlý redesign dělej jen podle zadání.
 - WhatsApp/Twilio jsou odložené na výslovný pokyn uživatele. Připravený kód nech vypnutý a konfiguraci neřeš, dokud se k tomu uživatel nevrátí.
@@ -16,4 +16,4 @@ Tato pravidla se týkají organizační aplikace v této složce a její dokumen
 
 ## Rozdělení veřejné a neveřejné části — 2026-09-29
 
-Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `aplikace-organizace/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-soukrome/Aplikace-organizace-soukrome/`. Toto rozhodnutí nahrazuje dřívější plošný zákaz verzovat podklady: do soukromého repozitáře jsou výslovně schválené, do veřejného nadále nesmějí. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.
+Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `event-app-zadani/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-soukrome/event-app-podklady-soukrome/`. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.

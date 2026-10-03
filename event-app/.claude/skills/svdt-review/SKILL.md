@@ -5,7 +5,7 @@ description: Nezávisle zkontrolovat konkrétní diff, větev nebo PR organizač
 
 Rozsah revize: $ARGUMENTS
 
-Načti `AGENTS.md`, zadání dotčeného modulu a diff. U necommitnutého `event-app/` nestačí `git diff`: prověř i nové soubory podle `git status`. Rozliš chybu aktuální změny a již známý nedodaný rozsah.
+Načti `AGENTS.md`, zadání dotčeného modulu a diff. U necommitnuté práce v této složce nestačí `git diff`: prověř i nové soubory podle `git status`. Rozliš chybu aktuální změny a již známý nedodaný rozsah.
 
 Prioritně ověř:
 - Čtení a zápisy mezi ročníky/rolemi, archiv, odmítnutí anonymního uživatele a nového účtu bez členství. Skrytí UI není kontrola oprávnění.

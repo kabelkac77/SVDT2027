@@ -1,6 +1,6 @@
 # Předání organizační aplikace SVDT do Claude Code
 
-Stav k 2026-09-28. Tento dokument je výchozí mapa; aktuální změny ověř proti kódu a `git status`. Source of truth zůstává celý adresář `aplikace-organizace/`.
+Stav k 2026-09-28. Tento dokument je výchozí mapa; aktuální změny ověř proti kódu a `git status`. Source of truth zůstává celý adresář `event-app-zadani/`.
 
 ## Jak začít
 
@@ -11,11 +11,11 @@ cd /cesta/k/SVDT2027
 claude
 ```
 
-Claude Code je na tomto Macu nainstalovaný; ověřeno `claude --version`: 2.1.247. Přihlášení k účtu ani načtení skills v běžící relaci nebylo tímto předáním zkoušeno. Root `CLAUDE.md` importuje společné `AGENTS.md`. Projektové skills jsou v `.claude/skills/`; jejich příkazy mají prefix `svdt-`, aby se nekřížily s obecným review/design příkazem.
+Claude Code je na tomto Macu nainstalovaný; ověřeno `claude --version`: 2.1.247. Přihlášení k účtu ani načtení skills v běžící relaci nebylo tímto předáním zkoušeno. Otevři Claude Code přímo ve složce `event-app/`; `CLAUDE.md` importuje místní `AGENTS.md` a projektové skills jsou v `event-app/.claude/skills/`. Jejich příkazy mají prefix `svdt-`, aby se nekřížily s obecným review/design příkazem.
 
 Úvodní prompt pro vložení:
 
-> Použij /svdt-start. Přebíráš další implementaci organizační aplikace SVDT 2027 v tomto existujícím repozitáři. Načti CLAUDE.md, AGENTS.md a celý adresář aplikace-organizace/, zkontroluj kód event-app a aktuální Git stav. Respektuj rozpracovanou necommitnutou práci. Nejprve mi stručně potvrď architekturu, co je hotové, co je pouze demo a otevřená rozhodnutí. Připrav konkrétní plán dokončení Partnerů a převodu Financí na skutečný backend s akceptačními podmínkami. Důležitá rozhodnutí zapisuj do příslušných MD a DECISIONS.md. UI zatím zásadně nepředělávej, WhatsApp/Twilio neřeš a nic nenasazuj ani neimportuj do produkce při úvodním převzetí.
+> Otevři Claude Code ve složce `event-app/` a použij /svdt-start. Načti místní CLAUDE.md, AGENTS.md a celý sousední adresář ../event-app-zadani/, zkontroluj kód a aktuální Git stav. Respektuj rozpracovanou necommitnutou práci. Nejprve mi stručně potvrď architekturu, co je hotové, co je pouze demo a otevřená rozhodnutí. Připrav konkrétní plán dokončení Partnerů a převodu Financí na skutečný backend s akceptačními podmínkami. Důležitá rozhodnutí zapisuj do příslušných MD a DECISIONS.md. UI zatím zásadně nepředělávej, WhatsApp/Twilio neřeš a nic nenasazuj ani neimportuj do produkce při úvodním převzetí.
 
 Tento první prompt je orientace a plán, ne implementace všech modulů. Po jeho zodpovězení zadá uživatel první vybraný funkční celek. Codex následně může provést nezávislé review konkrétní změny.
 
@@ -30,7 +30,7 @@ Tento první prompt je orientace a plán, ne implementace všech modulů. Po jeh
 
 ## Dokumenty k načtení
 
-Při prvním převzetí přečti všechny MD v `aplikace-organizace/`; následující seznam je orientace, ne náhrada celku:
+Při prvním převzetí přečti všechny MD v `event-app-zadani/`; následující seznam je orientace, ne náhrada celku:
 
 - `00-MASTER-CONTEXT.md`, `CONTEXT.md`, `APP_ARCHITECTURE.md`: organizace a dlouhodobá architektura.
 - `DECISIONS.md`, `IMPLEMENTATION-STATUS.md`, `BACKLOG.md`, `INPUTS-NEEDED.md`: aktuální rozhodnutí, důkazy, další práce.
@@ -136,4 +136,4 @@ Oficiální formát ověřen při přípravě: [Claude Code memory](https://code
 
 ## Rozdělení veřejné a neveřejné části — 2026-09-29
 
-Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `aplikace-organizace/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-soukrome/Aplikace-organizace-soukrome/`. Toto rozhodnutí nahrazuje dřívější plošný zákaz verzovat podklady: do soukromého repozitáře jsou výslovně schválené, do veřejného nadále nesmějí. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.
+Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `event-app-zadani/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-soukrome/event-app-podklady-soukrome/`. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.

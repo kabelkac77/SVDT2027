@@ -2,7 +2,7 @@
 
 @AGENTS.md
 
-Pro převzetí projektu použij `/svdt-start`. Podrobný stav, mapa souborů a první úkol jsou v `../aplikace-organizace/HANDOFF-CLAUDE.md`.
+Pro převzetí projektu použij `/svdt-start`. Podrobný stav, mapa souborů a první úkol jsou v `../event-app-zadani/HANDOFF-CLAUDE.md`.
 
 Projektové skills v `.claude/skills/`:
 - `/svdt-start` — načtení zadání a ověření výchozího stavu.
