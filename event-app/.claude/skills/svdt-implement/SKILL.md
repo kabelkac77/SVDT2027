@@ -5,7 +5,7 @@ description: Implementovat konkrétní funkční změnu organizační aplikace S
 
 Zadání: $ARGUMENTS
 
-Načti `AGENTS.md`, aktuální stav a model dotčeného modulu v `../aplikace-organizace/`. Rozhodnutí zapisuj průběžně do příslušného dokumentu a `DECISIONS.md`, neopisuj celou architekturu do skillu.
+Načti `AGENTS.md`, aktuální stav a model dotčeného modulu v `../event-app-zadani/`. Rozhodnutí zapisuj průběžně do příslušného dokumentu a `DECISIONS.md`, neopisuj celou architekturu do skillu.
 
 Podle dotčené oblasti:
 - Partneři: `10-PARTNERI-MODEL-A-FLOW.md`, případně `10-PARTNERI-IMPORT.md`, migrace a `tests/database.test.ts`.

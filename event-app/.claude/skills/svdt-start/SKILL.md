@@ -3,7 +3,7 @@ name: svdt-start
 description: Převzít projekt SVDT nebo pokračovat po předání mezi nástroji; ověřit pracovní stav a vybrat konkrétní další úkol.
 ---
 
-Pracuj z této složky aplikace. Načti `AGENTS.md` a `../aplikace-organizace/HANDOFF-CLAUDE.md`. Při prvním převzetí projdi celý `../aplikace-organizace/` po rozumných částech a eviduj přečtené dokumenty; při pokračování čti změněné části a dokumenty k úkolu. Načtení nepředstírej, pokud výstup nástroje soubor ořízl.
+Pracuj z této složky aplikace. Načti `AGENTS.md` a `../event-app-zadani/HANDOFF-CLAUDE.md`. Při prvním převzetí projdi celý `../event-app-zadani/` po rozumných částech a eviduj přečtené dokumenty; při pokračování čti změněné části a dokumenty k úkolu. Načtení nepředstírej, pokud výstup nástroje soubor ořízl.
 
 Zkontroluj aktuální větev, commit a `git status` a lokální závislosti. Nečti hodnoty `.env.local` do výstupu. Srovnej tvrzení o stavu s kódem, migracemi a testy. Neopakuj aplikaci bootstrap SQL v produkci.
 
