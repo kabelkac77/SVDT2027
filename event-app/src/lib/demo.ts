@@ -149,6 +149,7 @@ export function freshDemo(): Data {
         version: 1,
       },
     ],
+    partnerHistory: [],
     audit: [],
   };
 }
@@ -158,7 +159,7 @@ export function readDemo(): Data {
   const d = JSON.parse(saved);
   if (!d?.editions || !d?.prospects)
     throw Error("Ukázková data nelze načíst. Obnov demo.");
-  return d;
+  return { ...d, partnerHistory: d.partnerHistory ?? [] };
 }
 export function resetDemo() {
   localStorage.removeItem(key);

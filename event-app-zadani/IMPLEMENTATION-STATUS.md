@@ -45,3 +45,16 @@ Historický běh před doplněním OAuth: prošel produkční build, 7 databázo
 ## Předání Claude Code
 
 Připravené `event-app/CLAUDE.md`, místní `event-app/AGENTS.md`, čtyři projektové skills v `event-app/.claude/skills/` a `HANDOFF-CLAUDE.md`. Instrukce se týkají pouze aplikace, nikoli ostatních složek repozitáře. Samotné předání nepřidává implementaci modulu, migraci ani produkční změnu. Následný pokyn uživatele z 2026-09-28 zahrnuje publikování aplikace, dokumentace a skills do stávajícího GitHub repozitáře. Jejich načtení skutečnou Claude relací zatím nebylo ověřeno.
+
+## 2026-10-03 — uzavření lokálních změn Partnerů
+
+Implementováno: pracovní tabulka s úpravami stavu/ownera/termínu/poznámky/kontaktu, `neosloven`, pouze čitelná historie organizace a kompatibilita již uloženého dema. Chybový draft zůstává zachovaný; souběžný zápis řádku se blokuje. Historické NULL a překryvy se nezobrazují jako nula nebo automatický součet. Rozhodnutí: `10-PARTNERI-MODEL-A-FLOW.md`, `DECISIONS.md`.
+
+Ověřeno na shodné dočasné kopii `/private/tmp/svdt2027-verify/event-app` bez konfigurace a skutečných dat:
+
+- `npm run typecheck` a `npm run build` prošly.
+- `node --import tsx --test tests/*.test.ts`: **10/10** (5 DB scénářů v PGlite, 3 Finance, 2 Partner model/kompatibilita). Tento ekvivalent `npm test` obchází sandboxem blokovaný IPC socket spouštěče tsx.
+- `npm run test:e2e`: **15/15** v Chrome, včetně 3 nových scénářů řádků, pomalého RPC/konfliktu a čtenáře/historie. Backend, OAuth a OTP jsou mockované; neodeslaly se skutečné platby, OTP ani partnerské mutace.
+- Vizuální kontrola desktopu a mobilu; SHA-256 shoda aplikačních zdrojů ověřovací kopie. `next dev/build` v kopii generuje `next-env.d.ts` a vlastní blok v `AGENTS.md`; tyto generované úpravy se do zdroje nepřenášejí.
+
+Migrace `202609290001_partner_history.sql` je součástí kódu, testuje se po původní migraci. Nebyla zde aplikována do produkce; stav jejího dřívějšího použití není ověřen. Skutečný Auth/PostgREST a více souběžných účtů dál vyžadují izolovanou live akceptaci. Finance zůstávají demo; tento krok nepřidává jejich backend ani ostrý import.

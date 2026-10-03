@@ -16,6 +16,7 @@ import {
   statuses,
   todayPrague,
   isHttpUrl,
+  historicalAmount,
 } from "@/lib/model";
 import {
   loadData,
@@ -92,6 +93,11 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
   const [status, setStatus] = useState("all");
   const [owner, setOwner] = useState("all");
   const [due, setDue] = useState("all");
+  const [inlineEdits, setInlineEdits] = useState<
+    Record<string, Partial<PartnerInput>>
+  >({});
+  const [inlineSaving, setInlineSaving] = useState<string | null>(null);
+  const inlineLock = useRef(false);
   const generation = useRef(0);
   const refresh = useCallback(async () => {
     const ticket = ++generation.current;
@@ -219,7 +225,45 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
     setNotice("Plnění bylo uloženo.");
     await refresh();
   }
+  function editInline(prospect: Prospect, patch: Partial<PartnerInput>) {
+    if (!data) return;
+    const next = {
+      version: prospect.version,
+      organization_version: data.organizations.find(
+        (o) => o.id === prospect.organization_id,
+      )!.version,
+      ...inlineEdits[prospect.id],
+      ...patch,
+    };
+    setInlineEdits((edits) => ({ ...edits, [prospect.id]: next }));
+    return next;
+  }
+  async function saveInline(prospect: Prospect, patch: Partial<PartnerInput>) {
+    if (!data || inlineLock.current) return;
+    const next = editInline(prospect, patch)!;
+    inlineLock.current = true;
+    setInlineSaving(prospect.id);
+    setError("");
+    setNotice("");
+    try {
+      const input = { ...partnerInput(data, prospect), ...next };
+      if (demo) writeDemoPartner(editionId, input);
+      else await savePartner(editionId, input);
+      setInlineEdits((edits) => {
+        const { [prospect.id]: _, ...rest } = edits;
+        return rest;
+      });
+      setNotice("Řádek byl uložen.");
+      await refresh();
+    } catch (e) {
+      setError(message(e));
+    } finally {
+      inlineLock.current = false;
+      setInlineSaving(null);
+    }
+  }
   function changeEdition(id: string) {
+    setInlineEdits({});
     setEditionId(id);
     setSelected(null);
     setDraft(null);
@@ -309,7 +353,7 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
             Ročník
             <select
               aria-label="Ročník"
-              disabled={!!draft}
+              disabled={!!draft || !!inlineSaving}
               value={editionId}
               onChange={(e) => changeEdition(e.target.value)}
             >
@@ -331,7 +375,9 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
                 DEMO · Změny se ukládají jen v tomto prohlížeči.{" "}
                 <button
                   className="quiet"
+                  disabled={!!inlineSaving}
                   onClick={() => {
+                    setInlineEdits({});
                     resetDemo();
                     localStorage.removeItem(financeKey);
                     setView("partners");
@@ -351,7 +397,15 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
             {error && (
               <div className="error" role="alert">
                 {error}{" "}
-                <button onClick={() => void refresh()}>Zkusit znovu</button>
+                <button
+                  disabled={!!inlineSaving}
+                  onClick={() => {
+                    setInlineEdits({});
+                    void refresh();
+                  }}
+                >
+                  Načíst aktuální data a zahodit úpravy
+                </button>
               </div>
             )}
             {notice && (
@@ -462,11 +516,13 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
                     { label: "Celkem partnerů", value: "all" },
                     ...statuses.map((s) => ({
                       label:
-                        s === "osloven"
-                          ? "Oslovení"
-                          : s === "potvrzen"
-                            ? "Potvrzení"
-                            : "Zamítnutí",
+                        s === "neosloven"
+                          ? "Neoslovení"
+                          : s === "osloven"
+                            ? "Oslovení"
+                            : s === "potvrzen"
+                              ? "Potvrzení"
+                              : "Zamítnutí",
                       value: s,
                     })),
                   ].map((s) => (
@@ -485,13 +541,15 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
                               .padStart(2, "0")}
                       </strong>
                       <small>
-                        {s.value === "potvrzen"
-                          ? "Aktivní spolupráce"
-                          : s.value === "osloven"
-                            ? "Čekáme na domluvu"
-                            : s.value === "zamítnut"
-                              ? "Historie zůstává"
-                              : "V tomto ročníku"}
+                        {s.value === "neosloven"
+                          ? "Připraveno k oslovení"
+                          : s.value === "potvrzen"
+                            ? "Aktivní spolupráce"
+                            : s.value === "osloven"
+                              ? "Čekáme na domluvu"
+                              : s.value === "zamítnut"
+                                ? "Historie zůstává"
+                                : "V tomto ročníku"}
                       </small>
                     </button>
                   ))}
@@ -548,13 +606,22 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
                   </div>
                   {records.length ? (
                     <div className="table-scroll">
-                      <table>
+                      <table className="partners-table">
                         <thead>
                           <tr>
-                            <th>Organizace / kontakt</th>
-                            <th>Stav spolupráce</th>
+                            <th>Partner</th>
+                            <th>Úkol</th>
+                            <th>Stav</th>
+                            <th>Fakturace</th>
+                            <th>Kč potvrzené</th>
+                            <th>Kč odhad</th>
+                            <th>Kč real</th>
+                            <th>Kč z 2025</th>
+                            <th>Poznámka</th>
+                            <th>Logo / podklady</th>
+                            <th>Druh partnerství</th>
                             <th>Owner</th>
-                            <th>Další kontakt</th>
+                            <th>Kontakt</th>
                             <th>Plnění</th>
                           </tr>
                         </thead>
@@ -572,8 +639,16 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
                             const ds = data.deliverables.filter(
                               (d) => d.partnership_id === s?.id,
                             );
+                            const history2025 = data.partnerHistory.filter(
+                              (record) =>
+                                record.organization_id === o.id &&
+                                record.year === 2025 &&
+                                record.event_name === "SVDT",
+                            );
+                            const amount2025 = historicalAmount(history2025);
+                            const edit = inlineEdits[p.id] || {};
                             return (
-                              <tr key={p.id}>
+                              <tr key={p.id} aria-busy={inlineSaving === p.id}>
                                 <td>
                                   <button
                                     className="partner-link"
@@ -588,18 +663,15 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
                                   <small>
                                     {c?.name || "Kontakt zatím nedoplněn"}
                                   </small>
-                                </td>
-                                <td>
-                                  <Badge value={p.status} />
-                                </td>
-                                <td>
-                                  {
-                                    data.members.find(
-                                      (m) =>
-                                        m.edition_id === editionId &&
-                                        m.user_id === p.owner_id,
-                                    )?.display_name
-                                  }
+                                  {inlineEdits[p.id] && (
+                                    <button
+                                      disabled={!!inlineSaving || loading}
+                                      aria-label={`Uložit změny: ${o.name}`}
+                                      onClick={() => void saveInline(p, {})}
+                                    >
+                                      Uložit změny
+                                    </button>
+                                  )}
                                 </td>
                                 <td
                                   className={
@@ -610,7 +682,208 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
                                       : ""
                                   }
                                 >
-                                  {dateLabel(p.next_contact_on)}
+                                  {canEdit ? (
+                                    <input
+                                      className="cell-control cell-date"
+                                      aria-label={`Další kontakt: ${o.name}`}
+                                      type="date"
+                                      value={
+                                        edit.next_contact_on ??
+                                        p.next_contact_on ??
+                                        ""
+                                      }
+                                      disabled={!!inlineSaving || loading}
+                                      onChange={(e) =>
+                                        void saveInline(p, {
+                                          next_contact_on: e.target.value,
+                                        })
+                                      }
+                                    />
+                                  ) : (
+                                    dateLabel(p.next_contact_on)
+                                  )}
+                                  <small>další kontakt</small>
+                                </td>
+                                <td>
+                                  {canEdit ? (
+                                    <select
+                                      className="cell-control"
+                                      aria-label={`Stav: ${o.name}`}
+                                      value={edit.status ?? p.status}
+                                      disabled={!!inlineSaving || loading}
+                                      onChange={(e) =>
+                                        void saveInline(p, {
+                                          status: e.target
+                                            .value as PartnerInput["status"],
+                                        })
+                                      }
+                                    >
+                                      {statuses.map((value) => (
+                                        <option key={value} value={value}>
+                                          {value}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  ) : (
+                                    <Badge value={p.status} />
+                                  )}
+                                </td>
+                                <td className="empty-cell">—</td>
+                                <td className="amount-cell">—</td>
+                                <td className="amount-cell">—</td>
+                                <td className="amount-cell">—</td>
+                                <td className="amount-cell">
+                                  {amount2025 !== null
+                                    ? new Intl.NumberFormat("cs-CZ", {
+                                        style: "currency",
+                                        currency: "CZK",
+                                        maximumFractionDigits: 0,
+                                      }).format(amount2025)
+                                    : "—"}
+                                </td>
+                                <td>
+                                  {canEdit ? (
+                                    <input
+                                      className="cell-control note-cell"
+                                      aria-label={`Poznámka: ${o.name}`}
+                                      value={
+                                        edit.internal_note ?? p.internal_note
+                                      }
+                                      onChange={(e) =>
+                                        editInline(p, {
+                                          internal_note: e.target.value,
+                                        })
+                                      }
+                                      disabled={!!inlineSaving || loading}
+                                      onBlur={(e) => {
+                                        if (e.target.value !== p.internal_note)
+                                          void saveInline(p, {
+                                            internal_note: e.target.value,
+                                          });
+                                      }}
+                                    />
+                                  ) : (
+                                    p.internal_note || "—"
+                                  )}
+                                </td>
+                                <td className="empty-cell">—</td>
+                                <td className="empty-cell">—</td>
+                                <td>
+                                  {canEdit ? (
+                                    <select
+                                      className="cell-control"
+                                      aria-label={`Owner: ${o.name}`}
+                                      value={edit.owner_id ?? p.owner_id}
+                                      disabled={!!inlineSaving || loading}
+                                      onChange={(e) =>
+                                        void saveInline(p, {
+                                          owner_id: e.target.value,
+                                        })
+                                      }
+                                    >
+                                      {data.members
+                                        .filter(
+                                          (m) =>
+                                            m.edition_id === editionId &&
+                                            m.role !== "viewer",
+                                        )
+                                        .map((m) => (
+                                          <option
+                                            key={m.user_id}
+                                            value={m.user_id}
+                                          >
+                                            {m.display_name}
+                                          </option>
+                                        ))}
+                                    </select>
+                                  ) : (
+                                    data.members.find(
+                                      (m) =>
+                                        m.edition_id === editionId &&
+                                        m.user_id === p.owner_id,
+                                    )?.display_name
+                                  )}
+                                </td>
+                                <td>
+                                  {canEdit ? (
+                                    <div className="contact-cells">
+                                      <input
+                                        className="cell-control"
+                                        aria-label={`Jméno kontaktu: ${o.name}`}
+                                        value={
+                                          edit.contact_name ?? c?.name ?? ""
+                                        }
+                                        onChange={(e) =>
+                                          editInline(p, {
+                                            contact_name: e.target.value,
+                                          })
+                                        }
+                                        placeholder="Jméno"
+                                        disabled={!!inlineSaving || loading}
+                                        onBlur={(e) => {
+                                          if (
+                                            e.target.value !== (c?.name || "")
+                                          )
+                                            void saveInline(p, {
+                                              contact_name: e.target.value,
+                                            });
+                                        }}
+                                      />
+                                      <input
+                                        className="cell-control"
+                                        aria-label={`Telefon kontaktu: ${o.name}`}
+                                        value={
+                                          edit.contact_phone ?? c?.phone ?? ""
+                                        }
+                                        onChange={(e) =>
+                                          editInline(p, {
+                                            contact_phone: e.target.value,
+                                          })
+                                        }
+                                        placeholder="Telefon"
+                                        disabled={!!inlineSaving || loading}
+                                        onBlur={(e) => {
+                                          if (
+                                            e.target.value !== (c?.phone || "")
+                                          )
+                                            void saveInline(p, {
+                                              contact_phone: e.target.value,
+                                            });
+                                        }}
+                                      />
+                                      <input
+                                        className="cell-control"
+                                        aria-label={`E-mail kontaktu: ${o.name}`}
+                                        value={
+                                          edit.contact_email ?? c?.email ?? ""
+                                        }
+                                        onChange={(e) =>
+                                          editInline(p, {
+                                            contact_email: e.target.value,
+                                          })
+                                        }
+                                        placeholder="E-mail"
+                                        disabled={!!inlineSaving || loading}
+                                        onBlur={(e) => {
+                                          if (
+                                            e.target.value !== (c?.email || "")
+                                          )
+                                            void saveInline(p, {
+                                              contact_email: e.target.value,
+                                            });
+                                        }}
+                                      />
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <span>{c?.name || "—"}</span>
+                                      <small>
+                                        {[c?.phone, c?.email]
+                                          .filter(Boolean)
+                                          .join(" · ")}
+                                      </small>
+                                    </>
+                                  )}
                                 </td>
                                 <td>
                                   {s ? (
@@ -1004,6 +1277,9 @@ function PartnerDetail({
   const c = data.people.find((c) => c.id === o.primary_contact_id);
   const s = data.partnerships.find((s) => s.prospect_id === p.id);
   const ds = data.deliverables.filter((d) => d.partnership_id === s?.id);
+  const partnerHistory = data.partnerHistory
+    .filter((record) => record.organization_id === o.id)
+    .sort((a, b) => b.year - a.year);
   const [draft, setDraft] = useState<DeliverableInput | null>(null);
   const [tab, setTab] = useState("overview");
   const owner = data.members.find(
@@ -1113,6 +1389,34 @@ function PartnerDetail({
                   </dd>
                 </div>
               </dl>
+            </section>
+            <section className="panel">
+              <p className="eyebrow">Historie</p>
+              <h2>Dřívější SVDT</h2>
+              {!partnerHistory.length && (
+                <p className="muted">Zatím bez importované historie.</p>
+              )}
+              {partnerHistory.map((record) => (
+                <div key={record.id} className="history-record">
+                  <strong>
+                    {record.event_name} {record.year}
+                  </strong>
+                  <p>
+                    Částka:{" "}
+                    {record.cash_amount_czk === null
+                      ? "neuvedena"
+                      : new Intl.NumberFormat("cs-CZ", {
+                          style: "currency",
+                          currency: "CZK",
+                          maximumFractionDigits: 0,
+                        }).format(record.cash_amount_czk)}
+                  </p>
+                  {record.position && <p>Pozice: {record.position}</p>}
+                  {record.fulfillment && (
+                    <p className="preserve">Plnění: {record.fulfillment}</p>
+                  )}
+                </div>
+              ))}
             </section>
             <section className="panel">
               <p className="eyebrow">Pouze interně</p>

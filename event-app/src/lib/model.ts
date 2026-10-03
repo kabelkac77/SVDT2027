@@ -1,4 +1,9 @@
-export const statuses = ["osloven", "potvrzen", "zamítnut"] as const;
+export const statuses = [
+  "neosloven",
+  "osloven",
+  "potvrzen",
+  "zamítnut",
+] as const;
 export const fulfillmentStatuses = [
   "nesplněno",
   "v řešení",
@@ -54,6 +59,16 @@ export type Deliverable = {
   evidence_url: string;
   version: number;
 };
+export type PartnerHistoricalRecord = {
+  id: string;
+  organization_id: string;
+  event_name: string;
+  year: number;
+  cash_amount_czk: number | null;
+  fulfillment: string;
+  position: string;
+  source_ref: string;
+};
 export type Audit = {
   id: string;
   edition_id: string;
@@ -73,6 +88,7 @@ export type Data = {
   prospects: Prospect[];
   partnerships: Partnership[];
   deliverables: Deliverable[];
+  partnerHistory: PartnerHistoricalRecord[];
   audit: Audit[];
 };
 export type PartnerInput = {
@@ -200,4 +216,12 @@ export function normalized(value: string) {
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
     .toLocaleLowerCase("cs");
+}
+
+// Source rows may overlap: only one unambiguous historical amount is a total.
+// This legacy import field is in whole CZK, unlike the Finance ledger in haléře.
+export function historicalAmount(
+  records: PartnerHistoricalRecord[],
+): number | null {
+  return records.length === 1 ? records[0].cash_amount_czk : null;
 }

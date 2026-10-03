@@ -1,6 +1,6 @@
 # Předání organizační aplikace SVDT do Claude Code
 
-Stav k 2026-09-28. Tento dokument je výchozí mapa; aktuální změny ověř proti kódu a `git status`. Source of truth zůstává celý adresář `event-app-zadani/`.
+Aktualizováno 2026-10-03; aktuální Partneři a ověření viz `IMPLEMENTATION-STATUS.md` (10 DB/doménových a 15 browser testů). Historické popisy níže zachycují předání z 2026-09-28. Tento dokument je výchozí mapa; aktuální změny ověř proti kódu a `git status`. Source of truth zůstává celý adresář `event-app-zadani/`.
 
 ## Jak začít
 
@@ -74,6 +74,7 @@ Všechny následující cesty jsou relativní k `event-app/`:
 | `src/components/social-login.tsx` | OAuth dostupnost a přesměrování |
 | `src/components/whatsapp-login.tsx` | Odložená telefonní metoda, ponechat vypnutou |
 | `supabase/migrations/202609280001_partners.sql` | Partnerské tabulky, RLS, RPC a audit |
+| `supabase/migrations/202609290001_partner_history.sql` | `neosloven` a historie organizace; lokálně ověřeno, stav produkční aplikace neověřen |
 | `supabase/bootstrap-admin.sql` | Jednorázová příprava admina, ne běžný seed |
 | `tests/database.test.ts`, `tests/finance.test.ts` | PGlite/RLS/transakce a peněžní pravidla |
 | `tests/browser/` | Uživatelské průchody a mock Auth |
@@ -94,7 +95,7 @@ npm run test:e2e
 
 `npm ci` je potřeba při přípravě závislostí, nikoli před každým testem. Pro náhled `npm run dev`; výchozí adresa `http://127.0.0.1:3000`. `event-app/.env.example` obsahuje pouze názvy veřejných proměnných. `.env.local` existuje lokálně a není v Gitu; pro nový stroj použij bezpečné předání konfigurace. Nikdy nenastavuj service-role klíč jako `NEXT_PUBLIC_*`.
 
-Playwright používá nainstalovaný Chrome. Vytvořený testovací server zapíná `NEXT_PUBLIC_WHATSAPP_ENABLED=true` pouze pro mock scénáře; skutečný Phone provider je vypnutý. Má-li Playwright použít již běžící server, musí být stejný flag nastavený při jeho spuštění, jinak WhatsApp testy neuvidí tlačítko. Běžný náhled/provoz ponechává flag vypnutý. Browser Auth testy vyžadují URL a publishable key v konfiguraci, požadavky OAuth/OTP v testech jsou mockované.
+Playwright používá nainstalovaný Chrome. Vytvořený testovací server zapíná `NEXT_PUBLIC_WHATSAPP_ENABLED=true` pouze pro mock scénáře; skutečný Phone provider je vypnutý. Playwright nepoužívá již běžící server. Běžný náhled/provoz ponechává flag vypnutý. Od 2026-10-03 testovací server používá vlastní fiktivní URL/klíč a nepřebírá již běžící server. Produkční `.env.local` pro testy není potřeba; port 3000 musí být volný. OAuth/OTP i partnerské Data API v nových scénářích jsou mockované.
 
 Dosavadní výsledek: 7 databázových/doménových testů, 12 browser testů, TypeScript a produkční build prošly. Poslední běh po změně WhatsApp: typecheck + 12 browser + build; DB/domain testy prošly předtím a DB se následně neměnila. Jde o lokální ověření, nikoli plné live přihlášení OAuth/Twilio.
 

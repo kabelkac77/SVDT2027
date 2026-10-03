@@ -5,7 +5,7 @@ Detailní implementační model a obrazovky: [10-PARTNERI-MODEL-A-FLOW.md](10-PA
 ## Interní V1
 - centrální profil organizace,
 - owner,
-- stav: osloven / potvrzen / zamítnut,
+- stav: neosloven / osloven / potvrzen / zamítnut,
 - obecná interní poznámka,
 - datum dalšího kroku/kontaktu.
 

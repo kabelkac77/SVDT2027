@@ -17,7 +17,7 @@ npm run dev
 
 ## Připojení skutečné evidence
 
-1. V existujícím nebo novém Supabase projektu aplikovat `supabase/migrations/202609280001_partners.sql` standardním migračním postupem. Migrace je pro prázdné tabulky tohoto modulu, není opakovatelný reset. Produkční projekt ani hosting nebyly tímto commitem vytvořeny.
+1. V izolovaném testovacím prostředí aplikovat partnerské migrace v pořadí: `supabase/migrations/202609280001_partners.sql`, potom `202609290001_partner_history.sql` (stav `neosloven` a pouze čitelná historie organizace). Před změnou existujícího prostředí ověřit jeho migrační historii; již použitou migraci neopakovat. Produkční aplikace migrací vyžaduje výslovný pokyn uživatele. Migrace je pro prázdné tabulky tohoto modulu, není opakovatelný reset. Produkční projekt ani hosting nebyly tímto commitem vytvořeny.
 2. Zkopírovat `.env.example` do `.env.local`, vyplnit project URL a veřejný publishable key. Nikdy nepoužívat service_role/secret key v `NEXT_PUBLIC_*` ani v Git.
 3. Připravit přihlašování dle `../event-app-zadani/PRIHLASOVANI.md`: Google, Apple, Facebook přes Supabase OAuth; e-mail/heslo zůstává záloha pro připravené účty. Tlačítka se zobrazí po aktivaci v Supabase. Pro první sociální přihlášení nových uživatelů musí Auth dovolovat vytvoření účtu; tento účet nezískává členství. Crew samoobsluha ani zvání z UI zatím nejsou implementované.
 4. Přidat Event, Edition a členství v SQL editoru jako správce. Příklad níže používá placeholder pro UUID **existujícího Auth uživatele**; nejprve jej nahraď.
@@ -58,7 +58,7 @@ npm run build
 npm run test:e2e
 ```
 
-DB testy používají skutečný PostgreSQL engine PGlite: RLS, RPC transakce, izolace ročníků, potvrzení, konflikty verzí, rollback, audit, archiv a plnění. Playwright kontroluje uživatelské flow a mobilní viewport; výchozí je nainstalovaný Google Chrome. Pro samostatný Chromium použij `npx playwright install chromium` a `PLAYWRIGHT_CHANNEL=chromium npm run test:e2e`.
+DB testy aplikují obě migrace a používají PostgreSQL engine PGlite: RLS, RPC transakce, izolace ročníků, potvrzení, konflikty verzí, rollback, audit, archiv a plnění. Playwright kontroluje i úpravy řádků, chybu/verzi, historii a mobilní viewport. Spouští vlastní lokální server na portu 3000 s fiktivní Supabase URL/klíčem a mock Auth/Data API; port musí být volný. Nepřebírá běžící server a nepotřebuje produkční `.env.local`; výchozí je nainstalovaný Google Chrome. Pro samostatný Chromium použij `npx playwright install chromium` a `PLAYWRIGHT_CHANNEL=chromium npm run test:e2e`.
 
 ## Technické poznámky
 

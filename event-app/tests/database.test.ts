@@ -6,6 +6,13 @@ const sql = await readFile(
   new URL("../supabase/migrations/202609280001_partners.sql", import.meta.url),
   "utf8",
 );
+const historySql = await readFile(
+  new URL(
+    "../supabase/migrations/202609290001_partner_history.sql",
+    import.meta.url,
+  ),
+  "utf8",
+);
 const user = "00000000-0000-0000-0000-000000000001",
   viewer = "00000000-0000-0000-0000-000000000002",
   outsider = "00000000-0000-0000-0000-000000000003";
@@ -18,6 +25,7 @@ async function setup() {
     `create schema auth;create table auth.users(id uuid primary key);create role anon nologin;create role authenticated nologin;grant usage on schema public,auth to authenticated;create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;`,
   );
   await db.exec(sql);
+  await db.exec(historySql);
   await db.exec(
     `insert into auth.users values('${user}'),('${viewer}'),('${outsider}');insert into events(id,name) values('${event}','Test');insert into editions(id,event_id,year,name) values('${e1}','${event}',2027,'2027'),('${e2}','${event}',2028,'2028');insert into edition_members values('${e1}','${user}','Admin','admin'),('${e1}','${viewer}','Viewer','viewer'),('${e2}','${user}','Admin','admin');`,
   );
@@ -243,6 +251,67 @@ test("deliverables validate edition, owner, status, URL and version; audit actor
     const audit = (await db.query<any>("select * from audit_log")).rows;
     assert(audit.every((a) => a.actor_id === user));
     assert.equal(audit.length, 4);
+  } finally {
+    await db.close();
+  }
+});
+
+test("uncontacted prospects and historical evidence stay separate; history is read-only and RLS protected", async () => {
+  const db = await setup();
+  try {
+    await as(db, user);
+    const id = await save(db, { ...input(), status: "neosloven" });
+    const p = await editInput(db, id);
+    assert.equal(
+      (await db.query("select * from edition_partnerships")).rows.length,
+      0,
+    );
+    await db.exec("reset role");
+    await db.query(
+      `insert into partner_historical_records(organization_id, year, cash_amount_czk, source_ref)
+      values($1,2025,null,'fixture:1'),($1,2026,0,'fixture:2')`,
+      [p.organization_id],
+    );
+    for (const identity of [user, viewer]) {
+      await as(db, identity);
+      const rows = (
+        await db.query<{ cash_amount_czk: number | null }>(
+          "select * from partner_historical_records order by year",
+        )
+      ).rows;
+      assert.equal(rows.length, 2);
+      assert.equal(rows[0].cash_amount_czk, null);
+      assert.equal(Number(rows[1].cash_amount_czk), 0);
+      await assert.rejects(
+        () => db.exec("delete from partner_historical_records"),
+        /permission denied/,
+      );
+    }
+    await as(db, outsider);
+    assert.equal(
+      (await db.query("select * from partner_historical_records")).rows.length,
+      0,
+    );
+    await db.exec("reset role;set role anon");
+    await assert.rejects(
+      () => db.exec("select * from partner_historical_records"),
+      /permission denied/,
+    );
+    await as(db, user);
+    await save(db, { ...p, status: "potvrzen" });
+    await save(db, { ...(await editInput(db, id)), status: "neosloven" });
+    assert.equal(
+      (await db.query("select * from edition_partnerships")).rows.length,
+      1,
+    );
+    await db.exec(
+      `reset role;update editions set archived=true where id='${e1}'`,
+    );
+    await as(db, user);
+    await assert.rejects(
+      () => save(db, { ...p, version: 3 }),
+      /EDITION_ARCHIVED/,
+    );
   } finally {
     await db.close();
   }

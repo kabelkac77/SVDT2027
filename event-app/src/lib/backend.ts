@@ -36,6 +36,7 @@ export async function loadData(): Promise<Data> {
     "partner_prospects",
     "edition_partnerships",
     "partner_deliverables",
+    "partner_historical_records",
     "audit_log",
   ];
   const values = await Promise.all(names.map(allRows));
@@ -48,6 +49,7 @@ export async function loadData(): Promise<Data> {
       "prospects",
       "partnerships",
       "deliverables",
+      "partnerHistory",
       "audit",
     ].map((k, i) => [k, values[i]]),
   ) as Data;

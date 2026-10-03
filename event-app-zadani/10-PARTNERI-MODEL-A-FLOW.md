@@ -20,7 +20,7 @@ Všechny entity mají UUID. Provozní tabulky nesou `edition_id`; čas je UTC ti
 | Person | id, name, email, phone | Centrální kontaktní osoba; kontakt nemusí mít login. E-mail není globální unikátní identifikátor. |
 | Organization | id, name, country_code, registration_id, website, primary_contact_id, version | Centrální profil. IČO/registrační číslo je text; unikátní země + vyplněné číslo. Nevyplněná čísla se ukládají jako NULL. Jméno nemusí být unikátní. |
 | EditionMember | edition_id, user_id → auth.users, display_name, role | Interní přístup; role admin / manager / viewer. Owner musí být admin nebo manager daného ročníku. Uživatelské členství se nikdy nezakládá registrací samo. |
-| PartnerProspect | id, edition_id, organization_id, owner_id, status, internal_note, next_contact_on, version | Unikátní edition + organization. Status osloven / potvrzen / zamítnut. Interní obchodní údaje jsou ročníkové, ne globální. |
+| PartnerProspect | id, edition_id, organization_id, owner_id, status, internal_note, next_contact_on, version | Unikátní edition + organization. Status neosloven / osloven / potvrzen / zamítnut. Interní obchodní údaje jsou ročníkové, ne globální. |
 | EditionPartnership | id, edition_id, prospect_id, confirmed_at | Vznikne atomicky při prvním potvrzení, právě jednou. ID je budoucí vazba pro Finance a Portal. |
 | PartnerDeliverable | id, edition_id, partnership_id, title, status, due_on, evidence_url, version | Nesplněno / v řešení / splněno. Důkaz je volitelný HTTP(S) odkaz; soubory později přes Document. |
 | AuditLog | id, edition_id, actor_id, entity, entity_id, action, old_data, new_data, created_at | Interní append-only historie; autor odvozen z ověřené identity, ne z formuláře. |
@@ -62,3 +62,12 @@ Implementace v `event-app/`: Next.js + TypeScript, Supabase Auth/PostgreSQL/Post
 - Storage souborů, Synology integrace, retenční pravidla, více důkazů jednoho plnění.
 - VIP QR/accreditation kontrakt, questionnaire, post-event report a finance dle Excelu.
 - Produkční Supabase projekt, uživatelské účty/členství, hosting a backup. Žádná služba se tímto dokumentem nezakládá ani neobjednává.
+
+## 2026-10-03 — dokončení pracovní tabulky a historie
+
+- Pracovní tabulka upravuje stav včetně `neosloven`, ownera, datum dalšího kontaktu, poznámku a hlavní kontakt přes stejné `save_partner` RPC a dvojí kontrolu verzí jako detail. Změna globálního kontaktu platí také pro ostatní ročníky organizace.
+- Během zápisu jsou všechny editory řádků i přepnutí ročníku blokované. Neúspěšný vstup zůstává v řádku; lze jej opravit nebo znovu uložit tlačítkem. Při konfliktu nedochází k automatickému přepsání nové verze; explicitní načtení aktuálních dat zahodí rozpracované úpravy. Demo doplní chybějící historii ve starším localStorage bez resetu uživatelských změn.
+- `partner_historical_records` je oddělená, klientem pouze čitelná evidence u organizace, chráněná `can_read_organization`. Nemění potvrzení nového ročníku. Migrace `202609290001_partner_history.sql` rozšiřuje constraint stavů a přidává historii; neobsahuje skutečná data a byla ověřena pouze lokálně. Stav jejího použití v existujícím Supabase není tímto ověřen ani změněn.
+- Legacy importní pole `cash_amount_czk` uchovává celé Kč historického podkladu. Není finančním ledgerem. Finance budou používat samostatné celočíselné haléře; převod historických hodnot vyžaduje explicitní násobení 100 a kontrolu původu. Případnou změnu jednotek tohoto existujícího schématu řešit novou migrací, nikdy přepsáním použité migrace.
+- Sloupec „Kč z 2025“ ukazuje částku jen pro jediný jednoznačný záznam `SVDT` z roku 2025. NULL, žádný záznam nebo více potenciálně překrývajících se zdrojů znamenají „—“, nula se zobrazí jako nula. Detail ukazuje jednotlivé roky, částky a plnění; záznamy různých akcí se nesčítají do tohoto sloupce.
+- Sloupce fakturace, aktuálních částek, typu partnerství a souborů zůstávají bez hodnot, dokud nejsou jejich moduly skutečně implementované. Historický import, portál ani produkční nasazení nejsou součástí této dodávky.

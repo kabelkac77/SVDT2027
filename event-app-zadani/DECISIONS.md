@@ -116,3 +116,12 @@ Uživatel rozhodl, že instrukce a skills nejsou výchozí pro celý repozitář
 - Veřejný zdroj zadání je `event-app-zadani/`; název odlišuje dokumentaci a rozhodnutí od zdrojového kódu v `event-app/`.
 - Neveřejné zdrojové podklady jsou v `event-app-podklady-soukrome/` v repozitáři `vojtechhrach/SVDT2027-soukrome/`. Název výslovně říká, že nejde o druhou aplikaci ani o bezpečné místo pro klíče.
 - `AGENTS.md`, `CLAUDE.md` a projektové skills patří výhradně do `event-app/`. Všechny interní odkazy byly změněny spolu s přejmenováním; GitHub workflow ani běhový kód cestu zadání nepoužívají.
+
+## 2026-10-03 — dokončení lokálních změn Partnerů
+
+Implementační rozhodnutí (kód a lokální testy; žádná produkční změna):
+
+- Pracovní tabulka používá existující transakční `save_partner`, obě verze a audit. Zápisy řádků se serializují; během ukládání se blokují ostatní editory a změna ročníku. Chyba zachová draft; konflikt vyžaduje vědomé načtení nové verze, nikoli automatické přepsání. Detail: `10-PARTNERI-MODEL-A-FLOW.md`.
+- Historie organizace je pouze čitelná pro oprávněného interního člena. Stav `neosloven` se nepřevádí na potvrzené partnerství. Historické `cash_amount_czk` je legacy pole celých Kč, oddělené od budoucího finančního ledgeru v haléřích. Neznámá částka není nula; více zdrojových řádků se nesčítá bez kontroly překryvů.
+- Browser testy používají vlastní lokální server s fiktivní URL a klíčem Supabase a mock API. Existující běžící server se nepřebírá. Mock test ani PGlite nejsou důkazem live Auth/PostgREST; migrace se v produkci v tomto úkolu neaplikuje.
+- Uživatel výslovně zadal samostatný otestovaný commit a push Partnerů na `main`; Finance mají následně pouze detailní implementační plán. Nasazení, produkční změny a aktivace placených služeb vyžadují další výslovný pokyn.

@@ -11,9 +11,13 @@ export default defineConfig({
   reporter: "list",
   webServer: {
     command: "npm run dev",
-    env: { NEXT_PUBLIC_WHATSAPP_ENABLED: "true" },
+    env: {
+      NEXT_PUBLIC_WHATSAPP_ENABLED: "true",
+      NEXT_PUBLIC_SUPABASE_URL: "https://svdt-test.supabase.co",
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_test_fixture",
+    },
     url: "http://127.0.0.1:3000",
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 120000,
   },
 });
