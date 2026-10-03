@@ -10,3 +10,5 @@ Zdrojové sešity, odkazy, podrobná mapa buněk a neveřejné výsledky kontrol
 - Samostatně vyřešit finanční oprávnění; role v Partnerech neposkytuje automatický přístup k Financím.
 
 Model a flow: `11-FINANCE-MODEL-A-FLOW.md`. Finance zatím fungují jako lokální demo; finanční migrace ani ostrý import nejsou dokončené.
+
+Implementační návaznost 2026-10-03: [11-FINANCE-IMPLEMENTACNI-PLAN.md](11-FINANCE-IMPLEMENTACNI-PLAN.md), §10. Zachovat soukromou review frontu, fingerprint i původní řádky/vzorce, explicitní význam částek, ročník a split akcí. Historii 2026 lze přenést jen jako vědomý návrh plánu, nikoli schválení nebo úhrady 2027. V tomto kroku žádný finanční podklad znovu neimportujeme.

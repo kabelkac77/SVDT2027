@@ -58,3 +58,9 @@ Ověřeno na shodné dočasné kopii `/private/tmp/svdt2027-verify/event-app` be
 - Vizuální kontrola desktopu a mobilu; SHA-256 shoda aplikačních zdrojů ověřovací kopie. `next dev/build` v kopii generuje `next-env.d.ts` a vlastní blok v `AGENTS.md`; tyto generované úpravy se do zdroje nepřenášejí.
 
 Migrace `202609290001_partner_history.sql` je součástí kódu, testuje se po původní migraci. Nebyla zde aplikována do produkce; stav jejího dřívějšího použití není ověřen. Skutečný Auth/PostgREST a více souběžných účtů dál vyžadují izolovanou live akceptaci. Finance zůstávají demo; tento krok nepřidává jejich backend ani ostrý import.
+
+## 2026-10-03 — Finance: detailní implementační plán
+
+Připraven `11-FINANCE-IMPLEMENTACNI-PLAN.md`: konkrétní tabulky/vazby, samostatná oprávnění a audit, schvalování, peněžní veličiny a NULL, osobní plátci/proplacení, RPC/souběh/idempotence, opravy, soukromé doklady, importní provenance, export/obnova, UI a etapy B0–B6 s akceptací. Modelové závěry jsou současně v `11-FINANCE-MODEL-A-FLOW.md` a `DECISIONS.md`; odkazy/backlog byly sjednocené.
+
+Jde pouze o dokumentovaný návrh. Nebyla vytvořena finanční migrace, aktivována služba, změněn produkční grant ani importován skutečný finanční řádek. Konkrétní role osob, self-approval, význam daňových částek a provozní volby zůstávají otevřené podle plánu. První doporučená implementace je B1 po uzavření B0 v izolovaném prostředí.

@@ -9,6 +9,7 @@ Tato složka je source of truth pro organizační strukturu SVDT 2027 a připrav
 - BACKLOG.md — otevřené body, podklady a další práce.
 - 10-PARTNERI-MODEL-A-FLOW.md — detailní model, oprávnění a UI/flow interní V1 Partnerů.
 - 10-PARTNERI-IMPORT.md — filtrace partnerského Excelu a pravidla přenosu historie.
+- 11-FINANCE-IMPLEMENTACNI-PLAN.md — konkrétní návrh finančního Supabase backendu, rolí/RPC, schvalování, importu a etap s akceptací; zatím bez implementace.
 - IMPLEMENTATION-STATUS.md — skutečně implementované, ověřené a dosud nehotové části.
 - PRIHLASOVANI.md — Google/Apple/Facebook, nastavení a cenový podklad WhatsApp.
 - SPOLUPRACE-A-ZALOHY.md — návrh spolupráce Claude/Codex a požadavek na denní zálohy/CSV/Excel; provoz zatím není aktivovaný.

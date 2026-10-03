@@ -66,7 +66,10 @@
 - [x] Propojené lokální demo Partneři/Finance a model zkušebního flow — `11-FINANCE-MODEL-A-FLOW.md`. Sdílený backend zůstává otevřený.
 - [ ] načíst Excel, schema plan/actual, faktury/přílohy/payment status, později Fio API.
 - [x] Načíst všech šest listů dodaného rozpočtu, mapovat zdroje a převodní pravidla — `11-FINANCE-PODKLAD.md`.
-- [ ] Detailní model a UI/flow: oddělený plán, potvrzená částka, částečné úhrady, osobní vyrovnání; kontrola překryvů hlavní akce/afterparty.
+- [x] Detailní implementační plán backendu, modelu a UI/flow — `11-FINANCE-IMPLEMENTACNI-PLAN.md` (2026-10-03). Návrh samostatných rolí a self-approval čeká na potvrzení; implementace zůstává otevřená.
+- [ ] B0: potvrdit konkrétní finanční role, self-approval a význam částek podkladu.
+- [ ] B1: finanční grant + položka/schválení + částečná úhrada + idempotence/audit v izolovaném prostředí.
+- [ ] B2–B6: osobní platby/barter, opravy, soukromé doklady, import/export/obnova a akceptace podle plánu.
 - [ ] Implementace, finanční oprávnění a ověřený import. Souhrnná položka zůstává otevřená.
 
 ## Další moduly

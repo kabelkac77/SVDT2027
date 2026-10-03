@@ -125,3 +125,15 @@ Implementační rozhodnutí (kód a lokální testy; žádná produkční změna
 - Historie organizace je pouze čitelná pro oprávněného interního člena. Stav `neosloven` se nepřevádí na potvrzené partnerství. Historické `cash_amount_czk` je legacy pole celých Kč, oddělené od budoucího finančního ledgeru v haléřích. Neznámá částka není nula; více zdrojových řádků se nesčítá bez kontroly překryvů.
 - Browser testy používají vlastní lokální server s fiktivní URL a klíčem Supabase a mock API. Existující běžící server se nepřebírá. Mock test ani PGlite nejsou důkazem live Auth/PostgREST; migrace se v produkci v tomto úkolu neaplikuje.
 - Uživatel výslovně zadal samostatný otestovaný commit a push Partnerů na `main`; Finance mají následně pouze detailní implementační plán. Nasazení, produkční změny a aktivace placených služeb vyžadují další výslovný pokyn.
+
+## 2026-10-03 — plán skutečných Financí v Supabase
+
+**Implementační návrh, nikoli schválení produkční aktivace či konkrétních rolí.** Detail: `11-FINANCE-IMPLEMENTACNI-PLAN.md`, návaznost dema: `11-FINANCE-MODEL-A-FLOW.md`.
+
+- Finance oddělí plán (včetně NULL), schválenou potvrzenou částku, vypořádání protistrany a peněžní tok pořadatele. CZK/haléře zůstávají; bigint agregace se přes API přenesou jako řetězce bez ztráty přesnosti. Neznámé částky nejsou nulami.
+- Navržen samostatný ročníkový finance grant reader/editor/approver/admin a schvalování konkrétní verze. Partnerský admin/manager automaticky nedostane finance. Konkrétní příjemci práv a self-approval jsou OPEN před implementací/aktivací.
+- Finanční audit bude v samostatné chráněné tabulce: dnešní partnerský `audit_log` čtou všichni interní členové a nesmí obsahovat finanční payloady. Globální profily dostanou úzké finanční čtecí politiky; partnerské helpery se nerozšíří tak, aby se změnila práva k historii.
+- Protistrany: globální Organization/Person + ročníkový finanční registr; dodavatel se nebude vydávat za PartnerProspect. Osobní plátce je Person, autor změny Auth UUID; proplacení odkazuje na konkrétní osobní platbu. Náklad ani dodavatelský zůstatek se proplacením nesmí započíst podruhé, barter není peněžní tok.
+- Zápisy: transakční RPC, kontrola verzí, zámek položky/archivu/grantu, request_id s kontrolou payloadu a bezpečným replay. Ledger bez přímých editací/mazání. Evidenční storno a skutečná vratka jsou odlišné procesy.
+- Návrh dokladů používá soukromý Storage a metadata; faktura sama není úhradou a více dokladů nesmí podruhé započítat částku položky. Správa grantů se serializuje po ročníku, aby souběh neobešel ochranu posledního admina. Import zachová provenance, vyřadí souhrny/duplicity, explicitně rozdělí akce a nepřenese úhrady 2026 do 2027. Ostrý import ani placená služba se nyní neaktivují.
+- Doporučený první celek B1: grant, návrh/schválení položky, bankovní/hotovostní částečná úhrada, idempotence a oddělený audit v izolovaném prostředí. Další B2–B6 doplní osoby/barter, opravy, doklady, import/export/obnovu a skutečnou akceptaci. Produkční práce až na samostatný výslovný pokyn uživatele.

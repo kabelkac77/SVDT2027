@@ -2,7 +2,7 @@
 
 V1 vychází z Vojtova stávajícího Excelu.
 
-Propojený lokální náhled a jeho rozsah: [11-FINANCE-MODEL-A-FLOW.md](11-FINANCE-MODEL-A-FLOW.md). Sdílený finanční backend zatím není implementovaný.
+Propojený lokální náhled a jeho rozsah: [11-FINANCE-MODEL-A-FLOW.md](11-FINANCE-MODEL-A-FLOW.md). Sdílený finanční backend zatím není implementovaný. Detailní plán Supabase, oprávnění a etap: [11-FINANCE-IMPLEMENTACNI-PLAN.md](11-FINANCE-IMPLEMENTACNI-PLAN.md) (2026-10-03; návrh bez produkčních změn).
 
 Rozpočet dodán a načten 2026-09-28. Mapa šesti listů, pravidla převodu a otevřené otázky: [11-FINANCE-PODKLAD.md](11-FINANCE-PODKLAD.md). Obsahuje historii 2026, afterparty a starší partnerské podklady; není to schválený rozpočet 2027.
 

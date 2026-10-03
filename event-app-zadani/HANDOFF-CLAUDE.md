@@ -138,3 +138,9 @@ Oficiální formát ověřen při přípravě: [Claude Code memory](https://code
 ## Rozdělení veřejné a neveřejné části — 2026-09-29
 
 Veřejný kód a obecná specifikace zůstávají v `kabelkac77/SVDT2027`, dokumentace v `event-app-zadani/`. Neveřejné podklady a provozní údaje patří do soukromého `vojtechhrach/SVDT2027-soukrome/event-app-podklady-soukrome/`. Hesla a klíče se neverzují nikde. Přístupy k oběma repozitářům se ověřují odděleně.
+
+## Aktuální další krok — 2026-10-03
+
+Partneři (pracovní tabulka, `neosloven`, historie) jsou uzavření v samostatném otestovaném commitu `707d560` na `main`; TypeScript/build, 10 DB/doménových a 15 browser testů prošly. Produkční migrace ani data se v tomto kroku neměnily. Zdrojové `.DS_Store` zůstaly mimo commit; konfigurace/podklady jsou ignorované.
+
+Finance mají detailní plán `11-FINANCE-IMPLEMENTACNI-PLAN.md`. Příští implementátor začne B0 (potvrdit otevřená finanční práva/schvalování), potom B1: oddělený grant/audit, návrh a schválení položky, bankovní/hotovostní částečná úhrada, verze a idempotentní RPC. Zůstává zákaz nasazení, produkčních mutací, ostrého importu a placené aktivace bez dalšího výslovného pokynu. Dnešní Finance jsou stále demo.
