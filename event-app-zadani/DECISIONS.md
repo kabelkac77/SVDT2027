@@ -1,5 +1,9 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-10-28 — přímá spolupráce Codex → místní Claude Code
+
+**CONFIRMED:** uživatel výslovně určil zahajovací prompt pro nastavení tohoto toku a bezpečné end-to-end ověření. Codex je jediný komunikační bod, připravuje zadání, nezávislé review/testy a Git; Claude Pro s výchozím modelem CLI připravuje implementace a opravy. Veřejný kód zůstává v `kabelkac77/SVDT2027` (`event-app/`, `event-app-zadani/`), účelové neveřejné podklady v samostatném soukromém repozitáři dle místního provozního záznamu. Oba přístupy ověřené přes místní GitHub CLI. SQLite, exporty, soukromé screenshoty a secrets mimo oba repozitáře. Nový projektový skill/runner, společný účtový kapacitní guard a zámek s iNice; iNice se nemění. Malé větve/Draft PR, žádný push main, deploy, ostrá migrace, zprávy nebo aktivace záloh. Skutečný stav ověření se průběžně eviduje v [22](22-CODEX-CLAUDE-SPOLUPRACE.md); příprava není důkaz úspěšného modelového/opravného běhu.
+
 ## 2026-09-28 — příprava předání Claude Code
 
 - Uživatel požádal o kompletní podklady, MD a skills pro předání další práce Claudovi. Připraven `event-app/CLAUDE.md`, místní `event-app/AGENTS.md`, `HANDOFF-CLAUDE.md` a čtyři projektové skills (start, implementace, review, design).

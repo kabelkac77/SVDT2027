@@ -1,5 +1,9 @@
 # SVDT — interní Partneři V1
 
+## Codex → místní Claude Code
+
+Projektový postup je v [skill](skills/svdt-claude-handoff/SKILL.md), stav/úložiště v [22](../event-app-zadani/22-CODEX-CLAUDE-SPOLUPRACE.md). Runner `tools/claude_handoff.py` pracuje jen s čistou izolovanou worktree, konkrétním issue, přesným HEAD a allowlistem; nejprve `--dry-run`. Sám nepublikuje a nepouští testy. Hostitelské kontroly z kořene repozitáře: `python3 -B -m unittest discover -s event-app/tests -p "*_test.py" -v` na syntetických datech. Nativní Claude Pro používá stejný účtový zámek/kapacitní guard jako iNice; soukromé podklady nejsou modelový kontext.
+
 Zdroj zadání: `../event-app-zadani/`. Model, oprávnění a hranice dodávky: `10-PARTNERI-MODEL-A-FLOW.md`; podklady: `10-PARTNERI-IMPORT.md`.
 
 ## Lokální spuštění

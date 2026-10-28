@@ -1,5 +1,9 @@
 # Spolupráce při vývoji a denní zálohy
 
+## Aktuální spolupráce — 2026-10-28
+
+Uživatel nyní výslovně zadal tok Codex → místní Claude Code: Codex zadání, nezávislé review, skutečné testy a Git; Claude implementace a opravy. Konkrétní nastavení, ověření přístupů, datové hranice a stav zkoušky jsou v [22-CODEX-CLAUDE-SPOLUPRACE.md](22-CODEX-CLAUDE-SPOLUPRACE.md). Historické doporučení modelu níže je nahrazené stávajícím nativním Claude Pro a výchozím modelem CLI bez API fallbacku. Toto není aktivace denních záloh.
+
 ## Stav — 2026-09-28
 
 Repozitář `kabelkac77/SVDT2027` je veřejný. Uživatel 2026-09-28 zadal aktualizaci tohoto repozitáře kódem, dokumentací a předáním pro Claude. Soukromé podklady, konfigurace a zálohy zůstávají mimo Git. Viditelnost repozitáře se nemění. iCloud kopie není náhradou verzování přes Git.
