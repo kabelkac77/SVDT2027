@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="cs" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>SVDT 2027 — pracovní UX návrh</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="fixtures.js"></script>
+  <script defer src="prototype.js"></script>
+</head>
+<body>
+  <section class="prototype-bar" aria-label="Ovládání návrhu">
+    <div><strong>PRACOVNÍ NÁVRH</strong><span>Fiktivní data · změny jen v otevřené stránce</span></div>
+    <label>Scénář<select id="profile"><option value="vojta">Vojta · finanční návrh</option><option value="vlasta">Vlasta · vlastní partneři (A1)</option><option value="reader">Čtenář Partnerů</option><option value="crew">Crew · budoucí varianta A3</option><option value="zone">Manažer zóny · budoucí návrh</option></select></label>
+    <label>Vzhled<select id="theme"><option value="light">Světlý návrh</option><option value="dark">Tmavý návrh</option></select></label>
+    <label>Stav<select id="scenario"><option value="ready">Běžná práce</option><option value="loading">Načítání</option><option value="empty">Prázdná evidence</option><option value="load-error">Chyba načtení</option><option value="save-error">Chyba uložení</option><option value="conflict">Konflikt verzí</option><option value="offline">Bez spojení</option><option value="archive">Archiv</option></select></label>
+    <button id="reset" type="button">Obnovit návrh</button>
+    <a href="crew.html">Nově: Lidi a crew · návrh</a>
+  </section>
+  <a class="skip" href="#main">Přejít k obsahu</a>
+  <div class="application">
+    <aside id="sidebar" class="sidebar">
+      <div class="wordmark">SVDT<span>ORGANIZACE AKCE</span></div>
+      <nav aria-label="Hlavní navigace">
+        <a href="#work" data-nav="work">Moje práce</a>
+        <a href="#partners" data-nav="partners">Partneři</a>
+        <a href="#finance" data-nav="finance" id="finance-nav">Finance</a>
+      </nav>
+      <div class="future"><p class="eyebrow">Cílová struktura</p><p>Lidé <small>Budoucí modul</small></p><p>Úkoly a harmonogram <small>Budoucí modul</small></p><p>Zóny a mapa <small>Budoucí modul</small></p><p>Závod <small>Budoucí modul</small></p><p>Dokumenty <small>Budoucí modul</small></p></div>
+      <p class="sidebar-note">Provozní skici crew a zóny jsou v nabídce scénářů nad návrhem.</p>
+    </aside>
+    <div class="workspace">
+      <header class="topbar"><button id="menu" class="mobile-menu" aria-expanded="false" type="button">Menu</button><label>Ročník<select id="edition"><option value="2027">SVDT 2027</option><option value="2026">SVDT 2026 · archiv</option></select></label><span class="top-context">Příprava · modelový pracovní den</span><span id="identity"></span></header>
+      <main id="main"><div id="app"></div></main>
+    </div>
+  </div>
+  <div id="feedback" class="feedback" aria-live="polite" role="status"></div>
+  <dialog id="dialog" aria-labelledby="dialog-title"><div id="dialog-content"></div></dialog>
+</body>
+</html>

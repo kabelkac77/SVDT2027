@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="cs" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>SVDT — Lidi a crew · pracovní návrh</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="crew.css">
+  <script defer src="crew.js"></script>
+</head>
+<body>
+  <section class="prototype-bar" aria-label="Ovládání návrhu">
+    <div><strong>LIDI A CREW · NÁVRH</strong><span>Vymyšlené osoby · nic se neukládá do aplikace</span></div>
+    <button type="button" id="crew-controls-toggle" aria-expanded="false">Zobrazit možnosti návrhu</button>
+    <label>Pohled<select id="crew-profile"><option value="leadership">Vedení · návrh C5</option><option value="zone">Vedoucí stavby · návrh C5</option><option value="self">Crew 01 · vlastní pohled</option></select></label>
+    <label>Vzhled<select id="crew-theme"><option value="light">Světlý</option><option value="dark">Tmavý</option></select></label>
+    <label>Stav<select id="crew-scenario"><option value="ready">Běžná práce</option><option value="archive">Archiv · jen pro čtení</option><option value="save-error">Chyba uložení</option><option value="conflict">Konflikt změn</option><option value="offline">Bez spojení</option></select></label>
+    <button type="button" id="crew-reset">Obnovit návrh</button>
+    <a href="index.html">Partneři a Finance</a>
+    <a href="crew-review.html">Mobilní náhled</a>
+  </section>
+  <a class="skip" href="#main">Přejít k obsahu</a>
+  <div class="application">
+    <aside class="sidebar" id="sidebar">
+      <div class="wordmark">SVDT<span>ORGANIZACE AKCE</span></div>
+      <nav aria-label="Navigace návrhu"><a href="index.html#work">Moje práce</a><a href="#people" id="people-nav">Lidi a crew</a><a href="#coverage" id="coverage-nav">Obsazenost</a><a href="#history-review" id="history-review-nav">Převzetí historie · návrh</a><a href="index.html#partners">Partneři · návrh</a></nav>
+      <p class="sidebar-note">První další priorita. Přístupové rozsahy, názvy stavů a hranice dodávky čekají na potvrzení C1–C8.</p>
+    </aside>
+    <div class="workspace">
+      <header class="topbar"><button type="button" id="crew-menu" class="mobile-menu" aria-expanded="false">Menu</button><strong id="crew-edition">SVDT 2027 · návrh</strong><span class="top-context">Termíny jsou modelové, nejsou datem závodu</span></header>
+      <main id="main"><div id="crew-app"></div></main>
+    </div>
+  </div>
+  <dialog id="crew-dialog" aria-labelledby="crew-dialog-title"><div id="crew-dialog-content"></div></dialog>
+  <div id="crew-feedback" class="feedback" aria-live="polite" role="status"></div>
+</body>
+</html>

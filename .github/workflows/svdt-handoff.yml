@@ -7,6 +7,9 @@ on:
       - "event-app/tools/review_receipt.py"
       - "event-app/tests/claude_handoff_test.py"
       - "event-app/tests/review_receipt_test.py"
+      - "event-app/tools/crew_workspace.py"
+      - "event-app/tests/crew_workspace_test.py"
+      - "event-app-zadani/wireframes/**"
       - ".github/workflows/svdt-handoff.yml"
   push:
     branches: [main]
@@ -15,6 +18,9 @@ on:
       - "event-app/tools/review_receipt.py"
       - "event-app/tests/claude_handoff_test.py"
       - "event-app/tests/review_receipt_test.py"
+      - "event-app/tools/crew_workspace.py"
+      - "event-app/tests/crew_workspace_test.py"
+      - "event-app-zadani/wireframes/**"
       - ".github/workflows/svdt-handoff.yml"
 
 permissions:
@@ -33,3 +39,12 @@ jobs:
           python-version: "3.12"
       - name: Ověřit hostitelské kontroly na fiktivních datech
         run: python3 -B -m unittest discover -s event-app/tests -p '*_test.py' -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Ověřit syntaxi veřejného rozhraní
+        run: |
+          node --check event-app-zadani/wireframes/crew-sheet.js
+          node --check event-app-zadani/wireframes/crew-workspace.js
+          node --check event-app-zadani/wireframes/crew-review.js
+          node --check event-app-zadani/wireframes/prototype.js

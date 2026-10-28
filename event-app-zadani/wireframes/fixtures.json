@@ -1,0 +1,870 @@
+{
+  "fictional": true,
+  "modelDay": "2027-04-24",
+  "edition": "2027",
+  "partners": [
+    {
+      "id": "p01",
+      "name": "Fiktivní partner 01 — Městská cyklistika",
+      "owner": "Vlasta",
+      "status": "potvrzen",
+      "contact": "Kontakt 01",
+      "email": "kontakt-01@example.invalid",
+      "note": "Domluvit rozsah spolupráce a potvrdit podklady.",
+      "next": "2027-04-23",
+      "shared": true,
+      "deliverables": [
+        {
+          "id": "d01",
+          "title": "Banner u cíle",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p02",
+      "name": "Fiktivní partner 02 — Technická podpora a servis",
+      "owner": "Vojta",
+      "status": "resi",
+      "contact": "Kontakt 02",
+      "email": "kontakt-02@example.invalid",
+      "note": "Čekáme na finální podobu banneru.",
+      "next": "2027-04-24",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p03",
+      "name": "Fiktivní partner 03 — Produkční vybavení a zázemí",
+      "owner": "Vlasta",
+      "status": "potvrzen",
+      "contact": "Kontakt 03",
+      "email": "kontakt-03@example.invalid",
+      "note": "Zajišťujeme vstupy a podklady k prezentaci.",
+      "next": null,
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d03",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p04",
+      "name": "Fiktivní partner 04 — Lokální občerstvení",
+      "owner": "Vojta",
+      "status": "neosloven",
+      "contact": "Kontakt 04",
+      "email": "kontakt-04@example.invalid",
+      "note": "Nový kandidát pro osobní oslovení.",
+      "next": "2027-04-26",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p05",
+      "name": "Fiktivní partner 05 — Sportovní komunita",
+      "owner": "Vlasta",
+      "status": "uzavren",
+      "contact": "",
+      "email": "",
+      "note": "Dohoda dokončena, uchovat podklady pro další ročník.",
+      "next": "2027-04-27",
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d05",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p06",
+      "name": "Fiktivní partner 06 — Tisk a reklamní plochy",
+      "owner": "Vojta",
+      "status": "odmitnut",
+      "contact": "Kontakt 06",
+      "email": "kontakt-06@example.invalid",
+      "note": "Spolupráce pro tento ročník odmítnuta.",
+      "next": null,
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p07",
+      "name": "Fiktivní partner 07 — Dopravní technika",
+      "owner": "Vlasta",
+      "status": "osloven",
+      "contact": "Kontakt 07",
+      "email": "kontakt-07@example.invalid",
+      "note": "Domluvit rozsah spolupráce a potvrdit podklady.",
+      "next": "2027-04-22",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p08",
+      "name": "Fiktivní partner 08 — Dobrovolnický program",
+      "owner": "Vojta",
+      "status": "resi",
+      "contact": "Kontakt 08",
+      "email": "kontakt-08@example.invalid",
+      "note": "Čekáme na finální podobu banneru.",
+      "next": "2027-04-23",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p09",
+      "name": "Fiktivní partner 09 — Městská cyklistika",
+      "owner": "Vlasta",
+      "status": "potvrzen",
+      "contact": "Kontakt 09",
+      "email": "kontakt-09@example.invalid",
+      "note": "Zajišťujeme vstupy a podklady k prezentaci.",
+      "next": null,
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d09",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p10",
+      "name": "Fiktivní partner 10 — Technická podpora a servis",
+      "owner": "Vojta",
+      "status": "neosloven",
+      "contact": "",
+      "email": "",
+      "note": "Nový kandidát pro osobní oslovení.",
+      "next": "2027-04-25",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p11",
+      "name": "Fiktivní partner 11 — Produkční vybavení a zázemí",
+      "owner": "Vlasta",
+      "status": "uzavren",
+      "contact": "Kontakt 11",
+      "email": "kontakt-11@example.invalid",
+      "note": "Dohoda dokončena, uchovat podklady pro další ročník.",
+      "next": "2027-04-26",
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d11",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p12",
+      "name": "Fiktivní partner 12 — Lokální občerstvení",
+      "owner": "Vojta",
+      "status": "odmitnut",
+      "contact": "Kontakt 12",
+      "email": "kontakt-12@example.invalid",
+      "note": "Spolupráce pro tento ročník odmítnuta.",
+      "next": null,
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p13",
+      "name": "Fiktivní partner 13 — Sportovní komunita",
+      "owner": "Vlasta",
+      "status": "osloven",
+      "contact": "Kontakt 13",
+      "email": "kontakt-13@example.invalid",
+      "note": "Domluvit rozsah spolupráce a potvrdit podklady.",
+      "next": "2027-04-28",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p14",
+      "name": "Fiktivní partner 14 — Tisk a reklamní plochy",
+      "owner": "Vojta",
+      "status": "resi",
+      "contact": "Kontakt 14",
+      "email": "kontakt-14@example.invalid",
+      "note": "Čekáme na finální podobu banneru.",
+      "next": "2027-04-22",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p15",
+      "name": "Fiktivní partner 15 — Dopravní technika",
+      "owner": "Vlasta",
+      "status": "potvrzen",
+      "contact": "",
+      "email": "",
+      "note": "Zajišťujeme vstupy a podklady k prezentaci.",
+      "next": null,
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d15",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p16",
+      "name": "Fiktivní partner 16 — Dobrovolnický program",
+      "owner": "Vojta",
+      "status": "neosloven",
+      "contact": "Kontakt 16",
+      "email": "kontakt-16@example.invalid",
+      "note": "Nový kandidát pro osobní oslovení.",
+      "next": "2027-04-24",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p17",
+      "name": "Fiktivní partner 17 — Městská cyklistika",
+      "owner": "Vlasta",
+      "status": "uzavren",
+      "contact": "Kontakt 17",
+      "email": "kontakt-17@example.invalid",
+      "note": "Dohoda dokončena, uchovat podklady pro další ročník.",
+      "next": "2027-04-25",
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d17",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p18",
+      "name": "Fiktivní partner 18 — Technická podpora a servis",
+      "owner": "Vojta",
+      "status": "odmitnut",
+      "contact": "Kontakt 18",
+      "email": "kontakt-18@example.invalid",
+      "note": "Spolupráce pro tento ročník odmítnuta.",
+      "next": null,
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p19",
+      "name": "Fiktivní partner 19 — Produkční vybavení a zázemí",
+      "owner": "Vlasta",
+      "status": "osloven",
+      "contact": "Kontakt 19",
+      "email": "kontakt-19@example.invalid",
+      "note": "Domluvit rozsah spolupráce a potvrdit podklady.",
+      "next": "2027-04-27",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p20",
+      "name": "Fiktivní partner 20 — Lokální občerstvení",
+      "owner": "Vojta",
+      "status": "resi",
+      "contact": "",
+      "email": "",
+      "note": "Čekáme na finální podobu banneru.",
+      "next": "2027-04-28",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p21",
+      "name": "Fiktivní partner 21 — Sportovní komunita",
+      "owner": "Vlasta",
+      "status": "potvrzen",
+      "contact": "Kontakt 21",
+      "email": "kontakt-21@example.invalid",
+      "note": "Zajišťujeme vstupy a podklady k prezentaci.",
+      "next": null,
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d21",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p22",
+      "name": "Fiktivní partner 22 — Tisk a reklamní plochy",
+      "owner": "Vojta",
+      "status": "neosloven",
+      "contact": "Kontakt 22",
+      "email": "kontakt-22@example.invalid",
+      "note": "Nový kandidát pro osobní oslovení.",
+      "next": "2027-04-23",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p23",
+      "name": "Fiktivní partner 23 — Dopravní technika",
+      "owner": "Vlasta",
+      "status": "uzavren",
+      "contact": "Kontakt 23",
+      "email": "kontakt-23@example.invalid",
+      "note": "Dohoda dokončena, uchovat podklady pro další ročník.",
+      "next": "2027-04-24",
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d23",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p24",
+      "name": "Fiktivní partner 24 — Dobrovolnický program",
+      "owner": "Vojta",
+      "status": "odmitnut",
+      "contact": "Kontakt 24",
+      "email": "kontakt-24@example.invalid",
+      "note": "Spolupráce pro tento ročník odmítnuta.",
+      "next": null,
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p25",
+      "name": "Fiktivní partner 25 — Městská cyklistika",
+      "owner": "Vlasta",
+      "status": "osloven",
+      "contact": "",
+      "email": "",
+      "note": "Domluvit rozsah spolupráce a potvrdit podklady.",
+      "next": "2027-04-26",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p26",
+      "name": "Fiktivní partner 26 — Technická podpora a servis",
+      "owner": "Vojta",
+      "status": "resi",
+      "contact": "Kontakt 26",
+      "email": "kontakt-26@example.invalid",
+      "note": "Čekáme na finální podobu banneru.",
+      "next": "2027-04-27",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p27",
+      "name": "Fiktivní partner 27 — Produkční vybavení a zázemí",
+      "owner": "Vlasta",
+      "status": "potvrzen",
+      "contact": "Kontakt 27",
+      "email": "kontakt-27@example.invalid",
+      "note": "Zajišťujeme vstupy a podklady k prezentaci.",
+      "next": null,
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d27",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p28",
+      "name": "Fiktivní partner 28 — Lokální občerstvení",
+      "owner": "Vojta",
+      "status": "neosloven",
+      "contact": "Kontakt 28",
+      "email": "kontakt-28@example.invalid",
+      "note": "Nový kandidát pro osobní oslovení.",
+      "next": "2027-04-22",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p29",
+      "name": "Fiktivní partner 29 — Sportovní komunita",
+      "owner": "Vlasta",
+      "status": "uzavren",
+      "contact": "Kontakt 29",
+      "email": "kontakt-29@example.invalid",
+      "note": "Dohoda dokončena, uchovat podklady pro další ročník.",
+      "next": "2027-04-23",
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d29",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p30",
+      "name": "Fiktivní partner 30 — Tisk a reklamní plochy",
+      "owner": "Vojta",
+      "status": "odmitnut",
+      "contact": "",
+      "email": "",
+      "note": "Spolupráce pro tento ročník odmítnuta.",
+      "next": null,
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p31",
+      "name": "Fiktivní partner 31 — Dopravní technika",
+      "owner": "Vlasta",
+      "status": "osloven",
+      "contact": "Kontakt 31",
+      "email": "kontakt-31@example.invalid",
+      "note": "Domluvit rozsah spolupráce a potvrdit podklady.",
+      "next": "2027-04-25",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p32",
+      "name": "Fiktivní partner 32 — Dobrovolnický program",
+      "owner": "Vojta",
+      "status": "resi",
+      "contact": "Kontakt 32",
+      "email": "kontakt-32@example.invalid",
+      "note": "Čekáme na finální podobu banneru.",
+      "next": "2027-04-26",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p33",
+      "name": "Fiktivní partner 33 — Městská cyklistika",
+      "owner": "Vlasta",
+      "status": "potvrzen",
+      "contact": "Kontakt 33",
+      "email": "kontakt-33@example.invalid",
+      "note": "Zajišťujeme vstupy a podklady k prezentaci.",
+      "next": null,
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d33",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p34",
+      "name": "Fiktivní partner 34 — Technická podpora a servis",
+      "owner": "Vojta",
+      "status": "neosloven",
+      "contact": "Kontakt 34",
+      "email": "kontakt-34@example.invalid",
+      "note": "Nový kandidát pro osobní oslovení.",
+      "next": "2027-04-28",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p35",
+      "name": "Fiktivní partner 35 — Produkční vybavení a zázemí",
+      "owner": "Vlasta",
+      "status": "uzavren",
+      "contact": "",
+      "email": "",
+      "note": "Dohoda dokončena, uchovat podklady pro další ročník.",
+      "next": "2027-04-22",
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d35",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p36",
+      "name": "Fiktivní partner 36 — Lokální občerstvení",
+      "owner": "Vojta",
+      "status": "odmitnut",
+      "contact": "Kontakt 36",
+      "email": "kontakt-36@example.invalid",
+      "note": "Spolupráce pro tento ročník odmítnuta.",
+      "next": null,
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p37",
+      "name": "Fiktivní partner 37 — Sportovní komunita",
+      "owner": "Vlasta",
+      "status": "osloven",
+      "contact": "Kontakt 37",
+      "email": "kontakt-37@example.invalid",
+      "note": "Domluvit rozsah spolupráce a potvrdit podklady.",
+      "next": "2027-04-24",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p38",
+      "name": "Fiktivní partner 38 — Tisk a reklamní plochy",
+      "owner": "Vojta",
+      "status": "resi",
+      "contact": "Kontakt 38",
+      "email": "kontakt-38@example.invalid",
+      "note": "Čekáme na finální podobu banneru.",
+      "next": "2027-04-25",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p39",
+      "name": "Fiktivní partner 39 — Dopravní technika",
+      "owner": "Vlasta",
+      "status": "potvrzen",
+      "contact": "Kontakt 39",
+      "email": "kontakt-39@example.invalid",
+      "note": "Zajišťujeme vstupy a podklady k prezentaci.",
+      "next": null,
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d39",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p40",
+      "name": "Fiktivní partner 40 — Dobrovolnický program",
+      "owner": "Vojta",
+      "status": "neosloven",
+      "contact": "",
+      "email": "",
+      "note": "Nový kandidát pro osobní oslovení.",
+      "next": "2027-04-27",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p41",
+      "name": "Fiktivní partner 41 — Městská cyklistika",
+      "owner": "Vlasta",
+      "status": "uzavren",
+      "contact": "Kontakt 41",
+      "email": "kontakt-41@example.invalid",
+      "note": "Dohoda dokončena, uchovat podklady pro další ročník.",
+      "next": "2027-04-28",
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d41",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p42",
+      "name": "Fiktivní partner 42 — Technická podpora a servis",
+      "owner": "Vojta",
+      "status": "odmitnut",
+      "contact": "Kontakt 42",
+      "email": "kontakt-42@example.invalid",
+      "note": "Spolupráce pro tento ročník odmítnuta.",
+      "next": null,
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p43",
+      "name": "Fiktivní partner 43 — Produkční vybavení a zázemí",
+      "owner": "Vlasta",
+      "status": "osloven",
+      "contact": "Kontakt 43",
+      "email": "kontakt-43@example.invalid",
+      "note": "Domluvit rozsah spolupráce a potvrdit podklady.",
+      "next": "2027-04-23",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p44",
+      "name": "Fiktivní partner 44 — Lokální občerstvení",
+      "owner": "Vojta",
+      "status": "resi",
+      "contact": "Kontakt 44",
+      "email": "kontakt-44@example.invalid",
+      "note": "Čekáme na finální podobu banneru.",
+      "next": "2027-04-24",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p45",
+      "name": "Fiktivní partner 45 — Sportovní komunita",
+      "owner": "Vlasta",
+      "status": "potvrzen",
+      "contact": "",
+      "email": "",
+      "note": "Zajišťujeme vstupy a podklady k prezentaci.",
+      "next": null,
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d45",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p46",
+      "name": "Fiktivní partner 46 — Tisk a reklamní plochy",
+      "owner": "Vojta",
+      "status": "neosloven",
+      "contact": "Kontakt 46",
+      "email": "kontakt-46@example.invalid",
+      "note": "Nový kandidát pro osobní oslovení.",
+      "next": "2027-04-26",
+      "shared": false,
+      "deliverables": []
+    },
+    {
+      "id": "p47",
+      "name": "Fiktivní partner 47 — Dopravní technika",
+      "owner": "Vlasta",
+      "status": "uzavren",
+      "contact": "Kontakt 47",
+      "email": "kontakt-47@example.invalid",
+      "note": "Dohoda dokončena, uchovat podklady pro další ročník.",
+      "next": "2027-04-27",
+      "shared": false,
+      "deliverables": [
+        {
+          "id": "d47",
+          "title": "Logo na webu a banner v zóně",
+          "status": "v_reseni",
+          "due": "2027-04-26",
+          "evidence": ""
+        }
+      ]
+    },
+    {
+      "id": "p48",
+      "name": "Fiktivní partner 48 — Dobrovolnický program",
+      "owner": "Vojta",
+      "status": "odmitnut",
+      "contact": "Kontakt 48",
+      "email": "kontakt-48@example.invalid",
+      "note": "Spolupráce pro tento ročník odmítnuta.",
+      "next": null,
+      "shared": false,
+      "deliverables": []
+    }
+  ],
+  "items": [
+    {
+      "id": "f01",
+      "title": "Příspěvek partnera 01",
+      "direction": "income",
+      "partner": "p01",
+      "party": "Fiktivní partner 01",
+      "planned": 120000,
+      "confirmed": 100000,
+      "due": "2027-04-25",
+      "approved": true,
+      "scope": "main",
+      "category": "Partneři",
+      "settlements": []
+    },
+    {
+      "id": "f02",
+      "title": "Technika a ozvučení — model osobních plateb",
+      "direction": "expense",
+      "partner": null,
+      "party": "Fiktivní dodavatel techniky",
+      "planned": 1100000,
+      "confirmed": 1000000,
+      "due": "2027-04-27",
+      "approved": true,
+      "scope": "main",
+      "category": "Produkce",
+      "settlements": [
+        {
+          "id": "s02",
+          "kind": "money",
+          "amount": 300000,
+          "date": "2027-04-20",
+          "channel": "bank"
+        },
+        {
+          "id": "s03",
+          "kind": "personal",
+          "amount": 200000,
+          "date": "2027-04-21",
+          "person": "Fiktivní osoba A"
+        },
+        {
+          "id": "s04",
+          "kind": "personal",
+          "amount": 100000,
+          "date": "2027-04-21",
+          "person": "Fiktivní osoba B"
+        },
+        {
+          "id": "s05",
+          "kind": "barter",
+          "amount": 100000,
+          "date": "2027-04-22",
+          "note": "Modelová výměna služby za prezentaci"
+        }
+      ]
+    },
+    {
+      "id": "f03",
+      "title": "Příspěvek partnera 03 — neznámá částka",
+      "direction": "income",
+      "partner": "p03",
+      "party": "Fiktivní partner 03",
+      "planned": null,
+      "confirmed": null,
+      "due": null,
+      "approved": false,
+      "scope": "main",
+      "category": "Partneři",
+      "settlements": []
+    },
+    {
+      "id": "f04",
+      "title": "Podklady partnera 01 — známá nula",
+      "direction": "expense",
+      "partner": "p01",
+      "party": "Fiktivní partner 01",
+      "planned": 50000,
+      "confirmed": 0,
+      "due": null,
+      "approved": true,
+      "scope": "main",
+      "category": "Branding",
+      "settlements": []
+    },
+    {
+      "id": "f05",
+      "title": "Příspěvek partnera 02",
+      "direction": "income",
+      "partner": "p02",
+      "party": "Fiktivní partner 02",
+      "planned": 2500000,
+      "confirmed": 2500000,
+      "due": "2027-04-20",
+      "approved": true,
+      "scope": "main",
+      "category": "Partneři",
+      "settlements": [
+        {
+          "id": "s06",
+          "kind": "money",
+          "amount": 2500000,
+          "date": "2027-04-19",
+          "channel": "bank"
+        }
+      ]
+    },
+    {
+      "id": "f06",
+      "title": "Logistika překážek",
+      "direction": "expense",
+      "partner": null,
+      "party": "Fiktivní dodavatel dopravy",
+      "planned": null,
+      "confirmed": 800000,
+      "due": "2027-04-23",
+      "approved": true,
+      "scope": "main",
+      "category": "Stavba",
+      "settlements": []
+    },
+    {
+      "id": "f07",
+      "title": "Příspěvek partnera 05",
+      "direction": "income",
+      "partner": "p05",
+      "party": "Fiktivní partner 05",
+      "planned": 450000,
+      "confirmed": 400000,
+      "due": "2027-04-28",
+      "approved": true,
+      "scope": "main",
+      "category": "Partneři",
+      "settlements": []
+    },
+    {
+      "id": "f08",
+      "title": "Produkční služba pro partnera 03",
+      "direction": "expense",
+      "partner": "p03",
+      "party": "Fiktivní partner 03",
+      "planned": 150000,
+      "confirmed": 100000,
+      "due": "2027-04-26",
+      "approved": false,
+      "scope": "main",
+      "category": "Produkce",
+      "settlements": []
+    }
+  ]
+}
