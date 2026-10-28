@@ -82,17 +82,37 @@ class ValidateReviewTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     validate_review(_make_review(), _make_pull_request(), bad_head, ACTOR, REPOSITORY)
 
+    def test_rejects_expected_head_with_trailing_newline(self):
+        corrupted = EXPECTED_HEAD + "\n"
+        pull_request = _make_pull_request(
+            head={"sha": corrupted, "repo": {"full_name": REPOSITORY}}
+        )
+        review = _make_review(commit_id=corrupted)
+        with self.assertRaises(ValueError) as ctx:
+            validate_review(review, pull_request, corrupted, ACTOR, REPOSITORY)
+        self.assertEqual(str(ctx.exception), INVALID_REVIEW)
+
     def test_rejects_missing_or_invalid_actor(self):
         for bad_actor in (None, "", 123):
             with self.subTest(bad_actor=bad_actor):
                 with self.assertRaises(ValueError):
                     validate_review(_make_review(), _make_pull_request(), EXPECTED_HEAD, bad_actor, REPOSITORY)
 
+    def test_rejects_whitespace_only_actor(self):
+        with self.assertRaises(ValueError) as ctx:
+            validate_review(_make_review(), _make_pull_request(), EXPECTED_HEAD, "   ", REPOSITORY)
+        self.assertEqual(str(ctx.exception), INVALID_REVIEW)
+
     def test_rejects_missing_or_invalid_repository(self):
         for bad_repo in (None, "", 123):
             with self.subTest(bad_repo=bad_repo):
                 with self.assertRaises(ValueError):
                     validate_review(_make_review(), _make_pull_request(), EXPECTED_HEAD, ACTOR, bad_repo)
+
+    def test_rejects_whitespace_only_repository(self):
+        with self.assertRaises(ValueError) as ctx:
+            validate_review(_make_review(), _make_pull_request(), EXPECTED_HEAD, ACTOR, "   ")
+        self.assertEqual(str(ctx.exception), INVALID_REVIEW)
 
     def test_rejects_closed_pull_request(self):
         with self.assertRaises(ValueError):
@@ -140,10 +160,24 @@ class ValidateReviewTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     validate_review(review, _make_pull_request(), EXPECTED_HEAD, ACTOR, REPOSITORY)
 
+    def test_rejects_whitespace_only_submitted_at(self):
+        review = _make_review(submitted_at="   ")
+        with self.assertRaises(ValueError) as ctx:
+            validate_review(review, _make_pull_request(), EXPECTED_HEAD, ACTOR, REPOSITORY)
+        self.assertEqual(str(ctx.exception), INVALID_REVIEW)
+
     def test_rejects_pending_review(self):
         review = _make_review(state="PENDING")
         with self.assertRaises(ValueError):
             validate_review(review, _make_pull_request(), EXPECTED_HEAD, ACTOR, REPOSITORY)
+
+    def test_rejects_unhashable_state(self):
+        for bad_state in ([], {}, 123, None):
+            with self.subTest(bad_state=bad_state):
+                review = _make_review(state=bad_state)
+                with self.assertRaises(ValueError) as ctx:
+                    validate_review(review, _make_pull_request(), EXPECTED_HEAD, ACTOR, REPOSITORY)
+                self.assertEqual(str(ctx.exception), INVALID_REVIEW)
 
     def test_rejects_missing_nested_fields(self):
         pull_request = _make_pull_request()

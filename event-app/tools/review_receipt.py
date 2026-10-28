@@ -4,7 +4,7 @@ import re
 
 INVALID_REVIEW = "invalid_review"
 
-_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+_SHA_RE = re.compile(r"[0-9a-f]{40}")
 _SUBMITTED_STATES = frozenset({"APPROVED", "CHANGES_REQUESTED", "COMMENTED"})
 
 
@@ -19,7 +19,7 @@ def _require_dict(value):
 
 
 def _require_nonempty_str(value):
-    if not isinstance(value, str) or not value:
+    if not isinstance(value, str) or not value.strip():
         _fail()
     return value
 
@@ -31,7 +31,7 @@ def validate_review(review, pull_request, expected_head, actor, repository):
     _require_nonempty_str(actor)
     _require_nonempty_str(repository)
 
-    if not _SHA_RE.match(expected_head):
+    if not _SHA_RE.fullmatch(expected_head):
         _fail()
 
     if pull_request.get("state") != "open":
@@ -59,11 +59,11 @@ def validate_review(review, pull_request, expected_head, actor, repository):
         _fail()
 
     submitted_at = review.get("submitted_at")
-    if not isinstance(submitted_at, str) or not submitted_at:
+    if not isinstance(submitted_at, str) or not submitted_at.strip():
         _fail()
 
     state = review.get("state")
-    if state not in _SUBMITTED_STATES:
+    if not isinstance(state, str) or state not in _SUBMITTED_STATES:
         _fail()
 
     return True

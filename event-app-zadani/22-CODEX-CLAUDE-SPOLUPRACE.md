@@ -34,9 +34,13 @@ Před push zkontrolovat konkrétní index, diff, cesty, soukromé údaje a deplo
 
 ## Skutečný ověřovací běh
 
-- Issue [#16](https://github.com/kabelkac77/SVDT2027/issues/16): malý čistý validátor připnutého review bez produkčních dat, součást ověření spolupráce.
-- Dry-run prošel na přesném HEAD se dvěma povolenými výstupy a 3 990 bajty veřejného kontextu; nekontaktoval model.
-- 15 hostitelských testů prošlo; skill prošel oficiálním validátorem skill-creator v odděleném dočasném prostředí.
-- První skutečný pokus se zastavil na `CLAUDE_USAGE_UNAVAILABLE` ještě před modelovým zadáním. Diagnostika probíhá; tento stav nelze označit za úspěšný návrhový/opravný cyklus. Následující aktualizace musí uvést skutečný výsledek, konkrétní PR a nové revize.
+- Issue [#16](https://github.com/kabelkac77/SVDT2027/issues/16), [Draft PR #17](https://github.com/kabelkac77/SVDT2027/pull/17), větev `codex/svdt-local-claude`.
+- Dry-run bez modelu na `86453b50df007d50be002753ee2493845d1f7586`; 3 990 bajtů vybraného veřejného kontextu a dva přesně povolené soubory. Následný skutečný nativní návrh dokončen, commit `b22159e6e946a3f9f8df56b4ba397cd7b399ffa6`.
+- Nezávislé [review 5683683976](https://github.com/kabelkac77/SVDT2027/pull/17#pullrequestreview-5683683976) připnuté na tento commit: reprodukováno chybné přijetí SHA s koncovým odřádkováním, TypeError pro nehashovatelný state a whitespace místo vyplněných hodnot.
+- Skutečný opravný běh na stejném headu/větvi podle tohoto review, 14 577 bajtů veřejného kontextu. Claude opravil oba původní soubory a přidal regresní případy. Žádné modelové tvrzení nebylo vydávané za test hostitele.
+- Codex znovu přečetl diff a skutečně spustil **40 testů** (18 hostitelských + 22 validátoru) a dalších **41 nezávislých kontrol poškozených vstupů**: vše prošlo. Skill prošel oficiálním validátorem skill-creator; CI je na syntetických datech, přesný stav závěrečné revize v PR. Frontend/SQL se nemění, historické aplikační testy se tímto neopakují.
+- Strojově čitelná veřejná evidence: [claude-handoff-verification.json](claude-handoff-verification.json), pouze syntetická ověření a veřejné identifikátory. Konkrétní vazby/config, surové odpovědi ani provozní data se nezveřejňují.
+- Skutečně ověřeno i zastavení při nedostupném odečtu kapacity a obsazeném společném účtu; po cílené diagnóze/ověřeném uvolnění proběhl návrh i oprava přes nezměněný sdílený guard s nativními odečty před/po běhu. Žádná samostatná projektová kvóta.
+- Původní hlavní HEAD a index zůstaly beze změny, původní zdroje zachované; upravené jen zamýšlené MD. Místní Finder `.DS_Store` se nezávisle změnil a nebyl publikován ani vracen. Excel a historická personální data znovu porovnané se zdrojem, beze změny.
 
 Denní kompletní zálohy SVDT a jejich obnova nejsou aktivací tohoto postupu vyřešené. Lokální snímek personální DB při použití aplikace je samostatná, užší funkce. WhatsApp/Twilio zůstávají odložené a vypnuté. Žádné zprávy lidem ani tajné údaje jiným nástrojům se tímto neodesílají.
