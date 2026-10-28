@@ -36,14 +36,16 @@ def body(record):
     return {'requestId':str(uuid.uuid4()),'version':record['version'],'year':'2027','fields':fields}
 
 def fresh_source_db():
-    # Minimal, valid synthetic database used only to exercise atomic_sqlite_snapshot in isolation.
-    db = sqlite3.connect(':memory:')
-    db.execute("CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT NOT NULL)")
-    db.execute("INSERT INTO meta VALUES('initialized','x')")
-    for table in ('history', 'categories', 'working', 'audit', 'requests'):
-        db.execute(f'CREATE TABLE {table}(id TEXT PRIMARY KEY)')
-    db.commit()
+    # Use a complete schema from the existing synthetic fixture, with no real records.
+    with tempfile.TemporaryDirectory() as directory:
+        store=crew.CrewStore(directory,seed())
+        db=sqlite3.connect(':memory:')
+        try:
+            store.db.backup(db)
+        finally:
+            store.db.close()
     return db
+
 
 class StoreTests(unittest.TestCase):
     def setUp(self):
@@ -219,9 +221,9 @@ class SnapshotTests(unittest.TestCase):
         self.assertEqual(self.leftover_temp_files(),[])
 
     def test_existing_valid_target_is_not_overwritten(self):
-        self.target.write_bytes(b'not a real sqlite file but already present')
-        before=self.target.read_bytes()
         source=fresh_source_db()
+        self.assertTrue(crew.atomic_sqlite_snapshot(source,self.target))
+        before=self.target.read_bytes()
         self.assertFalse(crew.atomic_sqlite_snapshot(source,self.target))
         source.close()
         self.assertEqual(self.target.read_bytes(),before)
@@ -230,7 +232,8 @@ class SnapshotTests(unittest.TestCase):
     def test_corrupted_target_preserved_and_retry_succeeds_after_removal(self):
         self.target.write_bytes(b'\x00\x01corrupt')
         source=fresh_source_db()
-        self.assertFalse(crew.atomic_sqlite_snapshot(source,self.target))
+        with self.assertRaises(crew.SnapshotError):
+            crew.atomic_sqlite_snapshot(source,self.target)
         self.assertEqual(self.target.read_bytes(),b'\x00\x01corrupt')
         self.target.unlink()
         self.assertTrue(crew.atomic_sqlite_snapshot(source,self.target))
@@ -244,7 +247,8 @@ class SnapshotTests(unittest.TestCase):
         decoy.write_bytes(b'decoy contents')
         self.target.symlink_to(decoy)
         source=fresh_source_db()
-        self.assertFalse(crew.atomic_sqlite_snapshot(source,self.target))
+        with self.assertRaises(crew.SnapshotError):
+            crew.atomic_sqlite_snapshot(source,self.target)
         source.close()
         self.assertTrue(self.target.is_symlink())
         self.assertEqual(self.target.readlink(),decoy)

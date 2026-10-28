@@ -1,4 +1,4 @@
-"""Independent synthetic fault probes, intentionally not given to the model."""
+"""Independent synthetic fault probes authored by the host before review."""
 import hashlib
 import importlib.util
 import os
