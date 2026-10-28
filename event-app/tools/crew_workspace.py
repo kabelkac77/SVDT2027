@@ -9,9 +9,11 @@ import datetime as dt
 import hashlib
 import hmac
 import json
+import os
 import re
 import secrets
 import sqlite3
+import tempfile
 import threading
 import unicodedata
 import uuid
@@ -43,7 +45,7 @@ def amount_minor(value):
         return None
     if not isinstance(value, str):
         raise Problem(422, 'Částku zadej jako text v Kč.')
-    normalized = re.sub(r'[\s\u00a0\u202f]', '', value).replace(',', '.')
+    normalized = re.sub(r'[\s  ]', '', value).replace(',', '.')
     if not re.fullmatch(r'\d{1,9}(?:\.\d{1,2})?', normalized):
         raise Problem(422, 'Částka musí být nezáporná, nejvýše 999 999 999,99 Kč, se dvěma desetinnými místy.')
     whole, _, decimal = normalized.partition('.')
@@ -63,6 +65,52 @@ def read_seed(path):
     if not isinstance(payload.get('records'), list):
         raise ValueError('Missing source records')
     return payload
+
+REQUIRED_SNAPSHOT_TABLES = {'meta', 'history', 'categories', 'working', 'audit', 'requests'}
+
+class SnapshotError(Exception):
+    pass
+
+def verify_snapshot(path):
+    connection = sqlite3.connect(path)
+    try:
+        if connection.execute('PRAGMA integrity_check').fetchone()[0] != 'ok':
+            raise SnapshotError('Snapshot failed integrity check')
+        tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        if not REQUIRED_SNAPSHOT_TABLES.issubset(tables):
+            raise SnapshotError('Snapshot is missing required schema')
+        if not connection.execute("SELECT 1 FROM meta WHERE key='initialized'").fetchone():
+            raise SnapshotError('Snapshot is missing initialization metadata')
+    finally:
+        connection.close()
+
+def atomic_sqlite_snapshot(source_db, target):
+    # Published only via os.link, which atomically fails instead of silently replacing a path
+    # that already exists (a prior valid backup, a corrupted leftover, or a symlink).
+    target = Path(target)
+    if os.path.lexists(target):
+        return False
+    fd, tmp_name = tempfile.mkstemp(dir=target.parent, prefix='.' + target.name + '-', suffix='.tmp')
+    tmp_path = Path(tmp_name)
+    try:
+        os.close(fd)
+        snapshot = sqlite3.connect(tmp_path)
+        try:
+            source_db.backup(snapshot)
+        finally:
+            snapshot.close()
+        verify_snapshot(tmp_path)
+        try:
+            os.link(tmp_path, target)
+            return True
+        except FileExistsError:
+            return False
+    except SnapshotError:
+        raise
+    except Exception as error:
+        raise SnapshotError(f'Nepodařilo se bezpečně vytvořit záložní kopii {target.name}.') from error
+    finally:
+        tmp_path.unlink(missing_ok=True)
 
 class CrewStore:
     def __init__(self, directory, seed):
@@ -138,14 +186,8 @@ class CrewStore:
             folder = self.directory / 'backups'
             folder.mkdir(exist_ok=True)
             folder.chmod(0o700)
-            path = folder / f'crew-{dt.datetime.now(ZoneInfo("Europe/Prague")).date()}.sqlite3'
-            if not path.exists():
-                target = sqlite3.connect(path)
-                try:
-                    self.db.backup(target)
-                finally:
-                    target.close()
-                path.chmod(0o600)
+            target = folder / f'crew-{dt.datetime.now(ZoneInfo("Europe/Prague")).date()}.sqlite3'
+            atomic_sqlite_snapshot(self.db, target)
 
     def categories(self):
         return [dict(r) for r in self.db.execute('SELECT id,name,color,sort_order AS sortOrder,version FROM categories ORDER BY sort_order,name')]

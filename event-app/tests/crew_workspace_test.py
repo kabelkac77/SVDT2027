@@ -4,8 +4,11 @@ import hashlib
 import http.client
 import importlib.util
 import json
+import os
 from pathlib import Path
+import shutil
 import sqlite3
+import stat
 import tempfile
 import threading
 import unittest
@@ -31,6 +34,16 @@ def body(record):
     money=fields.pop('money')
     fields['amounts']={key:'' if value is None else f'{value//100},{value%100:02d}' for key,value in money.items()}
     return {'requestId':str(uuid.uuid4()),'version':record['version'],'year':'2027','fields':fields}
+
+def fresh_source_db():
+    # Minimal, valid synthetic database used only to exercise atomic_sqlite_snapshot in isolation.
+    db = sqlite3.connect(':memory:')
+    db.execute("CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT NOT NULL)")
+    db.execute("INSERT INTO meta VALUES('initialized','x')")
+    for table in ('history', 'categories', 'working', 'audit', 'requests'):
+        db.execute(f'CREATE TABLE {table}(id TEXT PRIMARY KEY)')
+    db.commit()
+    return db
 
 class StoreTests(unittest.TestCase):
     def setUp(self):
@@ -138,6 +151,138 @@ class StoreTests(unittest.TestCase):
         exported=self.store.export()
         self.assertEqual(exported['format'],'svdt-local-crew-v1')
         self.assertEqual(len(exported['audit']),1)
+
+    def test_backup_snapshot_has_private_permissions(self):
+        snapshot=next((Path(self.temp.name)/'backups').glob('crew-*.sqlite3'))
+        self.assertEqual(stat.S_IMODE(snapshot.stat().st_mode),0o600)
+
+    def test_restore_snapshot_into_new_folder(self):
+        row=self.row();request=body(row);request['fields']['notes']='Zápis před zálohou'
+        self.store.save_record(row['id'],request)
+        for existing in (Path(self.temp.name)/'backups').glob('crew-*.sqlite3'):
+            existing.unlink()
+        self.store.backup()
+        snapshot=next((Path(self.temp.name)/'backups').glob('crew-*.sqlite3'))
+        recovery=tempfile.TemporaryDirectory()
+        try:
+            recovered_path=Path(recovery.name)/'crew.sqlite3'
+            shutil.copy2(snapshot,recovered_path)
+            def fail_seed():
+                raise AssertionError('Seed must not run for an already initialized snapshot')
+            recovered=crew.CrewStore(recovery.name,fail_seed)
+            try:
+                recovered_row=next(r for r in recovered.payload()['records'] if r['year']=='2027' and r['id']==row['id'])
+                self.assertEqual(recovered_row['fields']['notes'],'Zápis před zálohou')
+            finally:
+                recovered.db.close()
+        finally:
+            recovery.cleanup()
+
+    def test_mutation_aborts_cleanly_when_backup_fails(self):
+        row=self.row();request=body(row);request['fields']['notes']='Pokus během poruchy zálohy'
+        original=crew.atomic_sqlite_snapshot
+        def failing(*args,**kwargs):
+            raise crew.SnapshotError('fake failure')
+        crew.atomic_sqlite_snapshot=failing
+        try:
+            with self.assertRaises(crew.SnapshotError):
+                self.store.save_record(row['id'],request)
+        finally:
+            crew.atomic_sqlite_snapshot=original
+        self.assertEqual(self.row()['version'],1)
+        self.assertEqual(self.store.db.execute('SELECT count(*) FROM audit').fetchone()[0],0)
+        retry=body(self.row());retry['fields']['notes']='Pokus během poruchy zálohy'
+        result=self.store.save_record(row['id'],retry)['record']
+        self.assertEqual(result['version'],2)
+        self.assertEqual(result['fields']['notes'],'Pokus během poruchy zálohy')
+
+class SnapshotTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory()
+        self.folder=Path(self.temp.name)
+        self.target=self.folder/'crew-snapshot.sqlite3'
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def leftover_temp_files(self):
+        return list(self.folder.glob('.crew-snapshot.sqlite3-*'))
+
+    def test_snapshot_is_atomic_private_and_valid(self):
+        source=fresh_source_db()
+        self.assertTrue(crew.atomic_sqlite_snapshot(source,self.target))
+        source.close()
+        self.assertEqual(stat.S_IMODE(self.target.stat().st_mode),0o600)
+        connection=sqlite3.connect(self.target)
+        self.assertEqual(connection.execute('PRAGMA integrity_check').fetchone()[0],'ok')
+        connection.close()
+        self.assertEqual(self.leftover_temp_files(),[])
+
+    def test_existing_valid_target_is_not_overwritten(self):
+        self.target.write_bytes(b'not a real sqlite file but already present')
+        before=self.target.read_bytes()
+        source=fresh_source_db()
+        self.assertFalse(crew.atomic_sqlite_snapshot(source,self.target))
+        source.close()
+        self.assertEqual(self.target.read_bytes(),before)
+        self.assertEqual(self.leftover_temp_files(),[])
+
+    def test_corrupted_target_preserved_and_retry_succeeds_after_removal(self):
+        self.target.write_bytes(b'\x00\x01corrupt')
+        source=fresh_source_db()
+        self.assertFalse(crew.atomic_sqlite_snapshot(source,self.target))
+        self.assertEqual(self.target.read_bytes(),b'\x00\x01corrupt')
+        self.target.unlink()
+        self.assertTrue(crew.atomic_sqlite_snapshot(source,self.target))
+        source.close()
+        connection=sqlite3.connect(self.target)
+        self.assertEqual(connection.execute('PRAGMA integrity_check').fetchone()[0],'ok')
+        connection.close()
+
+    def test_symlink_target_is_not_followed_or_removed(self):
+        decoy=self.folder/'decoy.sqlite3'
+        decoy.write_bytes(b'decoy contents')
+        self.target.symlink_to(decoy)
+        source=fresh_source_db()
+        self.assertFalse(crew.atomic_sqlite_snapshot(source,self.target))
+        source.close()
+        self.assertTrue(self.target.is_symlink())
+        self.assertEqual(self.target.readlink(),decoy)
+        self.assertEqual(decoy.read_bytes(),b'decoy contents')
+
+    def test_write_failure_preserves_source_and_allows_later_retry(self):
+        incomplete=sqlite3.connect(':memory:')
+        incomplete.execute("CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT NOT NULL)")
+        incomplete.commit()
+        with self.assertRaises(crew.SnapshotError):
+            crew.atomic_sqlite_snapshot(incomplete,self.target)
+        incomplete.close()
+        self.assertFalse(os.path.lexists(self.target))
+        self.assertEqual(self.leftover_temp_files(),[])
+        source=fresh_source_db()
+        self.assertTrue(crew.atomic_sqlite_snapshot(source,self.target))
+        source.close()
+
+    def test_concurrent_writers_produce_single_valid_winner(self):
+        results=[];errors=[]
+        def attempt():
+            source=fresh_source_db()
+            try:
+                results.append(crew.atomic_sqlite_snapshot(source,self.target))
+            except Exception as error:
+                errors.append(error)
+            finally:
+                source.close()
+        threads=[threading.Thread(target=attempt) for _ in range(8)]
+        for thread in threads:thread.start()
+        for thread in threads:thread.join()
+        self.assertEqual(errors,[])
+        self.assertEqual(len(results),8)
+        self.assertEqual(results.count(True),1)
+        connection=sqlite3.connect(self.target)
+        self.assertEqual(connection.execute('PRAGMA integrity_check').fetchone()[0],'ok')
+        connection.close()
+        self.assertEqual(self.leftover_temp_files(),[])
 
 class HttpTests(unittest.TestCase):
     @classmethod
