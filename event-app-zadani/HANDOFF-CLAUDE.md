@@ -1,5 +1,9 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## Aktuální předávací postup — 2026-10-28
+
+Na výslovné zadání používat projektový [svdt-claude-handoff](../event-app/skills/svdt-claude-handoff/SKILL.md), hostitelský runner a pravidla v [22](22-CODEX-CLAUDE-SPOLUPRACE.md). Claude připravuje vybrané implementace/opravy, Codex nezávisle přezkoumává, testuje a spravuje Git. Personální SQLite a necommitnutá pracovní verze zůstávají v původní místní kopii; čistá worktree z HEAD je automaticky neobsahuje. Starší pořadí modulů nepřepisuje aktuální prioritu Lidi a crew.
+
 Aktualizováno 2026-10-03; aktuální Partneři a ověření viz `IMPLEMENTATION-STATUS.md` (10 DB/doménových a 15 browser testů). Historické popisy níže zachycují předání z 2026-09-28. Tento dokument je výchozí mapa; aktuální změny ověř proti kódu a `git status`. Source of truth zůstává celý adresář `event-app-zadani/`.
 
 ## Jak začít
