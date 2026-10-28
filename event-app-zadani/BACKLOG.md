@@ -1,5 +1,12 @@
 # MASTER BACKLOG
 
+## Pracovní přehled a snímky — 2026-10-28
+
+- [x] Verzovat zkontrolované obecné zdroje místního pracovního přehledu se syntetickými ukázkami a izolovanými testy; bez provozních dat.
+- [x] Ověřit a opravit atomické SQLite snímky po nezávislém review: 73 testů, souběh, I/O poruchy a obnova; [23](23-PRACOVNI-EVIDENCE-A-SNIMKY.md), Draft PR #19 navazující na #17.
+- [x] Připravit místní návrh řádků k ručnímu posouzení bez změny záznamů; obsah nepatří do Git/modelového kontextu.
+- [ ] Ručně projít identity, zařazení a skutečné domluvy; navazující sdílení a konkrétní oprávnění zůstávají samostatně otevřené.
+
 ## Nastavení vývojové spolupráce — samostatně zadaný krok 2026-10-28
 
 - [x] Ověřit oba repozitáře a identitu, zachovat původní rozpracovanou kopii, připravit izolovanou větev.

@@ -1,5 +1,9 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-10-28 — navazující samostatný pracovní celek
+
+**IMPLEMENTED / ověřeno místně:** podle pokynu pokračovat a priority Lidi a crew jsou jednotlivě zkontrolované obecné zdroje pracovního přehledu verzované v navazující větvi/Draft PR #19. Oprava SQLite snímků má návrh Claude, nezávislé review, menší dokončený opravný krok, hostitelské zpřesnění a 73 syntetických testů. Soukromé záznamy, původní sešit, historie a strojové vazby nejsou publikační nebo modelový kontext. Seznam k ručnímu průchodu je návrh pouze místně; neurčuje totožnost osob ani oprávnění. [23](23-PRACOVNI-EVIDENCE-A-SNIMKY.md) a [evidence](crew-snapshot-verification.json). Žádná nová produktová volba, produkční import, grant nebo nasazení se nepovažuje za schválené mlčením.
+
 ## 2026-10-28 — přímá spolupráce Codex → místní Claude Code
 
 **CONFIRMED:** uživatel výslovně určil zahajovací prompt pro nastavení tohoto toku a bezpečné end-to-end ověření. Codex je jediný komunikační bod, připravuje zadání, nezávislé review/testy a Git; Claude Pro s výchozím modelem CLI připravuje implementace a opravy. Veřejný kód zůstává v `kabelkac77/SVDT2027` (`event-app/`, `event-app-zadani/`), účelové neveřejné podklady v samostatném soukromém repozitáři dle místního provozního záznamu. Oba přístupy ověřené přes místní GitHub CLI. SQLite, exporty, soukromé screenshoty a secrets mimo oba repozitáře. Nový projektový skill/runner, společný účtový kapacitní guard a zámek s iNice; iNice se nemění. Malé větve/Draft PR, žádný push main, deploy, ostrá migrace, zprávy nebo aktivace záloh. Skutečný stav ověření se průběžně eviduje v [22](22-CODEX-CLAUDE-SPOLUPRACE.md); příprava není důkaz úspěšného modelového/opravného běhu.

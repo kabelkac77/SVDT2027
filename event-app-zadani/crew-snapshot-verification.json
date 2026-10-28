@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-28",
+  "issue": 18,
+  "pullRequest": 19,
+  "basePullRequest": 17,
+  "data": "synthetic test data only",
+  "proposal": {
+    "head": "9a7aba18926deed82f09f99db6bf73308de89895",
+    "contextBytes": 35572,
+    "completed": true
+  },
+  "review": {
+    "head": "35d5406788752d63364a117276df9bd05b63cffb",
+    "id": 5686325955,
+    "url": "https://github.com/kabelkac77/SVDT2027/pull/19#pullrequestreview-5686325955"
+  },
+  "boundedRepair": {
+    "head": "35d5406788752d63364a117276df9bd05b63cffb",
+    "contextBytes": 35884,
+    "writeFiles": 1,
+    "completed": true,
+    "modelFileSha256": "318c7e6a547dab7349c6c3c723c0ca12fb8c76af37cb41605eef7a5e514a1636"
+  },
+  "hostReviewCorrections": [
+    "explicit read-only immutable SQLite verification",
+    "reject empty or whitespace initialization marker",
+    "preserve original amount parser representation"
+  ],
+  "verification": {
+    "pythonTests": 73,
+    "allPassed": true,
+    "jsSyntaxChecks": 4,
+    "brokenHtmlAssetLinks": 0,
+    "browserRerun": false
+  },
+  "finalSources": {
+    "event-app/tools/crew_workspace.py": "2cefbeef08a9c76090a1650e6ecd2fe4dfeef8ffbc8c075499914d9ccb52d51a",
+    "event-app/tests/crew_workspace_test.py": "b1a910daa5e0625969102754eae49905585d09b51b1491ccdbe12f7ee06e7d3a",
+    "event-app/tests/crew_snapshot_host_test.py": "8e0c17e2967d87be5a7379d1cc116ea1a04553855e6ebc1132d8549e2a97e622",
+    "event-app/tests/crew_snapshot_io_host_test.py": "f0126aae0a2909d52f8d9c26b8513f88682a1b0801539b8a57bf94d0e614f3b1"
+  },
+  "limits": [
+    "No shared Supabase, role grants, production migration or deployment.",
+    "Runtime data, exports and machine bindings stay outside Git and model context.",
+    "Daily complete scheduled backups remain a separate scope."
+  ]
+}

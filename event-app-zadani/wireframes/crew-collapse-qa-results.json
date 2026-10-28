@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-28",
+  "data": "fictional interaction checks; actual workspace layout verified read-only at 319x632",
+  "checks": [
+    {
+      "id": "default-collapsed",
+      "pass": true
+    },
+    {
+      "id": "opens-only-selected-category",
+      "pass": true
+    },
+    {
+      "id": "keyboard-collapse",
+      "pass": true
+    },
+    {
+      "id": "search-reveals-matches",
+      "pass": true
+    },
+    {
+      "id": "category-filter-reveals-members",
+      "pass": true
+    },
+    {
+      "id": "collapse-protects-unsaved-form",
+      "pass": true
+    },
+    {
+      "id": "confirmed-discard-collapses",
+      "pass": true
+    },
+    {
+      "id": "new-person-opens-its-category",
+      "pass": true
+    },
+    {
+      "id": "history-starts-collapsed",
+      "pass": true
+    },
+    {
+      "id": "history-expands-read-only",
+      "pass": true
+    },
+    {
+      "id": "compact-controls-collapsed-on-narrow-screen",
+      "pass": true
+    },
+    {
+      "id": "inline-editor-still-visible",
+      "pass": true
+    },
+    {
+      "id": "search-works-with-control-layout",
+      "pass": true
+    },
+    {
+      "id": "cleared-search-restores-collapsed-state",
+      "pass": true
+    }
+  ],
+  "actualLayout": {
+    "categories": 9,
+    "allCategoriesFit": true,
+    "horizontalOverflow": false
+  }
+}

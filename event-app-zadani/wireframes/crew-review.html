@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="cs" data-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; frame-src 'self'; base-uri 'none'">
+  <title>SVDT — kontrola mobilního návrhu crew</title>
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="crew-review.css">
+  <script defer src="crew-review.js"></script>
+</head>
+<body>
+  <header class="prototype-bar"><div><strong>MOBILNÍ NÁVRH CREW</strong><span>Šířka vnořeného návrhu, ne test skutečného telefonu</span></div><label>Šířka<select id="review-width"><option value="390">390 px</option><option value="320">320 px</option></select></label><label>Obrazovka<select id="review-screen"><option value="people">Seznam lidí</option><option value="row/demo-1">Rozbalený řádek</option><option value="row/demo-10">Řádek s barterem</option></select></label><a href="crew.html">Otevřít celý návrh</a></header>
+  <main class="review-stage"><iframe id="review-frame" title="Mobilní návrh Lidi a crew" src="crew.html#people" width="390" height="844"></iframe></main>
+</body>
+</html>

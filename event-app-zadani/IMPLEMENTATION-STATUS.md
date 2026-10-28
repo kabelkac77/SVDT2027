@@ -1,5 +1,9 @@
 # Stav implementace
 
+## 2026-10-28 — verzovaný pracovní přehled a atomické snímky
+
+Dodaný obecný místní pracovní přehled a oprava SQLite snímků v navazujícím Draft PR #19. Claude návrh/opravný krok, Codex nezávislé review, hostitelské revizní opravy a skutečné testy: 73/73 prošlo, včetně poruch, souběhu a obnovy do nové složky. Čtyři syntaktické JS kontroly a úplnost HTML odkazů prošly; nový browser běh se při nezměněném rozhraní netvrdí. Skutečné podklady nejsou ve veřejném zdroji. [23](23-PRACOVNI-EVIDENCE-A-SNIMKY.md) rozlišuje dodávku, důkazy a ruční otevřené kroky. Bez merge, produkční migrace nebo aktivace plánovaných kompletních záloh.
+
 ## 2026-10-28 — místní spolupráce Codex a Claude Code
 
 Dodaný a nainstalovaný projektový skill/runner, oddělené strojové vazby mimo Git, ověřené přístupy, samostatná větev a Draft PR #17 pro issue #16. Skutečný nativní návrh, nezávislé připnuté review tří reprodukovaných chyb a oprava ve stejné větvi dokončené. Codex ověřil 40 syntetických testů + 41 dalších negativních případů; kontrola formátu skillu prošla. Zdroj pravdy a důkazy v [22](22-CODEX-CLAUDE-SPOLUPRACE.md). Nové CI testuje jen veřejné syntetické nástroje bez modelového/produkčního přístupu; finální check v PR. Personální pracovní verze, historické údaje, původní index/HEAD, frontend, SQL a produkce se tímto nemění. Denní úplné zálohy nebyly aktivované.
