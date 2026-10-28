@@ -23,3 +23,7 @@ Podklad: [OWASP CSV Injection](https://community.owasp.org/attacks/CSV_Injection
 ## Ověření a stav
 
 IN PROGRESS. Claude připravuje pouze čistý modul; Codex nezávislé regresní testy, review, integraci a browser kontrolu výhradně na fiktivních datech. Skutečný export uživatel vytvoří až výslovným kliknutím; data se nikam nenahrávají a evidence se exportem nemění. JSON záloha a historické roky zůstávají zachované. Přesné testy a revize se doplní podle skutečných výsledků.
+
+## Kompatibilita nativního odečtu přes půlnoc
+
+Při přípravě konkrétního běhu se ověřila chyba výkladu nativního času bez data pro následující půlnoc. SVDT host doplňuje pouze doslovný pražský čas v následujícím dni, pokud je jednoznačný a uvnitř původní pětihodinové hranice. Nevytváří reset přičtením pěti hodin. Neznámé formáty, explicitní minulá data, nejednoznačný/neexistující čas při změně času i staré odečty zůstávají blokované; 100 % stále blokuje. Sedm syntetických testů a kontrola přes původní sdílený parser/gate tyto hranice ověřily. Společný modul, stav a zámek účtu se nemění; soubor/konfigurace druhého projektu zůstávají beze změny.

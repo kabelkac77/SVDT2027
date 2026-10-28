@@ -12,6 +12,9 @@ import re
 import signal
 import subprocess
 import tempfile
+import datetime as dt
+import math
+from zoneinfo import ZoneInfo
 
 REPO = 'kabelkac77/SVDT2027'
 ACTOR = 'vojtechhrach'
@@ -240,6 +243,37 @@ def apply_files(root, files):
 def native_env():
     return {k:v for k,v in os.environ.items() if k in ('PATH','HOME','USER','LOGNAME','TMPDIR','LANG','LC_ALL','TERM')}
 
+def next_native_clock_reset(value, observed_at):
+    """Resolve only a native Prague clock crossing midnight within the 5h window.
+
+    No new quota or assumed +5h reset. Explicit dates and unknown/DST-ambiguous
+    clocks remain the shared parser's responsibility and stay rejected here.
+    """
+    if (not isinstance(value,str) or isinstance(observed_at,bool)
+        or not isinstance(observed_at,(int,float)) or not math.isfinite(observed_at)):
+        return None
+    match=re.fullmatch(r'([1-9]|1[0-2])(?::([0-5][0-9]))?([ap]m) \(Europe/Prague\)',value.strip())
+    if not match:
+        return None
+    hour=int(match[1])%12+(12 if match[3]=='pm' else 0)
+    try:
+        timezone=ZoneInfo('Europe/Prague')
+        local=dt.datetime.fromtimestamp(observed_at,timezone)
+        today=local.replace(hour=hour,minute=int(match[2] or 0),second=0,microsecond=0)
+        if today.timestamp()>observed_at:
+            return None
+        tomorrow=today+dt.timedelta(days=1)
+        candidates=set()
+        for fold in (0,1):
+            instant=tomorrow.replace(fold=fold).timestamp()
+            back=dt.datetime.fromtimestamp(instant,timezone)
+            if (back.date()==tomorrow.date() and back.hour==hour and back.minute==tomorrow.minute
+                and 0<instant-observed_at<=5*3600+60):
+                candidates.add(int(instant))
+        return next(iter(candidates)) if len(candidates)==1 else None
+    except (ValueError,OverflowError,OSError):
+        return None
+
 def usage_guard():
     if GUARD is None or ACCOUNT_STATE is None or not GUARD.is_file():
         raise Rejected('SHARED_ACCOUNT_GUARD_UNAVAILABLE')
@@ -248,6 +282,16 @@ def usage_guard():
     # Exactly the same lock/state as iNice; never override STATE per project.
     if module.STATE.resolve() != ACCOUNT_STATE:
         raise Rejected('SHARED_ACCOUNT_GUARD_CHANGED')
+    shared_reset=module.reset_time
+    def native_reset(value, observed_at):
+        try:
+            return shared_reset(value,observed_at)
+        except module.UsageError:
+            rollover=next_native_clock_reset(value,observed_at)
+            if rollover is None:
+                raise
+            return rollover
+    module.reset_time=native_reset
     return module
 
 def run(args):
