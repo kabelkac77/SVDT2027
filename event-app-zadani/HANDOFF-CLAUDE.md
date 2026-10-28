@@ -1,5 +1,9 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## Nejnovější pracovní přehled — 2026-10-28
+
+Obecné zdroje místního přehledu jsou v navazujícím Draft PR #19, základ PR #17. Atomické SQLite snímky ověřené 73 syntetickými testy včetně obnovy; skutečný stav a hranice v [23](23-PRACOVNI-EVIDENCE-A-SNIMKY.md). Soukromý seznam k ruční kontrole ani skutečná DB nejsou modelový/veřejný kontext. Priorita zůstává Lidi a crew; sdílené oprávnění a import jsou další samostatný krok.
+
 ## Aktuální předávací postup — 2026-10-28
 
 Na výslovné zadání používat projektový [svdt-claude-handoff](../event-app/skills/svdt-claude-handoff/SKILL.md), hostitelský runner a pravidla v [22](22-CODEX-CLAUDE-SPOLUPRACE.md). Claude připravuje vybrané implementace/opravy, Codex nezávisle přezkoumává, testuje a spravuje Git. Personální SQLite a necommitnutá pracovní verze zůstávají v původní místní kopii; čistá worktree z HEAD je automaticky neobsahuje. Starší pořadí modulů nepřepisuje aktuální prioritu Lidi a crew.

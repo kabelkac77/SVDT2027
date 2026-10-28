@@ -49,3 +49,7 @@ Místní server je vázaný pouze na 127.0.0.1, soukromé soubory nejsou statick
 Ověřeno: 12 izolovaných serverových/databázových testů a 17 prohlížečových kontrol na **fiktivních** datech. Persistenci ověřilo znovuotevření DB i restart služby; obnovitelný snímek prošel kontrolou integrity. Testované konflikty, historie, opakování požadavku, peněžní přesnost, kategorie/barvy, přidání a vyřazení člověka, neuložené formuláře a mobilní šířka 390 px. Skutečná historie byla navíc porovnaná se zdrojem bez změny Excelu. Podrobná evidence v [CREW-WORKSPACE-QA.md](wireframes/CREW-WORKSPACE-QA.md).
 
 Zbývá ruční úklid zdrojových nejasností, skutečné domluvy pro 2027, případné sdílení a budoucí řízený přenos do kanonického modelu s oprávněními. Starší v0.3 je historický čtecí návrh; v0.4 je tato lokální pracovní dodávka.
+
+## Doplněk — ověřené atomické snímky
+
+Snímek má soukromá oprávnění od vytvoření; konečný název získá až po ověření integrity a potřebného schématu. Existující platný snímek se nepřepíše. Vadný soubor nebo symlink se automaticky nemaže; při takovém selhání nejprve uchovat aktuální soukromou složku a chybný snímek vědomě přesunout stranou, pak zopakovat vytvoření. Při testech se tímto způsobem pracuje pouze se syntetickými soubory. [Ověření a hranice](23-PRACOVNI-EVIDENCE-A-SNIMKY.md). Nejde o zapnutí plánovaných kompletních záloh.

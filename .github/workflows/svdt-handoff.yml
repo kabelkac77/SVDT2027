@@ -9,6 +9,8 @@ on:
       - "event-app/tests/review_receipt_test.py"
       - "event-app/tools/crew_workspace.py"
       - "event-app/tests/crew_workspace_test.py"
+      - "event-app/tests/crew_snapshot_host_test.py"
+      - "event-app/tests/crew_snapshot_io_host_test.py"
       - "event-app-zadani/wireframes/**"
       - ".github/workflows/svdt-handoff.yml"
   push:
@@ -20,6 +22,8 @@ on:
       - "event-app/tests/review_receipt_test.py"
       - "event-app/tools/crew_workspace.py"
       - "event-app/tests/crew_workspace_test.py"
+      - "event-app/tests/crew_snapshot_host_test.py"
+      - "event-app/tests/crew_snapshot_io_host_test.py"
       - "event-app-zadani/wireframes/**"
       - ".github/workflows/svdt-handoff.yml"
 

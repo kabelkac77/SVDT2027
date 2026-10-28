@@ -45,7 +45,7 @@ def amount_minor(value):
         return None
     if not isinstance(value, str):
         raise Problem(422, 'Částku zadej jako text v Kč.')
-    normalized = re.sub(r'[\s  ]', '', value).replace(',', '.')
+    normalized = re.sub(r'[\s\u00a0\u202f]', '', value).replace(',', '.')
     if not re.fullmatch(r'\d{1,9}(?:\.\d{1,2})?', normalized):
         raise Problem(422, 'Částka musí být nezáporná, nejvýše 999 999 999,99 Kč, se dvěma desetinnými místy.')
     whole, _, decimal = normalized.partition('.')
@@ -67,32 +67,61 @@ def read_seed(path):
     return payload
 
 REQUIRED_SNAPSHOT_TABLES = {'meta', 'history', 'categories', 'working', 'audit', 'requests'}
+REQUIRED_SNAPSHOT_COLUMNS = {
+    'meta': {'key', 'value'},
+    'history': {'id', 'year', 'content'},
+    'categories': {'id', 'name', 'name_key', 'color', 'sort_order', 'version'},
+    'working': {'id', 'year', 'category_id', 'content', 'source_id', 'version', 'updated_at'},
+    'audit': {'id', 'at', 'kind', 'record_id', 'before_json', 'after_json'},
+    'requests': {'id', 'fingerprint', 'response'},
+}
+SNAPSHOT_ERROR_MESSAGE = 'Nepodařilo se bezpečně vytvořit záložní kopii.'
 
 class SnapshotError(Exception):
     pass
 
 def verify_snapshot(path):
-    connection = sqlite3.connect(path)
+    # Read only: callers decide whether to delete or overwrite; this never does either.
+    connection = sqlite3.connect(Path(path).absolute().as_uri() + '?mode=ro&immutable=1', uri=True)
     try:
         if connection.execute('PRAGMA integrity_check').fetchone()[0] != 'ok':
             raise SnapshotError('Snapshot failed integrity check')
         tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
         if not REQUIRED_SNAPSHOT_TABLES.issubset(tables):
             raise SnapshotError('Snapshot is missing required schema')
-        if not connection.execute("SELECT 1 FROM meta WHERE key='initialized'").fetchone():
+        for table, columns in REQUIRED_SNAPSHOT_COLUMNS.items():
+            present = {row[1] for row in connection.execute(f'PRAGMA table_info({table})')}
+            if not columns.issubset(present):
+                raise SnapshotError('Snapshot is missing required columns')
+        row = connection.execute("SELECT value FROM meta WHERE key='initialized'").fetchone()
+        if not row or not isinstance(row[0], str) or not row[0].strip():
             raise SnapshotError('Snapshot is missing initialization metadata')
     finally:
         connection.close()
+
+def existing_snapshot_is_valid(target):
+    # Symlinks are never trusted regardless of what they resolve to, and we never
+    # follow or touch them; any non-regular-file or failed verification is just "invalid".
+    if target.is_symlink() or not target.is_file():
+        return False
+    try:
+        verify_snapshot(target)
+    except Exception:
+        return False
+    return True
 
 def atomic_sqlite_snapshot(source_db, target):
     # Published only via os.link, which atomically fails instead of silently replacing a path
     # that already exists (a prior valid backup, a corrupted leftover, or a symlink).
     target = Path(target)
     if os.path.lexists(target):
-        return False
-    fd, tmp_name = tempfile.mkstemp(dir=target.parent, prefix='.' + target.name + '-', suffix='.tmp')
-    tmp_path = Path(tmp_name)
+        if existing_snapshot_is_valid(target):
+            return False
+        raise SnapshotError(SNAPSHOT_ERROR_MESSAGE)
+    tmp_path = None
     try:
+        fd, tmp_name = tempfile.mkstemp(dir=target.parent, prefix='.crew-snapshot-', suffix='.tmp')
+        tmp_path = Path(tmp_name)
         os.close(fd)
         snapshot = sqlite3.connect(tmp_path)
         try:
@@ -104,13 +133,21 @@ def atomic_sqlite_snapshot(source_db, target):
             os.link(tmp_path, target)
             return True
         except FileExistsError:
-            return False
+            # Another process won the race; evaluate what it left the same way as any
+            # pre-existing target instead of assuming it is a valid completed snapshot.
+            if existing_snapshot_is_valid(target):
+                return False
+            raise SnapshotError(SNAPSHOT_ERROR_MESSAGE)
     except SnapshotError:
         raise
     except Exception as error:
-        raise SnapshotError(f'Nepodařilo se bezpečně vytvořit záložní kopii {target.name}.') from error
+        raise SnapshotError(SNAPSHOT_ERROR_MESSAGE) from error
     finally:
-        tmp_path.unlink(missing_ok=True)
+        if tmp_path is not None:
+            try:
+                tmp_path.unlink(missing_ok=True)
+            except OSError as error:
+                raise SnapshotError(SNAPSHOT_ERROR_MESSAGE) from error
 
 class CrewStore:
     def __init__(self, directory, seed):
