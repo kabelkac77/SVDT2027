@@ -1,0 +1,81 @@
+{
+  "version": "0.4",
+  "date": "2026-10-28",
+  "data": "fictional test data only",
+  "serverTests": 12,
+  "browserChecks": [
+    {
+      "id": "dirty-switch-protected",
+      "pass": true
+    },
+    {
+      "id": "saved-data-survives-reload",
+      "pass": true
+    },
+    {
+      "id": "history-read-only-ui",
+      "pass": true
+    },
+    {
+      "id": "history-name-unchanged",
+      "pass": true
+    },
+    {
+      "id": "category-name-and-stripe-saved",
+      "pass": true
+    },
+    {
+      "id": "category-color-survives-reload",
+      "pass": true
+    },
+    {
+      "id": "invalid-confirmation-preserves-input",
+      "pass": true
+    },
+    {
+      "id": "new-person-saved",
+      "pass": true
+    },
+    {
+      "id": "archive-hides-without-delete",
+      "pass": true
+    },
+    {
+      "id": "archived-record-remains-available",
+      "pass": true
+    },
+    {
+      "id": "conflict-keeps-unsaved-fields",
+      "pass": true
+    },
+    {
+      "id": "explicit-conflict-reload",
+      "pass": true
+    },
+    {
+      "id": "editing-still-works-after-category-dialog",
+      "pass": true
+    },
+    {
+      "id": "new-category-gets-free-persisted-color",
+      "pass": true
+    },
+    {
+      "id": "save-after-service-restart",
+      "pass": true
+    },
+    {
+      "id": "mobile-editor-390-no-horizontal-overflow",
+      "pass": true
+    },
+    {
+      "id": "moving-out-of-filter-is-explained",
+      "pass": true
+    }
+  ],
+  "limits": [
+    "Local workspace, not shared cloud authentication or Supabase RLS.",
+    "The real historical database was checked separately without test edits.",
+    "390 px tested in an iframe, not on a physical phone."
+  ]
+}
