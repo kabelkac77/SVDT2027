@@ -1,0 +1,9 @@
+# Omezený serverový krok pro PÁ a SO
+
+Samostatný menší krok pro issue 23, po ukončení většího běhu časovým limitem bez aplikace souborů. Tento běh má pouze jediný výstup: event-app/tools/crew_workspace.py. Neřešit HTML, CSS, JS ani testy; jejich integraci a nezávislé ověření provádí host odděleně.
+
+Doplnit do TEXT_LIMITS friday=100 a saturday=100. Jsou to jednoduché textové rozsahy například 08:00–16:00, žádná validace časového formátu, data nebo výpočet délky. Nové seed záznamy mají prázdné hodnoty podle TEXT_LIMITS. V record() doplnit do načtené kopie f chybějící friday a saturday na prázdný string; čtení nesmí nic zapisovat do DB. record.extra ponechá term a přidá dvě položky {'label':'PÁ (od–do)','value':f['friday']} a {'label':'SO (od–do)','value':f['saturday']} pro existující CSV export.
+
+validate(self, fields, previous=None): obě nová pole jsou volitelná kvůli starším otevřeným klientům. Chybějící klíč se bere z previous, jinak prázdno pro nový záznam. Explicitní prázdný text vědomě smaže hodnotu. Ostatní původní povinné klíče a odmítání neznámých klíčů zachovat. U nových polí stejná textová validace jako ostatní: string, max100 znaků, bez NUL, strip whitespace, jinak 422 před zápisem. Nevkládat pole do předaného fields nebo previous; pracovat s lokální kopií. U save_record uvnitř existující transakce předat previous z prior content (nebo None při novém záznamu) do validate(). Tím starší klient neposílající časy při úpravě jiné položky nesmaže uložené hodnoty.
+
+Zachovat úplně všechno ostatní: schema SQLite bez migrace, historie a původní raw, neměnná verze ročníku, term jako samostatný požadavek potvrzení, konflikty/verze, request fingerprint/idempotence, audit, zálohy, ochrana serveru a export JSON. Neměnit žádnou jinou funkci nebo veřejné soubory. Žádné skutečné podklady nejsou součástí tohoto zadání.
