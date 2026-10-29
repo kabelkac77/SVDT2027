@@ -1,5 +1,10 @@
 # MASTER BACKLOG
 
+## Samostatná práce — 2026-10-29
+
+- [ ] Přehled stavů uložených záznamů v záhlaví kategorií 2027, viditelný i při sbalení; filtry a historie zachované. [Zadání 25](25-CREW-STAVY-KATEGORII.md).
+- [ ] Později s uživatelem potvrdit čitelnost přehledu a potřebné počty/role/termíny pro skutečnou obsazenost. Počty záznamů nejsou počty unikátních lidí ani potvrzení personální připravenosti.
+
 ## Ruční potvrzení odložená uživatelem — 2026-10-28
 
 **CONFIRMED:** uživatel výslovně odkládá vlastní kontrolu a společný průchod na později. Tyto body nejsou podmínkou další samostatné technické práce a nejsou schválené mlčením.
