@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var ALLOWED_YEARS = [2025, 2026, 2027];
+  var ALLOWED_YEARS = ['2025', '2026', '2027'];
   var MAX_ROWS = 10000;
   var ERROR_MESSAGE = 'Neplatná vstupní data pro CSV export přehledu.';
   var BOM = '﻿';
@@ -33,9 +33,24 @@
     );
   }
 
+  // A sparse array (e.g. `new Array(n)` or `delete arr[i]`) makes forEach silently skip
+  // missing indices; reject it instead of dropping those entries from the export.
+  function hasNoHoles(list) {
+    for (var i = 0; i < list.length; i++) {
+      if (!Object.prototype.hasOwnProperty.call(list, i)) return false;
+    }
+    return true;
+  }
+
+  function validateOptionalObject(value) {
+    if (value === null || value === undefined) return undefined;
+    if (!isPlainObject(value)) fail();
+    return value;
+  }
+
   function validateEntryList(list) {
-    if (list === undefined || list === null) return;
-    if (!Array.isArray(list)) fail();
+    if (list === undefined) return;
+    if (!Array.isArray(list) || !hasNoHoles(list)) fail();
     list.forEach(function (entry) {
       if (!isPlainObject(entry)) fail();
       if (typeof entry.label !== 'string' || entry.label.length === 0) fail();
@@ -46,8 +61,37 @@
   function validateRow(row, year) {
     if (!isPlainObject(row)) fail();
     if (typeof row.id !== 'string' || row.id.length === 0) fail();
-    if (typeof row.year !== 'number' || row.year !== year) fail();
-    if (year === 2027 && (!Number.isSafeInteger(row.version) || row.version <= 0)) fail();
+    if (typeof row.year !== 'string' || row.year !== year) fail();
+
+    if (year === '2027') {
+      if (!Number.isSafeInteger(row.version) || row.version <= 0) fail();
+    } else if (!isValidFieldValue(row.version)) {
+      fail();
+    }
+
+    if (!isValidFieldValue(row.category)) fail();
+    if (!isValidFieldValue(row.name)) fail();
+    if (!isValidFieldValue(row.statusLabel)) fail();
+    if (!isValidFieldValue(row.status)) fail();
+    if (!isValidFieldValue(row.position)) fail();
+    if (!isValidFieldValue(row.owner)) fail();
+    if (!isValidFieldValue(row.email)) fail();
+    if (!isValidFieldValue(row.phone)) fail();
+    if (!isValidFieldValue(row.barter)) fail();
+    if (!isValidFieldValue(row.merch)) fail();
+    if (!isValidFieldValue(row.archived)) fail();
+    if (!isValidFieldValue(row.sourceYear)) fail();
+    if (!isValidFieldValue(row.sourceId)) fail();
+
+    var fields = validateOptionalObject(row.fields);
+    if (fields !== undefined && !isValidFieldValue(fields.term)) fail();
+
+    var source = validateOptionalObject(row.source);
+    if (source !== undefined) {
+      if (!isValidFieldValue(source.sheet)) fail();
+      if (!isValidFieldValue(source.row)) fail();
+    }
+
     validateEntryList(row.raw);
     validateEntryList(row.extra);
   }
@@ -109,8 +153,10 @@
     return '"' + text.replace(/"/g, '""') + '"';
   }
 
-  // Every non-empty text value (incl. headers) gets a tab prefix inside the quotes:
-  // neutralises CSV/formula injection in Excel and forces text display (keeps leading zeros).
+  // Every non-empty text value (incl. headers) gets a tab prefix inside the quotes.
+  // This is a best-effort nudge against formula/CSV injection when the file is opened
+  // in Excel and keeps leading zeros intact; it is not a guarantee for every spreadsheet
+  // program, nor for files that get re-saved or re-exported afterwards.
   function textCell(text) {
     if (text === '') return quote('');
     return quote('\t' + text);
@@ -138,8 +184,8 @@
   }
 
   function buildCsv(rows, year) {
-    if (typeof year !== 'number' || ALLOWED_YEARS.indexOf(year) === -1) fail();
-    if (!Array.isArray(rows) || rows.length > MAX_ROWS) fail();
+    if (typeof year !== 'string' || ALLOWED_YEARS.indexOf(year) === -1) fail();
+    if (!Array.isArray(rows) || rows.length > MAX_ROWS || !hasNoHoles(rows)) fail();
     rows.forEach(function (row) {
       validateRow(row, year);
     });

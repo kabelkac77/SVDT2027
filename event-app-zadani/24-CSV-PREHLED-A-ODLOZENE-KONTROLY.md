@@ -22,7 +22,7 @@ Podklad: [OWASP CSV Injection](https://community.owasp.org/attacks/CSV_Injection
 
 ## Ověření a stav
 
-IN PROGRESS. Claude připravuje pouze čistý modul; Codex nezávislé regresní testy, review, integraci a browser kontrolu výhradně na fiktivních datech. Skutečný export uživatel vytvoří až výslovným kliknutím; data se nikam nenahrávají a evidence se exportem nemění. JSON záloha a historické roky zůstávají zachované. Přesné testy a revize se doplní podle skutečných výsledků.
+**IMPLEMENTED / ověřeno 2026-10-29.** Claude dodal čistý modul a opravu podle [připnutého review](https://github.com/kabelkac77/SVDT2027/pull/21#pullrequestreview-5687651910); první návrh odmítal textový rok a neplatné hodnoty tiše vynechával. Codex provedl integraci, nezávislé review a regresní zkoušky: 80 Python + 19 Node testů prošlo, včetně nezávislého parsování přes Python csv, duplicitních a přeuspořádaných popisků, textových prefixů, historie a ochrany rozepsaných změn. V prohlížeči se na oddělených fiktivních datech ověřilo skutečné stažení se členy sbalené kategorie, hledání, historický rok a prázdný výběr. Stažený syntetický soubor byl také strojově zkontrolovaný. Desktopový Excel se nespouštěl. [Evidence](crew-csv-verification.json), Draft PR #21 navazuje na #19. Skutečný export uživatel vytvoří až výslovným kliknutím; data se nikam nenahrávají a evidence se exportem nemění. JSON záloha a historické roky zůstávají zachované. Přesné testy a revize se doplní podle skutečných výsledků.
 
 ## Kompatibilita nativního odečtu přes půlnoc
 

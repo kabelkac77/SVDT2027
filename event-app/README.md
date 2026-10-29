@@ -4,6 +4,8 @@
 
 Samostatný Python nástroj `tools/crew_workspace.py` obsluhuje [místní pracovní přehled](http://127.0.0.1:4317/crew.html#people), s privátní SQLite mimo Git a neměnnou historií. Není sdíleným Supabase modulem. Pro první založení potřebuje záměrně předaný soukromý zdroj; ve veřejném kódu jsou jen syntetické ukázky/testy. [Ovládání a spuštění](../event-app-zadani/21-LIDE-A-CREW-PRACOVNI-VERZE.md), [ověření a hranice](../event-app-zadani/23-PRACOVNI-EVIDENCE-A-SNIMKY.md). Testy z kořene: `python3 -B -m unittest discover -s event-app/tests -p '*_test.py' -v`.
 
+CSV filtrovaného uloženého ročníku: [ovládání a formát](../event-app-zadani/24-CSV-PREHLED-A-ODLOZENE-KONTROLY.md). Syntetické testy exportu z kořene: `node --test event-app/tests/crew_csv_test.cjs`. Desktopový Excel se tímto příkazem nespouští.
+
 ## Codex → místní Claude Code
 
 Projektový postup je v [skill](skills/svdt-claude-handoff/SKILL.md), stav/úložiště v [22](../event-app-zadani/22-CODEX-CLAUDE-SPOLUPRACE.md). Runner `tools/claude_handoff.py` pracuje jen s čistou izolovanou worktree, konkrétním issue, přesným HEAD a allowlistem; nejprve `--dry-run`. Sám nepublikuje a nepouští testy. Hostitelské kontroly z kořene repozitáře: `python3 -B -m unittest discover -s event-app/tests -p "*_test.py" -v` na syntetických datech. Nativní Claude Pro používá stejný účtový zámek/kapacitní guard jako iNice; soukromé podklady nejsou modelový kontext.

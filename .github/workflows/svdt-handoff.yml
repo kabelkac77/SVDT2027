@@ -9,6 +9,7 @@ on:
       - "event-app/tests/review_receipt_test.py"
       - "event-app/tools/crew_workspace.py"
       - "event-app/tests/crew_workspace_test.py"
+      - "event-app/tests/crew_csv_test.cjs"
       - "event-app/tests/crew_snapshot_host_test.py"
       - "event-app/tests/crew_snapshot_io_host_test.py"
       - "event-app-zadani/wireframes/**"
@@ -22,6 +23,7 @@ on:
       - "event-app/tests/review_receipt_test.py"
       - "event-app/tools/crew_workspace.py"
       - "event-app/tests/crew_workspace_test.py"
+      - "event-app/tests/crew_csv_test.cjs"
       - "event-app/tests/crew_snapshot_host_test.py"
       - "event-app/tests/crew_snapshot_io_host_test.py"
       - "event-app-zadani/wireframes/**"
@@ -48,7 +50,10 @@ jobs:
           node-version: "22"
       - name: Ověřit syntaxi veřejného rozhraní
         run: |
+          node --check event-app-zadani/wireframes/crew-csv.js
           node --check event-app-zadani/wireframes/crew-sheet.js
           node --check event-app-zadani/wireframes/crew-workspace.js
           node --check event-app-zadani/wireframes/crew-review.js
           node --check event-app-zadani/wireframes/prototype.js
+      - name: Ověřit CSV serializaci na fiktivních datech
+        run: node --test event-app/tests/crew_csv_test.cjs

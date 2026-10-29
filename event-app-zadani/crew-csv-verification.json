@@ -1,0 +1,52 @@
+{
+  "verified_at": "2026-10-29",
+  "issue": 20,
+  "pull_request": 21,
+  "scope": "readable filtered CSV; synthetic tests only",
+  "implementation": {
+    "native_claude_proposal": "completed",
+    "pinned_repair_review": 5687651910,
+    "native_claude_repair": "completed",
+    "host_review": "completed"
+  },
+  "tests": {
+    "python": {
+      "passed": 80,
+      "failed": 0
+    },
+    "node": {
+      "passed": 19,
+      "failed": 0
+    },
+    "browser": {
+      "isolated_synthetic_fixture": true,
+      "dirty_draft_preserved": true,
+      "collapsed_members_exported": true,
+      "downloaded_csv_independently_parsed": true,
+      "search_count_matches": true,
+      "history_read_only_with_csv": true,
+      "empty_filter_stays_empty": true
+    }
+  },
+  "local_activation": {
+    "completed": true,
+    "database_unchanged_verified_privately": true
+  },
+  "limitations": [
+    "Desktop Excel was not executed",
+    "CSV is a readable view, not a lossless backup or import protocol",
+    "User review is explicitly deferred in BACKLOG.md",
+    "Shared hosting, permissions, scheduled backups and production deployment unchanged"
+  ],
+  "files_sha256": {
+    "event-app-zadani/wireframes/crew-csv.js": "f27d8cae8416e932295437bcc2bebc1264da17d370defbf9a9650242dfaf1e2f",
+    "event-app-zadani/wireframes/crew-workspace.js": "3e5673f71678c74de589d82a3be1e8f8cbff9632d6476fca8d7167a81cb3521b",
+    "event-app-zadani/wireframes/crew.html": "f9a13ab1d6c55e0d081aab04dc194468b3dff7acdfdd46bc74b386a9cbedf190",
+    "event-app/tools/crew_workspace.py": "52403ac32e4fa9094e87a69dffbd6c5eebccee0dc2645b3a87e4a9cc321ada6f",
+    "event-app/tools/claude_handoff.py": "f1ebac30779c7450c83f3f363d29c73caca357e5f4dfe82496a482f1eb45d12e",
+    "event-app/tests/crew_csv_test.cjs": "dcee0e984292338e97ae20811098b350421c0bcdb72d920c2fac0fd3a488f4ec",
+    "event-app/tests/crew_workspace_test.py": "898581df81d705a719bde97c6926959d3537f4a1cccb9219b7863e647076bca4",
+    "event-app/tests/claude_handoff_test.py": "416e288a3a259cdebdab7a723119755ebaf10a7b55d56d65a6427b55c82238b0",
+    ".github/workflows/svdt-handoff.yml": "f3204d1cf7fe3bc1b14c2019331207f46a842c1da46162d6af8f83bffa5a9da4"
+  }
+}
