@@ -1,5 +1,10 @@
 # MASTER BACKLOG
 
+## Aktuální priorita uživatele — 2026-10-29
+
+- [ ] Přidat editovatelné a trvale ukládané sloupce PÁ (od–do), SO (od–do). [Zadání 26](26-CREW-PATEK-SOBOTA.md).
+- [ ] Později uživatelsky projít rozložení časových sloupců; skutečné časy, směny a konkrétní data zůstávají k doplnění.
+
 ## Samostatná práce — 2026-10-29
 
 - [ ] Přehled stavů uložených záznamů v záhlaví kategorií 2027, viditelný i při sbalení; filtry a historie zachované. [Zadání 25](25-CREW-STAVY-KATEGORII.md).
