@@ -27,7 +27,8 @@ WEB = ROOT / 'event-app-zadani/wireframes'
 COLORS = [f'cat-{i}' for i in range(12)]
 STATES = {'candidate': 'Neoslovený', 'contacted': 'Poptaný', 'confirmed': 'Potvrzený', 'declined': 'Odmítl', 'unknown': 'K ověření'}
 LABELS = ['jméno', 'poptán?', 'poznámka - stav', 'pozice', 'kdo ho řeší - před / na akci', 'kontakt', 'Kč nástřel', 'Kč', 'Bartr', 'Celková hodnota', 'Vyplaceno', 'poznámka']
-TEXT_LIMITS = {'name': 200, 'categoryId': 100, 'position': 500, 'owner': 500, 'email': 500, 'phone': 500, 'contactOriginal': 2000, 'statusNote': 4000, 'notes': 10000, 'barter': 4000, 'merch': 2000, 'term': 1000}
+TEXT_LIMITS = {'name': 200, 'categoryId': 100, 'position': 500, 'owner': 500, 'email': 500, 'phone': 500, 'contactOriginal': 2000, 'statusNote': 4000, 'notes': 10000, 'barter': 4000, 'merch': 2000, 'term': 1000, 'friday': 100, 'saturday': 100}
+OPTIONAL_TEXT_LIMITS = {'friday', 'saturday'}
 MONEY_KEYS = ('estimate', 'agreed', 'total', 'paid')
 
 def now():
@@ -231,10 +232,12 @@ class CrewStore:
 
     def record(self, row):
         f = json.loads(row['content'])
+        f.setdefault('friday', '')
+        f.setdefault('saturday', '')
         category = self.db.execute('SELECT name FROM categories WHERE id=?', (row['category_id'],)).fetchone()['name']
         money = f['money']
         values = [f['name'], 'Ne' if f['status']=='candidate' else 'Ano' if f['status'] in ('contacted','confirmed','declined') else None, f['statusNote'], f['position'], f['owner'], ' · '.join(v for v in (f['email'],f['phone'],f['contactOriginal']) if v), money_display(money['estimate']), money_display(money['agreed']), f['barter'], money_display(money['total']), money_display(money['paid']), f['notes']]
-        return {'id':row['id'],'year':'2027','dataset':'working-2027','name':f['name'],'category':category,'categoryId':row['category_id'],'categoryBasis':'Pracovní zařazení 2027','position':f['position'],'owner':f['owner'],'email':f['email'],'phone':f['phone'],'status':f['status'],'statusLabel':STATES[f['status']],'statusBasis':'Pracovní údaj pro rok 2027','cash':money_display(money['agreed']),'barter':f['barter'],'merch':f['merch'],'raw':[{'label':label,'value':value} for label,value in zip(LABELS,values)],'extra':[{'label':'Termín / účast','value':f['term']}],'source':{'sheet':'Pracovní verze 2027','row':'—'},'sourceId':row['source_id'],'sourceYear':'2026' if row['source_id'] else None,'version':row['version'],'updatedAt':row['updated_at'],'fields':f,'archived':f['archived']}
+        return {'id':row['id'],'year':'2027','dataset':'working-2027','name':f['name'],'category':category,'categoryId':row['category_id'],'categoryBasis':'Pracovní zařazení 2027','position':f['position'],'owner':f['owner'],'email':f['email'],'phone':f['phone'],'status':f['status'],'statusLabel':STATES[f['status']],'statusBasis':'Pracovní údaj pro rok 2027','cash':money_display(money['agreed']),'barter':f['barter'],'merch':f['merch'],'raw':[{'label':label,'value':value} for label,value in zip(LABELS,values)],'extra':[{'label':'Termín / účast','value':f['term']},{'label':'PÁ (od–do)','value':f['friday']},{'label':'SO (od–do)','value':f['saturday']}],'source':{'sheet':'Pracovní verze 2027','row':'—'},'sourceId':row['source_id'],'sourceYear':'2026' if row['source_id'] else None,'version':row['version'],'updatedAt':row['updated_at'],'fields':f,'archived':f['archived']}
 
     def payload(self):
         with self.lock:
@@ -242,12 +245,14 @@ class CrewStore:
             current = [self.record(row) for row in self.db.execute('SELECT * FROM working ORDER BY rowid')]
             return {'private':True,'workspace':True,'defaultYear':'2027','categories':self.categories(),'records':current+history,'datasets':[{'id':'working-2027','year':'2027','label':'Pracovní verze 2027'},{'id':'personnel-2026','year':'2026','label':'Historie 2026'},{'id':'personnel-2025','year':'2025','label':'Historie 2025'}]}
 
-    def validate(self, fields):
-        if not isinstance(fields, dict) or set(fields) != set(TEXT_LIMITS) | {'status','archived','amounts'}:
+    def validate(self, fields, previous=None):
+        allowed_keys = set(TEXT_LIMITS) | {'status','archived','amounts'}
+        required_keys = allowed_keys - OPTIONAL_TEXT_LIMITS
+        if not isinstance(fields, dict) or not required_keys.issubset(fields) or not set(fields).issubset(allowed_keys):
             raise Problem(422, 'Formulář obsahuje neplatná pole. Obnov stránku a zkus to znovu.')
         result = {}
         for key, limit in TEXT_LIMITS.items():
-            v = fields[key]
+            v = fields[key] if key in fields else (previous or {}).get(key, '')
             if not isinstance(v,str) or len(v)>limit or '\x00' in v:
                 raise Problem(422, 'Některý údaj je příliš dlouhý nebo neplatný.')
             result[key] = v.strip()
@@ -299,7 +304,8 @@ class CrewStore:
             prior = self.db.execute('SELECT * FROM working WHERE id=?',(identifier,)).fetchone()
             if (prior['version'] if prior else 0)!=body['version']:
                 raise Problem(409,'Řádek mezitím někdo změnil. Rozepsané údaje zůstaly; načti aktuální verzi.')
-            fields = self.validate(body['fields'])
+            previous = json.loads(prior['content']) if prior else None
+            fields = self.validate(body['fields'], previous)
             version = (prior['version'] if prior else 0)+1
             if prior:
                 self.db.execute('UPDATE working SET category_id=?,content=?,version=?,updated_at=? WHERE id=?',(fields['categoryId'],encoded(fields),version,now(),identifier))

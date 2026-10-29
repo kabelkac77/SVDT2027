@@ -1,0 +1,46 @@
+{
+  "verified_at": "2026-10-29",
+  "issue": 23,
+  "scope": "persistent Friday/Saturday manual ranges in local crew workspace",
+  "native_handoff": {
+    "larger_scope": "timed_out_no_files_applied",
+    "narrow_server_scope": "completed",
+    "host_review_and_integration": "completed"
+  },
+  "tests": {
+    "python_passed": 96,
+    "node_passed": 28,
+    "failures": 0
+  },
+  "browser": {
+    "synthetic_only": true,
+    "eight_columns": true,
+    "saved_after_test_server_restart": true,
+    "persisted_after_reload": true,
+    "dirty_day_draft_preserved": true,
+    "downloaded_csv_independently_parsed": true,
+    "mobile_390_no_horizontal_overflow": true,
+    "mobile_day_labels": true
+  },
+  "local_activation": {
+    "completed": true,
+    "database_unchanged_verified_privately": true,
+    "recoverable_snapshot_created": true
+  },
+  "limitations": [
+    "Manual text ranges; no dates, shift planner or duration calculation",
+    "User review and actual times deferred",
+    "Category state summary remains pending",
+    "No shared permission change, production deployment or scheduled backup activation"
+  ],
+  "files_sha256": {
+    "event-app/tools/crew_workspace.py": "c5772da5c430104ecc6dfadca490c2e49e2ce9c6435b576c815ccec1aa22ba33",
+    "event-app-zadani/wireframes/crew-workspace.js": "cb422d7e68077ff856a60cd5289a96e31b1648779819ee87c872b4ba12c607ad",
+    "event-app-zadani/wireframes/crew-sheet.js": "a5cf6d09273d471b1f28a753d3ee9d4c286472658f7f6ec161afb17f90f4e366",
+    "event-app-zadani/wireframes/crew-sheet.css": "66821ff774498d8092c43e0c85df47f3f4acadc77925e9852b4e2d8640b170b7",
+    "event-app-zadani/wireframes/crew.html": "1a1a37d6332c46047aa5cfef2341472f6a280deb7c8f7568d570c5f340d98df4",
+    "event-app/tests/crew_days_test.py": "e697dd8bcc4ca629a962c415f12754ee78d6dce491f54d252019d8ed702e1225",
+    "event-app/tests/crew_days_test.cjs": "91f87c6b56fb40143d62baadf9b5f5a55dde9b737dbab0c6f227040e28409bfa",
+    ".github/workflows/svdt-handoff.yml": "edfd363e43fb9dc66f32e244bf4c086483f4dc6f77cce63561fb62bb6558014f"
+  }
+}

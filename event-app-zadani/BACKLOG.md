@@ -1,5 +1,15 @@
 # MASTER BACKLOG
 
+## Aktuální priorita uživatele — 2026-10-29
+
+- [x] Přidat editovatelné a trvale ukládané sloupce PÁ (od–do), SO (od–do). [Zadání 26](26-CREW-PATEK-SOBOTA.md).
+- [ ] Později uživatelsky projít rozložení časových sloupců; skutečné časy, směny a konkrétní data zůstávají k doplnění.
+
+## Samostatná práce — 2026-10-29
+
+- [ ] Přehled stavů uložených záznamů v záhlaví kategorií 2027, viditelný i při sbalení; filtry a historie zachované. Připravený další krok issue #22; spuštění modelu zatím blokuje společný účtový zámek CLAUDE_ACCOUNT_BUSY, bez změn kódu. [Zadání 25](25-CREW-STAVY-KATEGORII.md).
+- [ ] Později s uživatelem potvrdit čitelnost přehledu a potřebné počty/role/termíny pro skutečnou obsazenost. Počty záznamů nejsou počty unikátních lidí ani potvrzení personální připravenosti.
+
 ## Ruční potvrzení odložená uživatelem — 2026-10-28
 
 **CONFIRMED:** uživatel výslovně odkládá vlastní kontrolu a společný průchod na později. Tyto body nejsou podmínkou další samostatné technické práce a nejsou schválené mlčením.

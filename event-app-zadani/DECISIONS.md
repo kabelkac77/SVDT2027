@@ -1,5 +1,9 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-10-29 — PÁ a SO přímo v hlavním personálním řádku
+
+**CONFIRMED:** uživatel výslovně zadal sloupce PÁ (od–do) a SO (od–do). Přehled a editace zůstávají v jedné tabulce s detailem pod řádkem, časy se ukládají samostatně pro 2027. Historie ani účast se z nich automaticky neodvozují. Jednoduchý textový rozsah a kompatibilita starších otevřených oken jsou technické provedení podle [26](26-CREW-PATEK-SOBOTA.md). Dříve připravený přehled stavů kategorií [25](25-CREW-STAVY-KATEGORII.md) zůstává v backlogu; uživatelská kontrola je dál odložená.
+
 ## 2026-10-29 — dokončení samostatného CSV celku
 
 **IMPLEMENTED / technické ověření:** místní přehled má čitelný CSV export filtrovaných uložených řádků jediného ročníku, bez automatického přenosu nebo změny evidence. Historie, všechny zdrojové sloupce, pořadí opakovaných popisků a ochrana rozepsaných změn ověřené synteticky. Podrobnosti a omezení v [24](24-CSV-PREHLED-A-ODLOZENE-KONTROLY.md). Neuzavírá ruční produktovou akceptaci, identity ani skutečné nové domluvy, které uživatel výslovně odložil.

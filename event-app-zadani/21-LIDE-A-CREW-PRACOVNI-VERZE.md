@@ -12,6 +12,12 @@
 6. Člověka lze označit **Vyřadit jen z pracovní evidence 2027**. Je dohledatelný přes **Včetně vyřazených** a lze jej obnovit; historie se nemaže.
 7. V přepínači ročníků otevřít **2026** nebo **2025**. Jsou pouze pro čtení. U převzatého řádku lze navíc rozbalit původní údaje 2026 přímo pod formulářem pro porovnání.
 
+## Časy v pátek a v sobotu
+
+Hlavní řádek má sloupce **PÁ (od–do)** a **SO (od–do)**. Klikni na člověka, v detailu vyplň stejnojmenná pole například `08:00–16:00` a klikni **Uložit změny**. Časy zůstanou po obnovení stránky a jsou také v CSV/JSON exportu. Pomlčka znamená, že údaj zatím není vyplněný; prázdné pole při uložení čas smaže. Jde o ruční textový rozsah, ne plánování směn nebo výpočet odpracovaných hodin. Obecný termín a potvrzení účasti jsou samostatné.
+
+Starší záznamy se při čtení nepřepisují. Starší otevřené okno bez nových polí zachová již uložené časy. Historie zůstává neměnná; aktuální časy se z minulých let automaticky nepřebírají. Na mobilu jsou hodnoty označené PÁ a SO uvnitř karty. [Specifikace a ověření](26-CREW-PATEK-SOBOTA.md).
+
 ## Export filtrovaného přehledu
 
 Vyber ročník, případně zadej hledání, stav nebo kategorii a klikni **Export CSV**. Stáhne se jen uložený filtrovaný přehled; sbalené kategorie jeho členy nevyřadí. Při zapnutém **Včetně vyřazených** zahrne také vyřazené. Export funguje i pro historické ročníky bez možnosti jejich úprav. Před stažením ulož nebo zahoď rozepsané změny; export sám formulář nezahazuje.
