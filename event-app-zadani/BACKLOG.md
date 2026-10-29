@@ -2,7 +2,7 @@
 
 ## Aktuální priorita uživatele — 2026-10-29
 
-- [ ] Přidat editovatelné a trvale ukládané sloupce PÁ (od–do), SO (od–do). [Zadání 26](26-CREW-PATEK-SOBOTA.md).
+- [x] Přidat editovatelné a trvale ukládané sloupce PÁ (od–do), SO (od–do). [Zadání 26](26-CREW-PATEK-SOBOTA.md).
 - [ ] Později uživatelsky projít rozložení časových sloupců; skutečné časy, směny a konkrétní data zůstávají k doplnění.
 
 ## Samostatná práce — 2026-10-29

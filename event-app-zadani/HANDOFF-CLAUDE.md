@@ -1,5 +1,9 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## Nejnovější změna — PÁ/SO, 2026-10-29
+
+Místní personál má dva ukládané časové sloupce PÁ (od–do) a SO (od–do), včetně editoru a CSV. [26](26-CREW-PATEK-SOBOTA.md), [evidence](crew-days-verification.json). Zpětná kompatibilita starších formulářů chrání uložené časy před nechtěným vymazáním. 96 Python + 28 Node testů a fiktivní browser průchod prošly. Žádná změna skutečných záznamů při aktualizaci; historie a původní zdroje zachované. Přehled stavů kategorií 25 je pouze připravené zadání, implementace nezačala kvůli přednostnímu požadavku na časy. Ruční potvrzení dál odložená.
+
 ## Nejnovější celek — 2026-10-29
 
 Navazující Draft PR #21 dodává filtrovaný CSV přehled místní evidence, včetně historie, bez zápisu dat. [24](24-CSV-PREHLED-A-ODLOZENE-KONTROLY.md), [evidence](crew-csv-verification.json). 80 Python + 19 Node testů a izolovaný průchod prohlížečem. Uživatelské kontroly identity/skupin, domluv, UX a konkrétních sdílených oprávnění jsou na výslovný pokyn odložené v backlogu, nikoli schválené mlčením. CSV nenahrazuje JSON/SQLite zálohu; automatické denní zálohy stále nejsou aktivní.

@@ -18,4 +18,4 @@ CSS upravit pouze v crew-category-colors.css: souhrn kompaktní, bez zbytečnéh
 
 Claude upravuje pouze event-app-zadani/wireframes/crew-sheet.js a crew-category-colors.css. Host připraví nezávislé syntetické Node regresní testy celého rendereru a prohlížečovou kontrolu. Přehled musí správně reagovat na hledání/stav/kategorii, vyřazené, uložené změny a ročník; rozbalení a ochrana rozepsaných změn se nesmí změnit. Neprovádět jiné opravy původního rendereru.
 
-Stav: IN PROGRESS. Ručně později: odsouhlasit kompaktnost/čitelnost přehledu a cílové počty/role/termíny pro skutečný výpočet obsazenosti. Neaktivovat sdílení, import, automatické zálohy nebo komunikaci s crew.
+Stav: BACKLOG / připravené zadání, implementace nezahájena. Přednost dostal výslovný požadavek na časové sloupce 26. Ručně později: odsouhlasit kompaktnost/čitelnost přehledu a cílové počty/role/termíny pro skutečný výpočet obsazenosti. Neaktivovat sdílení, import, automatické zálohy nebo komunikaci s crew.
