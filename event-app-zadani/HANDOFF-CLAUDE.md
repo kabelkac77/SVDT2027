@@ -1,5 +1,9 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## Další samostatný bod — stav po PÁ/SO
+
+Zadání [25](25-CREW-STAVY-KATEGORII.md), issue #22: stavové součty kategorií. Dry-run prošel, skutečný běh se zastavil CLAUDE_ACCOUNT_BUSY ještě před modelem. Žádné změny rendereru/souhrnů nebyly aplikované. Respektovat společný účet/zámek a nepoužívat alternativní účet nebo kvótu. Nezávislé syntetické testy jsou připravené hostem mimo publikovaný kód a před dalším předáním se znovu zkontrolují proti aktuálním časovým sloupcům. Uživatelská potvrzení zůstávají odložená a nejsou touto technickou překážkou vyžadovaná.
+
 ## Nejnovější změna — PÁ/SO, 2026-10-29
 
 Místní personál má dva ukládané časové sloupce PÁ (od–do) a SO (od–do), včetně editoru a CSV. [26](26-CREW-PATEK-SOBOTA.md), [evidence](crew-days-verification.json). Zpětná kompatibilita starších formulářů chrání uložené časy před nechtěným vymazáním. 96 Python + 28 Node testů a fiktivní browser průchod prošly. Žádná změna skutečných záznamů při aktualizaci; historie a původní zdroje zachované. Přehled stavů kategorií 25 je pouze připravené zadání, implementace nezačala kvůli přednostnímu požadavku na časy. Ruční potvrzení dál odložená.
