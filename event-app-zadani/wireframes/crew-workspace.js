@@ -25,12 +25,14 @@ function renderWorkDetail(record){
 }
 function afterWorkRender(){
  if(!document.getElementById('workspace-actions')){
-  const actions=document.createElement('div');actions.id='workspace-actions';actions.className='workspace-actions';actions.innerHTML='<button type="button" data-work-action="new" class="primary">Přidat člověka</button><button type="button" data-work-action="categories">Kategorie a barvy</button><button type="button" data-work-action="export">Stáhnout zálohu</button><label class="workspace-check"><input type="checkbox" id="workspace-archived">Včetně vyřazených</label>';
+  const actions=document.createElement('div');actions.id='workspace-actions';actions.className='workspace-actions';actions.innerHTML='<button type="button" data-work-action="new" class="primary">Přidat člověka</button><button type="button" data-work-action="categories">Kategorie a barvy</button><button type="button" data-work-action="export">Stáhnout zálohu</button><button type="button" data-work-action="csv" title="Čitelný export filtrovaného ročníku. Úplnou evidenci uchovává JSON záloha.">Export CSV</button><label class="workspace-check"><input type="checkbox" id="workspace-archived">Včetně vyřazených</label>';
   document.querySelector('.sheet-heading').append(actions);
   const notice=document.createElement('div');notice.id='workspace-notice';notice.className='workspace-notice';notice.setAttribute('role','status');document.querySelector('.sheet-list-meta').after(notice);
   document.getElementById('workspace-archived').addEventListener('change',event=>{const checked=event.target.checked;navigateWork(()=>{workspace.includeArchived=checked;renderSheet();});event.target.checked=workspace.includeArchived;});
  }
- const active=sheetYear==='2027';document.getElementById('workspace-actions').hidden=!active;
+ const active=sheetYear==='2027';
+ document.querySelectorAll('#workspace-actions [data-work-action]').forEach(button=>{button.hidden=!active&&button.dataset.workAction!=='csv';});
+ document.getElementById('workspace-archived').closest('label').hidden=!active;
  document.querySelector('.sheet-heading-help').hidden=true;
  const count=document.getElementById('sheet-count');if(active)count.textContent=count.textContent.replace('zdrojových ','');
  document.getElementById('sheet-year').setAttribute('aria-label','Ročník');const yearLabel=document.getElementById('sheet-year').parentElement;if(yearLabel.firstChild.nodeType===3)yearLabel.firstChild.textContent='Ročník';
@@ -108,6 +110,18 @@ async function saveWorkCategory(form){
  }catch(error){workError(form,error.message);}finally{workspace.saving=false;form.querySelectorAll('input,select,button').forEach(el=>el.disabled=false);}
 }
 async function exportWork(){try{const value=await workApi('/api/export');const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='svdt-personal-pracovni-zaloha.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(error){workNotice(error.message);}}
+function exportWorkCsv(){
+ if(workspace.saving){workNotice('Probíhá ukládání. Export stáhni až po jeho dokončení.');return;}
+ if(workspace.dirty||workspace.categoryDirty){workNotice('Před exportem CSV nejdřív ulož nebo zahoď rozepsané změny. Nic se nezahodilo.');return;}
+ try{
+  const rows=filteredRows().filter(row=>sheetYear!=='2027'||(Number.isSafeInteger(row.version)&&row.version>0));
+  const result=window.SVDT_CREW_CSV.buildCsv(rows,sheetYear);
+  const url=URL.createObjectURL(new Blob([result.csv],{type:'text/csv;charset=utf-8'}));
+  const a=document.createElement('a');a.href=url;a.download=result.filename;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  workNotice(`CSV připraveno · ${sheetYear} · uložené záznamy: ${result.rowCount}. Úplnou evidenci uchovává JSON záloha.`);
+ }catch(error){workNotice('CSV se nepodařilo připravit. Zkontroluj uložené údaje a zkus export znovu.');}
+}
 window.SVDT_CREW_EDITOR={renderDetail:renderWorkDetail,afterRender:afterWorkRender,navigate:navigateWork,get includeArchived(){return workspace.includeArchived;}};
 document.addEventListener('input',event=>{if(event.target.closest('#workspace-editor'))markWorkDirty();if(event.target.closest('#workspace-category-form')&&event.target.id!=='workspace-category-select'){workspace.categoryDirty=true;const form=event.target.closest('form'),preview=form.querySelector('.workspace-category-preview');preview.className='workspace-category-preview '+form.elements['category-color'].value;preview.querySelector('strong').textContent=form.elements['category-name'].value;}});
 document.addEventListener('change',event=>{
@@ -120,7 +134,7 @@ document.addEventListener('change',event=>{
 document.addEventListener('submit',event=>{if(event.target.id==='workspace-editor'){event.preventDefault();saveWorkForm(event.target);}if(event.target.id==='workspace-category-form'){event.preventDefault();saveWorkCategory(event.target);}});
 document.addEventListener('click',event=>{
  const action=event.target.closest('[data-work-action]')?.dataset.workAction;if(!action)return;
- if(action==='new')newWorkPerson();if(action==='discard')discardWork();if(action==='stay'){workspace.pending=null;document.getElementById('workspace-unsaved')?.remove();}if(action==='discard-navigate'){const next=workspace.pending;workspace.pending=null;cleanDraft();next?.();}if(action==='reload-current')reloadWorkVersion();if(action==='categories')openWorkCategories();if(action==='close-categories')closeWorkCategories();if(action==='discard-category')closeWorkCategories(true);if(action==='export')exportWork();
+ if(action==='new')newWorkPerson();if(action==='discard')discardWork();if(action==='stay'){workspace.pending=null;document.getElementById('workspace-unsaved')?.remove();}if(action==='discard-navigate'){const next=workspace.pending;workspace.pending=null;cleanDraft();next?.();}if(action==='reload-current')reloadWorkVersion();if(action==='categories')openWorkCategories();if(action==='close-categories')closeWorkCategories();if(action==='discard-category')closeWorkCategories(true);if(action==='export')exportWork();if(action==='csv')exportWorkCsv();
 });
 window.addEventListener('beforeunload',event=>{if(workspace.dirty||workspace.saving||workspace.categoryDirty){event.preventDefault();event.returnValue='';}});
 (async()=>{try{

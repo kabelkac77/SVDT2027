@@ -380,7 +380,7 @@ class CrewHandler(BaseHTTPRequestHandler):
                 html=(WEB/'crew.html').read_text().replace("connect-src 'none'","connect-src 'self'").replace('<script defer src="crew-sheet-fixtures.js"></script><script defer src="crew-sheet.js"></script>','<script defer src="crew-workspace.js"></script>')
                 html=html.replace('</head>','<link rel="stylesheet" href="crew-workspace.css"></head>')
                 return self.reply(200,html.encode(),'text/html; charset=utf-8')
-            allowed={'/styles.css','/crew-sheet.css','/crew-sheet.js','/crew-workspace.js','/crew-workspace.css','/assets/exo-500.ttf','/assets/exo-700.ttf','/assets/exo-900.ttf','/index.html','/prototype.js','/fixtures.js','/fixtures.json','/crew-operations.html','/crew.js','/crew.css','/crew-review.html','/crew-review.js','/crew-review.css'}
+            allowed={'/crew-csv.js','/styles.css','/crew-sheet.css','/crew-sheet.js','/crew-workspace.js','/crew-workspace.css','/assets/exo-500.ttf','/assets/exo-700.ttf','/assets/exo-900.ttf','/index.html','/prototype.js','/fixtures.js','/fixtures.json','/crew-operations.html','/crew.js','/crew.css','/crew-review.html','/crew-review.js','/crew-review.css'}
             allowed.add('/crew-category-colors.css')
             if path not in allowed:
                 raise Problem(404,'Soubor nebyl nalezen.')

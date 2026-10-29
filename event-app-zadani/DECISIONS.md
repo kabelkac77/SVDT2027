@@ -1,5 +1,13 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-10-29 — dokončení samostatného CSV celku
+
+**IMPLEMENTED / technické ověření:** místní přehled má čitelný CSV export filtrovaných uložených řádků jediného ročníku, bez automatického přenosu nebo změny evidence. Historie, všechny zdrojové sloupce, pořadí opakovaných popisků a ochrana rozepsaných změn ověřené synteticky. Podrobnosti a omezení v [24](24-CSV-PREHLED-A-ODLOZENE-KONTROLY.md). Neuzavírá ruční produktovou akceptaci, identity ani skutečné nové domluvy, které uživatel výslovně odložil.
+
+## 2026-10-28 — ruční průchod později, samostatná práce pokračuje
+
+**CONFIRMED:** uživatel odkládá vlastní kontrolu a další společná potvrzení na později a žádá pokračovat bez jejich průběžného vyžadování. Backlog uchovává identity/zařazení, skutečné domluvy, UX a konkrétní sdílená oprávnění jako otevřené. Mlčení není schválení těchto voleb. Další nezávislý technický celek: přehledový CSV export uložených filtrovaných řádků po jednotlivých ročnících, návaznost dřívějšího požadavku na čitelné exporty; neaktivuje plánovač ani změny sdílené DB.
+
 ## 2026-10-28 — navazující samostatný pracovní celek
 
 **IMPLEMENTED / ověřeno místně:** podle pokynu pokračovat a priority Lidi a crew jsou jednotlivě zkontrolované obecné zdroje pracovního přehledu verzované v navazující větvi/Draft PR #19. Oprava SQLite snímků má návrh Claude, nezávislé review, menší dokončený opravný krok, hostitelské zpřesnění a 73 syntetických testů. Soukromé záznamy, původní sešit, historie a strojové vazby nejsou publikační nebo modelový kontext. Seznam k ručnímu průchodu je návrh pouze místně; neurčuje totožnost osob ani oprávnění. [23](23-PRACOVNI-EVIDENCE-A-SNIMKY.md) a [evidence](crew-snapshot-verification.json). Žádná nová produktová volba, produkční import, grant nebo nasazení se nepovažuje za schválené mlčením.

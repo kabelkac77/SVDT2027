@@ -1,5 +1,18 @@
 # MASTER BACKLOG
 
+## Ruční potvrzení odložená uživatelem — 2026-10-28
+
+**CONFIRMED:** uživatel výslovně odkládá vlastní kontrolu a společný průchod na později. Tyto body nejsou podmínkou další samostatné technické práce a nejsou schválené mlčením.
+
+- [ ] Později společně projít nejasné identity/skupiny, opakovaná jména a zařazení. Soukromý návrh řádků je připravený místně.
+- [ ] Později potvrdit skutečné termíny, účast, částky a barter/merch pro aktuální ročník.
+- [ ] Později vyzkoušet CSV v používaném Excelu/tabulkovém editoru; desktopový Excel se při technických testech nespouštěl.
+- [ ] Později potvrdit vzhled a pracovní průchody, konkrétní sdílení/oprávnění a další otevřené produktové volby. Do té doby je neuzavírat za uživatele.
+
+## Dokončený samostatný celek — 2026-10-29
+
+- [x] Dodat čitelný CSV export aktuálně filtrovaného uloženého přehledu, po jednotlivých ročnících, se všemi zdrojovými sloupci a ochranou textových hodnot pro čtení v Excelu. Bez zápisu do evidence nebo přenosu dat mimo zařízení.
+
 ## Pracovní přehled a snímky — 2026-10-28
 
 - [x] Verzovat zkontrolované obecné zdroje místního pracovního přehledu se syntetickými ukázkami a izolovanými testy; bez provozních dat.

@@ -1,5 +1,9 @@
 # Stav implementace
 
+## 2026-10-29 — filtrovaný CSV přehled lidí
+
+**IMPLEMENTED / ověřeno místně:** tlačítko Export CSV stáhne uložené řádky podle právě vybraného ročníku a filtrů, včetně členů sbalených kategorií a všech zdrojových sloupců. Rozepsané změny chrání nedestruktivní blokace. Historie zůstává pouze pro čtení. Claude dodal serializátor a opravu podle připnutého review; Codex integraci, nezávislé review a testy. 80 Python + 19 Node testů prošlo; prohlížeč ověřen na oddělených fiktivních datech. [24](24-CSV-PREHLED-A-ODLOZENE-KONTROLY.md) a [evidence](crew-csv-verification.json). Desktopový Excel nebyl spuštěn; CSV není bezeztrátová záloha. Ruční potvrzení uživatele jsou výslovně odložená v backlogu. Bez aktivace plánovače, cloudového importu nebo merge.
+
 ## 2026-10-28 — verzovaný pracovní přehled a atomické snímky
 
 Dodaný obecný místní pracovní přehled a oprava SQLite snímků v navazujícím Draft PR #19. Claude návrh/opravný krok, Codex nezávislé review, hostitelské revizní opravy a skutečné testy: 73/73 prošlo, včetně poruch, souběhu a obnovy do nové složky. Čtyři syntaktické JS kontroly a úplnost HTML odkazů prošly; nový browser běh se při nezměněném rozhraní netvrdí. Skutečné podklady nejsou ve veřejném zdroji. [23](23-PRACOVNI-EVIDENCE-A-SNIMKY.md) rozlišuje dodávku, důkazy a ruční otevřené kroky. Bez merge, produkční migrace nebo aktivace plánovaných kompletních záloh.

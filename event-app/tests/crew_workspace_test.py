@@ -325,6 +325,7 @@ class HttpTests(unittest.TestCase):
         for path in ['/crew.sqlite3','/../.local/crew-workspace/crew.sqlite3','/crew-private-data.js','/backups/']:
             self.assertEqual(self.request('GET',path)[0],404)
         status,_,html=self.request('GET','/crew.html')
-        self.assertEqual(status,200);self.assertIn(b'crew-workspace.js',html);self.assertNotIn(b'crew-sheet-fixtures.js',html)
+        self.assertEqual(status,200);self.assertIn(b'crew-workspace.js',html);self.assertNotIn(b'crew-sheet-fixtures.js',html);self.assertIn(b'crew-csv.js',html)
+        self.assertEqual(self.request('GET','/crew-csv.js')[0],200)
 
 if __name__=='__main__':unittest.main()

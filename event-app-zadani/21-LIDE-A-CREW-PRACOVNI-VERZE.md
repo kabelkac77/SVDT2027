@@ -12,6 +12,12 @@
 6. Člověka lze označit **Vyřadit jen z pracovní evidence 2027**. Je dohledatelný přes **Včetně vyřazených** a lze jej obnovit; historie se nemaže.
 7. V přepínači ročníků otevřít **2026** nebo **2025**. Jsou pouze pro čtení. U převzatého řádku lze navíc rozbalit původní údaje 2026 přímo pod formulářem pro porovnání.
 
+## Export filtrovaného přehledu
+
+Vyber ročník, případně zadej hledání, stav nebo kategorii a klikni **Export CSV**. Stáhne se jen uložený filtrovaný přehled; sbalené kategorie jeho členy nevyřadí. Při zapnutém **Včetně vyřazených** zahrne také vyřazené. Export funguje i pro historické ročníky bez možnosti jejich úprav. Před stažením ulož nebo zahoď rozepsané změny; export sám formulář nezahazuje.
+
+Soubor má kontakty, domluvu, zdroj a všechny původní sloupce. Textová pole obsahují ochranný tabulátor, částky desetinnou čárku. Je určený k prohlížení, nikoli zpětnému importu nebo úplné obnově. **Stáhnout zálohu** nadále vytváří úplný JSON pracovní evidence. Data se exportem nikam neposílají. [Formát a hranice](24-CSV-PREHLED-A-ODLOZENE-KONTROLY.md).
+
 ## Co se převzalo a co je nové
 
 Pracovní záznamy 2027 mají samostatná ID a odkaz na zdrojový řádek 2026. Převzaly jména, kontakty, pracovní pozice, odpovědné a pracovní zařazení. Nejasné zdrojové řádky jsou stále k ruční kontrole, žádné slučování osob podle jména. Jde o pracovní evidenci řádků, nikoli hotovou globální databázi Person.

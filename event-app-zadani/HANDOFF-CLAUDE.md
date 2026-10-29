@@ -1,5 +1,9 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## Nejnovější celek — 2026-10-29
+
+Navazující Draft PR #21 dodává filtrovaný CSV přehled místní evidence, včetně historie, bez zápisu dat. [24](24-CSV-PREHLED-A-ODLOZENE-KONTROLY.md), [evidence](crew-csv-verification.json). 80 Python + 19 Node testů a izolovaný průchod prohlížečem. Uživatelské kontroly identity/skupin, domluv, UX a konkrétních sdílených oprávnění jsou na výslovný pokyn odložené v backlogu, nikoli schválené mlčením. CSV nenahrazuje JSON/SQLite zálohu; automatické denní zálohy stále nejsou aktivní.
+
 ## Nejnovější pracovní přehled — 2026-10-28
 
 Obecné zdroje místního přehledu jsou v navazujícím Draft PR #19, základ PR #17. Atomické SQLite snímky ověřené 73 syntetickými testy včetně obnovy; skutečný stav a hranice v [23](23-PRACOVNI-EVIDENCE-A-SNIMKY.md). Soukromý seznam k ruční kontrole ani skutečná DB nejsou modelový/veřejný kontext. Priorita zůstává Lidi a crew; sdílené oprávnění a import jsou další samostatný krok.

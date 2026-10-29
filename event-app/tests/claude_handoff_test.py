@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from types import SimpleNamespace
+from datetime import datetime
 
 spec=importlib.util.spec_from_file_location('handoff',Path(__file__).parents[1]/'tools/claude_handoff.py')
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
@@ -93,5 +94,26 @@ class HostGateTests(unittest.TestCase):
         with patch.object(h,'verify_tree'),patch.object(h,'github_task',return_value={}),patch.object(h,'build_prompt',return_value='synthetic'),patch.object(h,'command',return_value='codex/test'),patch.object(h,'usage_guard',return_value=guard),patch.object(h.subprocess,'run',return_value=auth),patch.object(h.subprocess,'Popen') as model:
             with self.assertRaises(h.Rejected):h.run(args)
             model.assert_not_called()
+
+class NativeClockTests(unittest.TestCase):
+    def stamp(self,value):return datetime.fromisoformat(value).timestamp()
+    def test_native_midnight_clock_resolves_only_the_following_day(self):
+        now=self.stamp('2026-10-28T19:10:30+01:00')
+        self.assertEqual(h.next_native_clock_reset('12:10am (Europe/Prague)',now),self.stamp('2026-10-29T00:10:00+01:00'))
+    def test_existing_today_future_clock_is_left_to_the_shared_parser(self):
+        self.assertIsNone(h.next_native_clock_reset('9pm (Europe/Prague)',self.stamp('2026-10-28T19:10:00+01:00')))
+    def test_no_reset_is_invented_outside_the_existing_five_hour_bound(self):
+        self.assertIsNone(h.next_native_clock_reset('7pm (Europe/Prague)',self.stamp('2026-10-28T19:10:00+01:00')))
+    def test_unknown_formats_explicit_dates_and_wrong_timezone_stay_rejected(self):
+        now=self.stamp('2026-10-28T19:10:00+01:00')
+        for value in ['unknown','00:10 (Europe/Prague)','12:10am (UTC)','Oct 28 at 12:10am (Europe/Prague)','tomorrow at 12:10am (Europe/Prague)','13am (Europe/Prague)','12:99am (Europe/Prague)']:
+            with self.subTest(value=value):self.assertIsNone(h.next_native_clock_reset(value,now))
+    def test_invalid_observation_is_rejected(self):
+        for now in [None,True,float('nan'),float('inf')]:self.assertIsNone(h.next_native_clock_reset('12am (Europe/Prague)',now))
+    def test_nonexistent_and_ambiguous_dst_clock_remains_blocked(self):
+        for now in ['2026-03-28T23:30:00+01:00','2026-10-24T23:30:00+02:00']:
+            self.assertIsNone(h.next_native_clock_reset('2:30am (Europe/Prague)',self.stamp(now)))
+    def test_calendar_year_boundary_uses_the_literal_next_midnight(self):
+        self.assertEqual(h.next_native_clock_reset('12:10am (Europe/Prague)',self.stamp('2026-12-31T23:30:00+01:00')),self.stamp('2027-01-01T00:10:00+01:00'))
 
 if __name__=='__main__':unittest.main()
