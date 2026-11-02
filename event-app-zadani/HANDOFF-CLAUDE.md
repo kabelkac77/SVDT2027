@@ -1,5 +1,12 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## 2026-11-02 — šifrovaný zálohovací balíček a bezpečná obnova
+
+IMPLEMENTED / synteticky ověřeno: knihovna `backup-bundle.js`, šest povinných inventářů, AES-256-GCM, kontrola SHA-256 a obnova pouze do nové soukromé složky. Patnáct testů ověřuje skutečné šifrování, poškození, úplnost, cesty, zákaz přepsání a úklid při I/O chybě bez odstranění cizích souborů. Testy jsou součástí běžného `npm test` a CI.
+
+**Úplné automatické zálohy mimo tento počítač nejsou aktivované.** Chybí kolektory, přístup k úplnému databázovému dumpu a Storage, úschova klíče, vzdálený vykonavatel, důkaz vzdálené kopie, plán a ověření obnovy databáze. Rozsah [29](29-ZALOHY-IMPLEMENTACE.md), odložené aktivace [31](31-AKTIVACE-A-RUCNI-KONTROLY.md). Další nezávislá práce: provozní moduly; zálohovací integrace pokračuje podle dostupných přístupů.
+
+
 ## 2026-11-02 — sdílená crew V1 v kódu
 
 IMPLEMENTED / synteticky ověřeno: samostatná `/crew`, existující Auth včetně povolených sociálních metod a návratu do crew, ročníky, sbalené kategorie, osm sloupců včetně PÁ/SO, detail pod řádkem, cíle obsazenosti, oddělené odměny a admin správa existujících účtů. Oprávnění, verze, idempotentní RPC a neveřejný audit v nové schema-only migraci. Role člena vidí vlastní přiřazení, odměny jen oprávněné role. Archiv zamyká provozní data, správce může odebrat přístup i v archivu.

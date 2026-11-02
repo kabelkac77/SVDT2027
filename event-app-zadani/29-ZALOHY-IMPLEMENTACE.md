@@ -22,3 +22,7 @@ Soukromá konfigurace obsahuje pouze veřejný Supabase klient, chybí přístup
 A. Šifrovaný balíček a striktní obnova — samostatný Node modul bez závislostí, testy poškození, cest a zákazů přepsání.
 B. Kolektory zdrojů, SQLite, databáze, Storage a exportů; oprávnění a temp adresáře soukromé, žádné secrets nebo osobní data v logu.
 C. Vzdálené uložení a ověření nové kopie, spuštění plánované úlohy v potvrzeném prostředí, monitor chyb, test skutečné obnovy a retence. Připravený kód není důkaz aktivního plánovače nebo dokončené vzdálené kopie.
+
+## Ověřený krok A — 2026-11-02
+
+Implementováno v `event-app/tools/backup-bundle.js`. Patnáct syntetických testů prošlo v Node24. Limity:128MiB vstupních souborů,10000 souborů,1000 znaků cesty a255UTF-8 bajtů segmentu; do192MiB rozbaleného JSON. Větší evidence vyžaduje navazující streamovaný formát, nesmí se tiše oříznout. AES klíč32 bajtů se nepřidává do balíčku. Obnova ověří celý manifest před zápisem, soubory0600/adresáře0700. Při chybě odstraňuje jen své objekty a zachová později přidané cizí soubory. Tento krok nenačítá skutečnou DB, nestahuje přílohy, neodesílá data a nenastavuje automatické zálohy. Kroky B/C zůstávají otevřené.
