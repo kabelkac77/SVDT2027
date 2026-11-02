@@ -1,0 +1,12 @@
+{
+  "verified_on": "2026-11-02",
+  "scope": "local_backup_collectors",
+  "tests": 15,
+  "passed": 15,
+  "actual_user_database_opened": false,
+  "remote_backup_active": false,
+  "files": {
+    "event-app/tools/backup-local.js": "db1e34980daa8507e91e8abdf3184d3d2ce00940e08ac7fe8c97c435cbe4e3aa",
+    "event-app/tests/backup-local.test.mjs": "ce75b5e1558c0189c4661aa343e48a19c953ce7b06bf5d4aa40d066f41c29e68"
+  }
+}
