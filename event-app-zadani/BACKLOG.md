@@ -1,5 +1,19 @@
 # MASTER BACKLOG
 
+## 2026-11-02 — první provozní moduly v aplikaci
+
+IMPLEMENTED / synteticky ověřeno: úkoly a denní harmonogram v místním čase akce, zóny s explicitním pracovním kontaktem a orientačním plánem, ruční registrace závodníků se samostatným oprávněním a mobilní Moje služba. Editory otevíráme přímo pod řádkem. Auth a ročník sdílejí stávající crew; člen vidí vlastní přiřazení/úkoly, správce řídí přístup Registrace. Rozepsané údaje chrání navigace a ukládání používá plný fingerprint se stabilní identitou požadavku při opakování po chybě. Historický ročník je provozně readonly, přístup lze odebrat i v archivu.
+
+Ověření:147/147 testů aplikace, úplný TypeScript, čistá instalace z lockfilu a produkční build prošly. [Evidence](operations-ui-verification.json). Nový browser/E2E průchod neproběhl, místní browser je vypnutý.
+
+Toto je první funkční rozsah, nikoli dokončený Race Control nebo celé financování závodu. Registrace nemají automatickou banku, kapacity, přidělování čísel nebo neodsouhlasený import. Plán nemá skutečný uliční podklad/polohy. Samoobslužné potvrzení příchodu a dokončení členem crew zůstává otevřené; průběžná/offline synchronizace není implementovaná. Rozsah [30](30-PROVOZNI-MODULY.md), aktivace a ruční kontroly [31](31-AKTIVACE-A-RUCNI-KONTROLY.md).
+
+Sdílený provoz ani úplné automatické zálohy nejsou aktivované. Migrace, konkrétní účty/granty, převod skutečné místní evidence, reálné OAuth, hosting a vzdálené zálohovací přístupy musí projít pozdější aktivací; uživatel požádal nyní práci nepřerušovat otázkami. Pracovní SQLite/historie zůstávají zachované.
+
+
+Další otevřené pořadí: ověřit skutečný sdílený projekt a migrace/účty → řízený převod místní crew bez ztráty polí/historie → kolektory úplné zálohy, vzdálený vykonavatel a ověřená obnova → skutečná pravidla registrací, harmonogram a mapový podklad → společný desktop/mobil průchod. Konkrétní závislosti jsou v31; nic z toho není potvrzené mlčením. Následuje užší role vedoucího zóny, společné Moje práce a případná realtime/offline podpora.
+
+
 ## 2026-11-02 — šifrovaný zálohovací balíček a bezpečná obnova
 
 IMPLEMENTED / synteticky ověřeno: knihovna `backup-bundle.js`, šest povinných inventářů, AES-256-GCM, kontrola SHA-256 a obnova pouze do nové soukromé složky. Patnáct testů ověřuje skutečné šifrování, poškození, úplnost, cesty, zákaz přepsání a úklid při I/O chybě bez odstranění cizích souborů. Testy jsou součástí běžného `npm test` a CI.
@@ -14,8 +28,9 @@ IMPLEMENTED / synteticky ověřeno: knihovna `backup-bundle.js`, šest povinnýc
 - [ ] Dostupný správný projekt, skutečné migrace, účty/granty, víceuživatelský průchod a hosting.
 - [ ] Řízený import místní crew se všemi zdrojovými poli a zachováním historie; žádné automatické slučování.
 - [ ] Desktop/mobil a přístupnost v prohlížeči; nyní ověřeno SSR, nikoli skutečný browser.
-- [ ] Šifrovaná úplná záloha, kolektory, vzdálená kopie, plánovač a skutečná obnova.
-- [ ] Rozhraní a adaptéry provozních modulů; datový základ připraven zvlášť, není tím nasazený.
+- [x] Šifrovaný formát a bezpečná souborová obnova;15 testů.
+- [ ] Kolektory úplné zálohy, vzdálená kopie, plánovač a skutečná obnova DB/Auth/příloh.
+- [x] První provozní rozhraní, adaptéry a modely integrované do /crew;147 testů celé aplikace, TypeScript/build. Skutečný provoz není tím nasazený.
 
 Vše potřebné k pozdějšímu ručnímu potvrzení v [31](31-AKTIVACE-A-RUCNI-KONTROLY.md).
 

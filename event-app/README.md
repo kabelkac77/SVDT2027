@@ -87,3 +87,11 @@ Implementační reference: [Next.js App Router](https://nextjs.org/docs/app/gett
 Nová schema-only migrace `202611020001_crew.sql` a aplikace oddělují crew členství, provozní přiřazení a soukromé odměny. Přístup vyžaduje již existující Auth účet a konkrétní ročníkové právo; samotný login je neuděluje. Nové členství nepřipravuje pozvánku ani neodesílá zprávu. Google/Apple/Facebook se ukážou jen pokud je služba povoluje, s návratem `/crew`; WhatsApp zůstává vypnutý.
 
 Místní evidence na samostatném localhost serveru se nepřevádí automaticky. Migrace/import na skutečný projekt nebyly tímto krokem spuštěné. Přehled nemá realtime/offline synchronizaci; změny jiných uživatelů načítá Obnovit, verzování chrání zápis. Read-only archiv neblokuje odebrání práv. Nejnovější stav a omezení jsou v `../event-app-zadani/28-SDILENA-CREW-A-OPRAVNENI.md` a `31-AKTIVACE-A-RUCNI-KONTROLY.md`.
+
+## Provoz závodu v `/crew`
+
+První provozní V1 sdílí Auth a výběr ročníku s crew. Úkoly a harmonogram, zóny s pracovním kontaktem a relativním plánem, ruční registrace se zvláštním oprávněním a mobilní Moje služba. Detail se otevírá pod řádkem; běžný člen vidí vlastní úkoly, správce spravuje existující registrační granty. Časy jsou místní Europe/Prague, NULL částka není0. Nová schema-only migrace `202611020002_operations.sql` navazuje na crew migraci; na skutečný server zatím není aplikovaná. Neopakovat bootstrap nebo staré migrace naslepo.
+
+`npm test` nyní zahrnuje i MJS testy šifrovaného zálohovacího balíčku. Provozní testy používají pouze syntetická data, PGlite/HTTP/SSR a jednotkovou hranici hooku; nepokrývají skutečný prohlížeč nebo živé OAuth. Esbuild byl již součástí testovacího stromu tsx, jeho stejná verze je nyní přímá dev závislost pro izolované stavové/SSR testy. Čisté npm ci s ignore-scripts prošlo.
+
+Skutečná místní evidence se do sdílené DB sama neimportuje. Nepotvrzené kapacity/čísla závodníků, mapový podklad, příchody/hotovo členů, realtime/offline, účty a aktivace jsou v zadání31. Knihovna záloh neznamená aktivní úplné automatické vzdálené zálohy; ty čekají na kolektory, přístupy, vzdálené ověření a obnovu29b.

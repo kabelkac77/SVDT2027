@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { CrewRosterView } from "./crew-roster-view";
+import { OperationsPanel } from "./operations-panel";
 import { CrewCategoryForm, CrewMembershipForm } from "./crew-forms";
 import { Edition } from "../lib/model";
 import {
@@ -43,6 +44,10 @@ export function CrewWorkspace({ userId, userEmail, onLogout }: CrewWorkspaceProp
   const [pendingKind, setPendingKind] = useState<CrewWriteKind | null>(null);
   const [settings, setSettings] = useState<SettingsTarget | null>(null);
   const [formEpoch, setFormEpoch] = useState(0);
+
+  const [workspaceView, setWorkspaceView] = useState<"crew" | "operations" | null>(null);
+  const operationsGuardRef = useRef<() => boolean>(() => true);
+  const registerOperationsGuard = useCallback((guard: () => boolean) => { operationsGuardRef.current = guard; }, []);
 
   const liveRef = useRef(true);
   const generationRef = useRef(0);
@@ -159,6 +164,7 @@ export function CrewWorkspace({ userId, userEmail, onLogout }: CrewWorkspaceProp
 
   function requestLeave(): boolean {
     if (writeLockRef.current) return false;
+    if (!operationsGuardRef.current()) return false;
     if (pendingKindRef.current) {
       const ok = window.confirm(
         "Zahodit rozepsané údaje? Už uložené změny zůstanou zachované.",
@@ -354,6 +360,12 @@ export function CrewWorkspace({ userId, userEmail, onLogout }: CrewWorkspaceProp
     }
   }
 
+  const showCrew = (workspaceView ?? (role === "member" ? "operations" : "crew")) === "crew";
+  function switchWorkspace(next: "crew" | "operations") {
+    if (!requestLeave()) return;
+    setWorkspaceView(next);
+  }
+
   const categoryKey = `category:${settings?.id ?? "new"}:${selectedCategory?.version ?? 0}:${formEpoch}`;
   const memberKey = `member:${settings?.id ?? "new"}:${selectedMember?.version ?? 0}:${formEpoch}`;
 
@@ -365,9 +377,8 @@ export function CrewWorkspace({ userId, userEmail, onLogout }: CrewWorkspaceProp
       <aside className="sidebar crew-sidebar">
         <div className="wordmark crew-wordmark">SVDT<span>ORGANIZACE</span></div>
         <nav>
-          <a aria-current="page" className="nav active crew-nav-active" href="/crew" onClick={handleRouteExit}>
-            Lidi a crew
-          </a>
+          <button type="button" className={`nav ${showCrew ? "active crew-nav-active" : ""}`} aria-pressed={showCrew} onClick={() => switchWorkspace("crew")} disabled={saving}>Lidi a crew</button>
+          <button type="button" className={`nav ${!showCrew ? "active crew-nav-active" : ""}`} aria-pressed={!showCrew} onClick={() => switchWorkspace("operations")} disabled={saving}>Provoz závodu</button>
           {role !== "member" && <a className="nav" href="/" onClick={handleRouteExit}>Partneři</a>}
         </nav>
         <div className="side-bottom crew-account">
@@ -397,7 +408,7 @@ export function CrewWorkspace({ userId, userEmail, onLogout }: CrewWorkspaceProp
           </p>
           <button type="button" onClick={retry} disabled={saving}>Obnovit</button>
         </div>
-        <div className="section-heading compact"><h1>Lidi a crew</h1></div>
+        {showCrew && <div className="section-heading compact"><h1>Lidi a crew</h1></div>}
         {pendingKind && <p className="muted">Nejdřív ulož nebo zahoď rozepsanou část.</p>}
 
         {loading && <p role="status">Načítání…</p>}
@@ -411,6 +422,7 @@ export function CrewWorkspace({ userId, userEmail, onLogout }: CrewWorkspaceProp
         )}
         {notice && <p role="status" className="crew-notice">{notice}</p>}
 
+        {showCrew && <>
         <div className="filters crew-filters">
           <input
             type="search" aria-label="Hledat v crew" disabled={saving}
@@ -533,6 +545,8 @@ export function CrewWorkspace({ userId, userEmail, onLogout }: CrewWorkspaceProp
             )}
           </section>
         )}
+        </>}
+        {!showCrew && edition && data && <OperationsPanel key={`${userId}:${edition.id}`} edition={edition} crew={data} userId={userId} onGuardChange={registerOperationsGuard} />}
       </main>
     </div>
   );
