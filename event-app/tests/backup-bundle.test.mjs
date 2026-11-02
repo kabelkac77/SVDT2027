@@ -1,0 +1,48 @@
+import {test} from 'node:test';
+import {spawnSync} from 'node:child_process';
+import assert from 'node:assert/strict';
+import {randomBytes,createCipheriv,createHash} from 'node:crypto';
+import {gzipSync} from 'node:zlib';
+import {mkdtemp,readFile,readdir,stat,writeFile,mkdir,symlink,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {REQUIRED_SOURCES,createBackup,readBackup,writeBackupExclusive,restoreBackupExclusive} from '../tools/backup-bundle.js';
+const key=randomBytes(32),message='Záložní balíček není platný nebo jej nelze bezpečně zpracovat.';
+const files=()=>REQUIRED_SOURCES.filter(s=>s!=='storage').map(source=>({source,path:source+'/synthetic.bin',bytes:Buffer.from([0,1,255,12])}));
+const sources=()=>REQUIRED_SOURCES.map(name=>({name,complete:true,fileCount:name==='storage'?0:1}));
+const backup=()=>createBackup(files(),sources(),key);
+function invalid(fn){assert.throws(fn,error=>error.message===message);}
+async function rejected(fn){await assert.rejects(Promise.resolve().then(fn),error=>error.message===message);}
+function forged(mutate){const f=files();const payload={version:1,createdAt:new Date().toISOString(),sources:sources(),files:f.map(r=>({source:r.source,path:r.path,size:r.bytes.length,sha256:createHash('sha256').update(r.bytes).digest('hex'),base64:r.bytes.toString('base64')}))};mutate(payload);const magic=Buffer.from('SVDTBACKUP1\n'),nonce=randomBytes(12),cipher=createCipheriv('aes-256-gcm',key,nonce);cipher.setAAD(Buffer.concat([magic,nonce]));const encrypted=Buffer.concat([cipher.update(gzipSync(JSON.stringify(payload))),cipher.final()]);return Buffer.concat([magic,nonce,encrypted,cipher.getAuthTag()]);}
+test('bundle encrypts all required source inventories and preserves exact binary bytes',()=>{const a=backup(),b=backup();assert.ok(Buffer.isBuffer(a));assert.notDeepEqual(a,b);assert.ok(!a.includes(Buffer.from('synthetic.bin')));const restored=readBackup(a,key);assert.equal(restored.version,1);assert.deepEqual(restored.sources,sources());assert.equal(restored.files.length,files().length);for(const f of restored.files)assert.deepEqual(f.bytes,Buffer.from([0,1,255,12]));});
+test('wrong key, magic, nonce, ciphertext, tag and truncated bundles are rejected',()=>{const a=backup();invalid(()=>readBackup(a,randomBytes(32)));for(const offset of [0,11,24,a.length-1]){const bad=Buffer.from(a);bad[offset]^=1;invalid(()=>readBackup(bad,key));}for(const size of [0,10,30,a.length-1])invalid(()=>readBackup(a.subarray(0,size),key));});
+test('missing, duplicate, incomplete, unknown and inaccurate source declarations fail closed',()=>{for(const change of [s=>s.pop(),s=>s.push(s[0]),s=>s[0].complete=false,s=>s[0].name='other',s=>s[0].fileCount=0,s=>s[0].complete='yes']){const s=sources();change(s);invalid(()=>createBackup(files(),s,key));}const f=files().filter(x=>x.source!=='crew'),s=sources().map(x=>x.name==='crew'?{...x,fileCount:0}:x);invalid(()=>createBackup(f,s,key));});
+test('relative, traversal, drive, control, empty segments and source mismatch paths fail',()=>{for(const path of ['/sources/x','sources/../x','sources/./x','sources//x','sources/x/','C:/sources/x','sources\\x','sources/x\u0000','sources/x\n','crew/wrong']){const f=files();f[0].path=path;invalid(()=>createBackup(f,sources(),key));}});
+test('case and Unicode normalization aliases cannot overwrite each other on restore',()=>{for(const [a,b] of [['sources/A','sources/a'],['sources/é','sources/e\u0301']]){const f=files();f[0].path=a;f.push({...f[0],path:b});const s=sources();s[0].fileCount=2;invalid(()=>createBackup(f,s,key));}});
+test('malformed payloads are revalidated after authenticated decryption',()=>{for(const change of [p=>p.version=2,p=>p.files[0].size=999,p=>p.files[0].sha256='0'.repeat(64),p=>p.files[0].base64='AA==junk',p=>p.files[0].path='sources/../escape',p=>p.sources[0].complete=false,p=>p.files[0].source='other',p=>p.createdAt='not a date'])invalid(()=>readBackup(forged(change),key));});
+test('key types, file types, declared sizes and count limits are enforced',()=>{for(const k of [null,'password',Buffer.alloc(16),Buffer.alloc(33)])invalid(()=>createBackup(files(),sources(),k));const f=files();f[0].bytes='not bytes';invalid(()=>createBackup(f,sources(),key));const many=Array.from({length:10001},(_,i)=>({source:'sources',path:'sources/'+i,bytes:Buffer.alloc(0)}));invalid(()=>createBackup(many,sources(),key));});
+test('exclusive write is private and never overwrites a file or symlink',async()=>{const root=await mkdtemp(join(tmpdir(),'svdt-backup-test-'));try{const path=join(root,'backup'),b=backup();await writeBackupExclusive(path,b);assert.deepEqual(await readFile(path),b);assert.equal((await stat(path)).mode&0o777,0o600);await rejected(()=>writeBackupExclusive(path,backup()));assert.deepEqual(await readFile(path),b);const link=join(root,'link');await symlink(path,link);await rejected(()=>writeBackupExclusive(link,backup()));assert.deepEqual((await readdir(root)).sort(),['backup','link']);}finally{await rm(root,{recursive:true,force:true});}});
+test('restore uses a fresh private target and preserves exact bytes',async()=>{const root=await mkdtemp(join(tmpdir(),'svdt-backup-test-'));try{const dest=join(root,'restored'),result=await restoreBackupExclusive(dest,backup(),key);assert.equal(result.files,files().length);assert.equal((await stat(dest)).mode&0o777,0o700);for(const f of files()){const path=join(dest,f.path);assert.deepEqual(await readFile(path),f.bytes);assert.equal((await stat(path)).mode&0o777,0o600);assert.equal((await stat(join(dest,f.source))).mode&0o777,0o700);}}finally{await rm(root,{recursive:true,force:true});}});
+test('invalid backup creates no restore directory and existing content stays untouched',async()=>{const root=await mkdtemp(join(tmpdir(),'svdt-backup-test-'));try{const dest=join(root,'restore');await rejected(()=>restoreBackupExclusive(dest,Buffer.from('bad'),key));assert.deepEqual(await readdir(root),[]);await mkdir(dest);await writeFile(join(dest,'keep'),'untouched');await rejected(()=>restoreBackupExclusive(dest,backup(),key));assert.equal(await readFile(join(dest,'keep'),'utf8'),'untouched');const link=join(root,'link');await symlink(dest,link);await rejected(()=>restoreBackupExclusive(link,backup(),key));assert.equal(await readFile(join(dest,'keep'),'utf8'),'untouched');}finally{await rm(root,{recursive:true,force:true});}});
+test('authenticated invalid inventory never reaches the restore filesystem',async()=>{const root=await mkdtemp(join(tmpdir(),'svdt-backup-test-'));try{for(const mutate of [p=>p.files[0].path='sources/../escape',p=>p.sources.pop(),p=>p.files[0].sha256='0'.repeat(64)]){await rejected(()=>restoreBackupExclusive(join(root,'target'),forged(mutate),key));assert.deepEqual(await readdir(root),[]);}}finally{await rm(root,{recursive:true,force:true});}});
+test('prototype-like path components are ordinary filenames and do not alter manifests',()=>{const f=files();f[0].path='sources/__proto__/constructor.bin';const result=readBackup(createBackup(f,sources(),key),key);assert.equal(result.files[0].path,f[0].path);assert.equal(({}).polluted,undefined);});
+test('a file cannot also be an ancestor directory, including case aliases',()=>{for(const [parent,child] of [['sources/tree','sources/tree/file'],['sources/Tree','sources/tree/file']]){const f=files(),s=sources();f[0].path=parent;f.push({...f[0],path:child});s[0].fileCount=2;invalid(()=>createBackup(f,s,key));invalid(()=>readBackup(forged(p=>{p.files[0].path=parent;p.files.push({...p.files[0],path:child});p.sources[0].fileCount=2;}),key));}});
+test('invalid calendar dates and paths that cannot be restored portably are refused',()=>{invalid(()=>readBackup(forged(p=>p.createdAt='2027-02-30T00:00:00.000Z'),key));for(const path of ['sources/\u0085','sources/\ud800','sources/'+'ž'.repeat(130)]){const f=files();f[0].path=path;invalid(()=>createBackup(f,sources(),key));}});
+
+test('restore I/O failure removes its own partial files and preserves foreign additions', async()=>{
+ const root=await mkdtemp(join(tmpdir(),'svdt-backup-fault-'));
+ try {
+  for(const foreign of [false,true]) {
+   const target=join(root,foreign?'foreign-case':'ordinary-case');
+   const moduleUrl=new URL('../tools/backup-bundle.js',import.meta.url).href;
+   const script=`import fs from 'node:fs';import {syncBuiltinESMExports} from 'node:module';import assert from 'node:assert/strict';import {join} from 'node:path';
+    const target=${JSON.stringify(target)};let writes=0;const original=fs.writeSync;
+    fs.writeSync=(...args)=>{if(++writes===2){if(${foreign})fs.writeFileSync(join(target,'foreign.txt'),'keep-foreign');throw Error('Synthetic EIO');}return original(...args);};syncBuiltinESMExports();
+    const module=await import(${JSON.stringify(moduleUrl)});const key=Buffer.alloc(32,42),files=module.REQUIRED_SOURCES.filter(s=>s!=='storage').map(source=>({source,path:source+'/data',bytes:Buffer.from('synthetic')}));const sources=module.REQUIRED_SOURCES.map(name=>({name,complete:true,fileCount:name==='storage'?0:1}));
+    const bundle=module.createBackup(files,sources,key);assert.throws(()=>module.restoreBackupExclusive(target,bundle,key),e=>e.message===${JSON.stringify(message)});
+    if(${foreign}){assert.equal(fs.readFileSync(join(target,'foreign.txt'),'utf8'),'keep-foreign');assert.deepEqual(fs.readdirSync(target),['foreign.txt']);}else assert.equal(fs.existsSync(target),false);`;
+   const result=spawnSync(process.execPath,['--input-type=module','-e',script],{encoding:'utf8'});
+   assert.equal(result.status,0,result.stderr);
+  }
+ }finally{await rm(root,{recursive:true,force:true});}
+});

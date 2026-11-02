@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-02",
+  "scope": "backup-format-core-only",
+  "node": "24.19",
+  "tests": 15,
+  "passed": 15,
+  "full_backup_active": false,
+  "remote_copy_verified": false,
+  "real_user_data_used": false,
+  "sha256": {
+    "event-app/tools/backup-bundle.js": "904271845db7d4c68f68523014cb440b126f6df6a2e5d1203353c527c3dfcb01",
+    "event-app/tests/backup-bundle.test.mjs": "80f77567711d4760382df095f9dc44c5ca9de8929cfbaffefbaaac6eb9c12224"
+  }
+}
