@@ -1,5 +1,7 @@
 # Úplný PostgreSQL dump — omezený kolektor
 
+BackupFile má vždy přesně pracovní tvar `{source:string,path:string,bytes:Buffer}` s cestou začínající `source/`, kompatibilní s backup-bundle.js. Do zdrojového textu nevkládat raw NUL/C0 bajty; regexové kontroly zapisovat textovými escape sekvencemi.
+
 Implementovat jen `event-app/tools/backup-postgres.js`, ESM built-ins fs/path/child_process/crypto. Žádné API/config/CLI/scheduler ani síťový běh v modelu. Host syntetické testy používají falešné executables, nikoli produkční DB. Export async `collectPostgres({pgDumpExecutable,pgRestoreExecutable,service,serviceFile,passFile,parent,requiredRelations})` -> BackupFiles[]. Arguments paths absolute, service /^[A-Za-z0-9_-]{1,80}$/; requiredRelations neprázdné pole jedinečných bezpečných schema.table identifikátorů (a-z0-9_); povinně obsahuje auth.users,auth.identities,storage.buckets,storage.objects a public.events,public.editions,public.edition_members. Další aktuální aplikační tabulky deklaruje důvěryhodný host. Nedoplňovat skryté výchozí přístupy.
 
 Všechny soukromé konfigurační soubory serviceFile/passFile obyčejné bez symlinků, vlastník aktuální OS uživatel, žádná group/other práva (0600 nebo přísnější). Nečíst jejich obsah do logu/modelu. Obě binárky skutečně existující executable, lze vyřešit realpath. parent existující adresář. Vytvořit pouze nový privátní mkdtemp0700 a exkluzivní database.dump0600, sledovat jeho dev/ino; zachovat jiné soubory.
@@ -11,3 +13,7 @@ pg_dump args přesně `--format=custom --no-password --file=PRIVATE_TEMP_FILE --
 Cleanup jen stejný vlastní dump inode a vlastní prázdný temp dir, nikdy recursive rm cizího obsahu. Chyby vždy Error('BACKUP_POSTGRES_FAILED'), bez dat/konfigurace/raw child error/stdout/stderr. Všechny fd zavřít. Pokud pg_dump vlastní soubor výstupu nahradí, neodstraňovat cizí nový inode a běh odmítnout, nepovažovat cizí bajty za svůj dump.
 
 Zdroj hranic: https://www.postgresql.org/docs/current/app-pgdump.html a https://www.postgresql.org/docs/current/app-pgrestore.html ; Supabase DB záloha neobsahuje Storage bytes: https://supabase.com/docs/guides/platform/backups . Žádná skutečná konfigurace v modelu. Completed questions=[], poznámky summary.
+
+## Stav2026-11-02
+
+Implementováno a nezávisle opraveno,9/9 syntetických scénářů s fakepg_dump/pg_restore. Testy ověřují argumenty/env, TOC, warnings/failures, verze, velikosti/práva a cizí náhradu inode. Nejde o živý dump nebo skutečnou databázovou obnovu; chybějící provozní přístup zůstává v31.

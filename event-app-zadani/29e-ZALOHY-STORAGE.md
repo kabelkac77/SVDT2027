@@ -1,5 +1,7 @@
 # Storage přílohy — omezený kolektor
 
+BackupFile má vždy přesně pracovní tvar `{source:string,path:string,bytes:Buffer}` s cestou začínající `source/`, kompatibilní s backup-bundle.js. Do zdrojového textu nevkládat raw NUL/C0 bajty; regexové kontroly zapisovat textovými escape sekvencemi.
+
 Implementovat jen `event-app/tools/backup-storage.js`, ESM bez závislostí kromě Node crypto. Export async `collectStorage({storage,inventory})` -> pole BackupFiles. `storage` je operátorem vytvořený serverový Supabase Storage client s oprávněním ke všem souborům; kolektor žádný klíč/net/config sám nekonstruuje. Žádné skutečné endpointy/data v modelu. Host používá synthetic fake SDK a samostatně HTTP protokol jen pokud potřeba.
 
 ## Autoritativní vstup a úplnost
@@ -20,3 +22,5 @@ Nejprve úplně vylistovat všechny buckety/objekty a porovnat přesně s invent
 Vrátit storage/objects/00000001.bin atd v deterministickém sortu exactbucketid+key a storage/inventory.json:version1, objects s původním bucket/key/id/updated_at/size/sha256 a exportPath, bucketmetadata pro obnovu public/mime/limit podle SDK. Pozor na UTF8/case zachovat původní klíče. Číslovanéexporty se nepřepisují. I0objektů má storage/inventory.json s explicitnímnulovýmpočtem. Žádnécontacts/keys/rawSDKerrors do logu, module nikdy console/stdout. Všechny chyby Error('BACKUP_STORAGE_FAILED'). Celkový limit počítat i pro manifest; nic tiše netruncovat. Bez filesystemu, CLI, scheduleru nebo dalších souborů. Completed questions=[], poznámky summary.
 
 Reference: https://supabase.com/docs/reference/javascript/file-buckets-listv2 ; současné rozhraní instalovaného @supabase/storage-js (listBuckets options, SearchV2Object/SearchV2Result) zkontroloval host. Samostatné soubory nutné podle https://supabase.com/docs/guides/platform/backups . Testy nejsou živé oprávnění nebo vzdálená záloha.
+
+Pole `version` samo o sobě není zakázané verzování bucketu: může být identita aktuálního objektu. Zachovat je do manifestu a kontrolovat shodu při druhém listu. Nepodporované jsou až explicitní is_versioned:true, archivované nebo delete-marker záznamy.
