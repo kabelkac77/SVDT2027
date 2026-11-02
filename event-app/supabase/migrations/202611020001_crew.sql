@@ -136,12 +136,14 @@ begin
    if not found and exists(select 1 from public.crew_roster where id=rid) then raise exception 'CREW_ACCESS_DENIED' using errcode='42501'; end if;
    if coalesce((previous->>'version')::integer,0)<>v then raise exception 'CREW_VERSION_CONFLICT' using errcode='40001'; end if;
    if not exists(select 1 from public.crew_categories where id=(p->>'category_id')::uuid and edition_id=e) then raise exception 'CREW_CATEGORY_INVALID' using errcode='22023'; end if;
-   pid:=nullif(p->>'person_id','')::uuid;
+   target:=case when p ? 'linked_user_id' then nullif(p->>'linked_user_id','')::uuid else nullif(previous->>'linked_user_id','')::uuid end;
+   if target is distinct from nullif(previous->>'linked_user_id','')::uuid and public.crew_role(e)<>'admin' then raise exception 'CREW_ACCESS_DENIED' using errcode='42501'; end if;
+   pid:=case when p ? 'person_id' then nullif(p->>'person_id','')::uuid else nullif(previous->>'person_id','')::uuid end;
    if p->>'kind'='person' then
     if pid is null then insert into public.people(name) values(btrim(p->>'name')) returning id into pid;
     elsif not exists(select 1 from public.crew_roster where edition_id=e and person_id=pid) then raise exception 'CREW_PERSON_INVALID' using errcode='22023'; end if;
    elsif pid is not null then raise exception 'CREW_PERSON_INVALID' using errcode='22023'; end if;
-   insert into public.crew_roster values(rid,e,(p->>'category_id')::uuid,pid,nullif(p->>'linked_user_id','')::uuid,coalesce(p->>'kind','unresolved'),btrim(p->>'name'),coalesce(p->>'position',''),coalesce(p->>'owner_label',''),coalesce(p->>'email',''),coalesce(p->>'phone',''),coalesce(p->>'status','candidate'),coalesce(p->>'term',''),btrim(coalesce(p->>'friday','')),btrim(coalesce(p->>'saturday','')),coalesce(p->>'notes',''),coalesce((p->>'archived')::boolean,false),v+1)
+   insert into public.crew_roster values(rid,e,(p->>'category_id')::uuid,pid,target,coalesce(p->>'kind','unresolved'),btrim(p->>'name'),coalesce(p->>'position',''),coalesce(p->>'owner_label',''),coalesce(p->>'email',''),coalesce(p->>'phone',''),coalesce(p->>'status','candidate'),coalesce(p->>'term',''),btrim(coalesce(p->>'friday','')),btrim(coalesce(p->>'saturday','')),coalesce(p->>'notes',''),coalesce((p->>'archived')::boolean,false),v+1)
    on conflict(id) do update set category_id=excluded.category_id,person_id=excluded.person_id,linked_user_id=excluded.linked_user_id,kind=excluded.kind,name=excluded.name,position=excluded.position,owner_label=excluded.owner_label,email=excluded.email,phone=excluded.phone,status=excluded.status,term=excluded.term,friday=excluded.friday,saturday=excluded.saturday,notes=excluded.notes,archived=excluded.archived,version=excluded.version returning to_jsonb(crew_roster.*) into result;
   else
    if not exists(select 1 from public.crew_roster where id=rid and edition_id=e) then raise exception 'CREW_ROSTER_INVALID' using errcode='22023'; end if;
@@ -161,3 +163,13 @@ revoke all on public.crew_members,public.crew_categories,public.crew_roster,publ
 grant select on public.crew_members,public.crew_categories,public.crew_roster,public.crew_compensation,public.crew_audit to authenticated;
 revoke all on function public.crew_role(uuid),public.crew_editor(uuid),public.crew_finance(uuid),public.require_crew_writer(uuid,text),public.crew_write(uuid,text,jsonb,uuid) from public,anon,authenticated;
 grant execute on function public.crew_role(uuid),public.crew_editor(uuid),public.crew_finance(uuid),public.crew_write(uuid,text,jsonb,uuid) to authenticated;
+
+-- Account emails are available only to the crew administrator, scoped to members.
+create function public.crew_member_directory(e uuid) returns table(edition_id uuid,user_id uuid,role text,enabled boolean,can_finance boolean,version integer,email text) language plpgsql stable security definer set search_path='' as $$
+begin
+ if coalesce(public.crew_role(e),'')<>'admin' then raise exception 'CREW_ACCESS_DENIED' using errcode='42501'; end if;
+ return query select m.edition_id,m.user_id,m.role,m.enabled,m.can_finance,m.version,u.email::text from public.crew_members m join auth.users u on u.id=m.user_id where m.edition_id=e order by m.user_id;
+end;
+$$;
+revoke all on function public.crew_member_directory(uuid) from public,anon,authenticated;
+grant execute on function public.crew_member_directory(uuid) to authenticated;
