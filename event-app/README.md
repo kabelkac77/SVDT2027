@@ -81,3 +81,9 @@ Design tokeny se importují přímo z `../design-system/tokens/svdt-tokens.css`;
 **Navazující rozsah:** externí Partner Portal, více kontaktů, questionnaire, uploady/Document, VIP QR, post-event report; finanční backend a kontrolovaný import. Finance lze zkoušet lokálně dle `../event-app-zadani/11-FINANCE-MODEL-A-FLOW.md`. Offline synchronizace, real-time odběry a PWA cache zatím nejsou implementované. Toto není hotová produkční eventová aplikace.
 
 Implementační reference: [Next.js App Router](https://nextjs.org/docs/app/getting-started/installation), [Supabase JS](https://supabase.com/docs/reference/javascript/introduction), [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).
+
+## Sdílená crew `/crew`
+
+Nová schema-only migrace `202611020001_crew.sql` a aplikace oddělují crew členství, provozní přiřazení a soukromé odměny. Přístup vyžaduje již existující Auth účet a konkrétní ročníkové právo; samotný login je neuděluje. Nové členství nepřipravuje pozvánku ani neodesílá zprávu. Google/Apple/Facebook se ukážou jen pokud je služba povoluje, s návratem `/crew`; WhatsApp zůstává vypnutý.
+
+Místní evidence na samostatném localhost serveru se nepřevádí automaticky. Migrace/import na skutečný projekt nebyly tímto krokem spuštěné. Přehled nemá realtime/offline synchronizaci; změny jiných uživatelů načítá Obnovit, verzování chrání zápis. Read-only archiv neblokuje odebrání práv. Nejnovější stav a omezení jsou v `../event-app-zadani/28-SDILENA-CREW-A-OPRAVNENI.md` a `31-AKTIVACE-A-RUCNI-KONTROLY.md`.

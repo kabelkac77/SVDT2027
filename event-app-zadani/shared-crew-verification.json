@@ -1,0 +1,24 @@
+{
+  "verified_on": "2026-11-02",
+  "status": "implemented_not_live",
+  "application_tests": 66,
+  "additional_separate_operations_tests": 17,
+  "host_python_tests": 104,
+  "legacy_node_tests": 37,
+  "typescript": "pass",
+  "production_build": "pass",
+  "browser_e2e": "not_run_local_browser_disabled",
+  "live_service_verified": false,
+  "actual_schema_applied": false,
+  "actual_personnel_imported": false,
+  "automatic_off_computer_full_backups_active": false,
+  "files": {
+    "event-app/src/components/crew-app.tsx": "fc3819846751fd3330acf9b3686fa45e2952f3afc8dbc528f1196e93cf1e0d7b",
+    "event-app/src/components/crew-workspace.tsx": "bafaa4d66b480a964e4884ffa119118eaea48e1be6fc2128475e526d02559385",
+    "event-app/src/components/crew-roster-view.tsx": "de2fc56b17d43fa8672556650a63b268b517af52a63d739ff0abb59e645da6c7",
+    "event-app/src/components/crew-forms.tsx": "0fc203111b496fb432d5ef79e98d77f19244ba6d5202e1bb4aef27755fe2726d",
+    "event-app/src/lib/crew-model.ts": "32b78ce2901f3f3464c2ae719e2b8cbe6a4dfeb7b1c03c7e418eb43ae36e5fad",
+    "event-app/src/lib/crew-backend.ts": "6d0f6b1194c5ff4628567fce510999050cfc9ee56506394d6996d0ccde48a643",
+    "event-app/supabase/migrations/202611020001_crew.sql": "c71f68b0bdb2af14839bf82922c92cecc6cbff687353a1ffed44513c41b3770c"
+  }
+}

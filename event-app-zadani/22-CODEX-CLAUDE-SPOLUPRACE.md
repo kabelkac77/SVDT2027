@@ -44,3 +44,7 @@ Před push zkontrolovat konkrétní index, diff, cesty, soukromé údaje a deplo
 - Původní hlavní HEAD a index zůstaly beze změny, původní zdroje zachované; upravené jen zamýšlené MD. Místní Finder `.DS_Store` se nezávisle změnil a nebyl publikován ani vracen. Excel a historická personální data znovu porovnané se zdrojem, beze změny.
 
 Denní kompletní zálohy SVDT a jejich obnova nejsou aktivací tohoto postupu vyřešené. Lokální snímek personální DB při použití aplikace je samostatná, užší funkce. WhatsApp/Twilio zůstávají odložené a vypnuté. Žádné zprávy lidem ani tajné údaje jiným nástrojům se tímto neodesílají.
+
+## 2026-11-02 — diagnostika konzistence návrhů
+
+Po výstupu INCONSISTENT_RESPONSE z tabulkového kroku #33 zůstává odmítnutí beze změny: completed s otázkami ani blocked se soubory se neaplikuje. Prompt nyní odlišuje blokující otázky od neblokujících poznámek pro pozdější ruční průchod. Po návratu modelu se strukturovaný návrh uchová v ignorovaném soukromém adresáři .local/svdt-claude-handoff/proposals/ (adresář0700/soubor0600); veřejný receipt uvádí jen náhodné ID. Neukládá se raw provider metadata ani žádný kontext skutečné personální evidence. Osm nových syntetických testů ověřuje soukromé uložení, symlinky, velikost, konzistenci a zachování odmítnutí; celkem104 Python a37 Node kontrol prošlo. Účtový guard, účet, model, API fallback a iNice konfigurace se nemění. Nativní návrh stále podléhá samostatnému review a aplikačním testům.

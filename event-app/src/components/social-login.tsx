@@ -11,7 +11,9 @@ const providers = [
 ] as const;
 type Provider = (typeof providers)[number]["id"];
 
-export function SocialLogin({ disabled }: { disabled: boolean }) {
+export function SocialLogin({ disabled, returnPath = "/", allowPhone = true }: {
+  disabled: boolean; returnPath?: "/" | "/crew"; allowPhone?: boolean;
+}) {
   const [enabled, setEnabled] = useState<Provider[]>([]);
   const [pending, setPending] = useState<Provider | null>(null);
   const [error, setError] = useState("");
@@ -70,7 +72,7 @@ export function SocialLogin({ disabled }: { disabled: boolean }) {
       const { data, error } = await db.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${window.location.origin}${returnPath === "/crew" ? "/crew" : "/"}`,
           skipBrowserRedirect: true,
         },
       });
@@ -86,7 +88,7 @@ export function SocialLogin({ disabled }: { disabled: boolean }) {
 
   return (
     <div className="social-login">
-      {phoneEnabled && process.env.NEXT_PUBLIC_WHATSAPP_ENABLED === "true" && (
+      {allowPhone && phoneEnabled && process.env.NEXT_PUBLIC_WHATSAPP_ENABLED === "true" && (
         <WhatsAppLogin disabled={disabled || pending !== null} />
       )}
       {providers
