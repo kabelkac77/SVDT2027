@@ -1,5 +1,18 @@
 # MASTER BACKLOG
 
+## Sdílená crew — ověřený kód, aktivace odložená
+
+- [x] Crew tabulky, soukromé odměny/audit, RLS a verzované idempotentní zápisy.
+- [x] Auth, přehled/inline editace, cíle obsazenosti, oddělené formy a správa existujících členství; TypeScript/build a66 aplikačních testů.
+- [ ] Dostupný správný projekt, skutečné migrace, účty/granty, víceuživatelský průchod a hosting.
+- [ ] Řízený import místní crew se všemi zdrojovými poli a zachováním historie; žádné automatické slučování.
+- [ ] Desktop/mobil a přístupnost v prohlížeči; nyní ověřeno SSR, nikoli skutečný browser.
+- [ ] Šifrovaná úplná záloha, kolektory, vzdálená kopie, plánovač a skutečná obnova.
+- [ ] Rozhraní a adaptéry provozních modulů; datový základ připraven zvlášť, není tím nasazený.
+
+Vše potřebné k pozdějšímu ručnímu potvrzení v [31](31-AKTIVACE-A-RUCNI-KONTROLY.md).
+
+
 ## Potvrzené pokračování — 2026-11-02
 
 CONFIRMED: uživatel zadal dokončit souhrny kategorií a navazující personální přehled, potom sdílení crew s účty a oprávněními, automatické úplné zálohy mimo počítač a následně úkoly/harmonogram, registrace závodníků, zóny/mapu a provozní mobilní pohled. Jde o skutečnou implementaci po ověřitelných celcích, ne pouhý návrh. Konkrétní totožnost účtů, rozsahy přístupů, cílové obsazení, pravidla registrací a provozní volby bez podkladů zůstávají k pozdějšímu potvrzení; nevyžadovat je jako podmínku nezávislé práce. Stávající skutečná evidence a historie se zachovávají. Podrobný sled a podmínky dokončení v [27](27-NAVAZUJICI-IMPLEMENTACE.md).

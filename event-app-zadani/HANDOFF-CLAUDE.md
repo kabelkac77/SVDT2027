@@ -1,5 +1,18 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## 2026-11-02 — sdílená crew V1 v kódu
+
+IMPLEMENTED / synteticky ověřeno: samostatná `/crew`, existující Auth včetně povolených sociálních metod a návratu do crew, ročníky, sbalené kategorie, osm sloupců včetně PÁ/SO, detail pod řádkem, cíle obsazenosti, oddělené odměny a admin správa existujících účtů. Oprávnění, verze, idempotentní RPC a neveřejný audit v nové schema-only migraci. Role člena vidí vlastní přiřazení, odměny jen oprávněné role. Archiv zamyká provozní data, správce může odebrat přístup i v archivu.
+
+Ověření: 66 testů současné aplikace (včetně 17 SSR scénářů tabulky), TypeScript a produkční build prošly; samostatně 17 testů připraveného provozního modelu. Hostitelské nástroje:104 Python a37 Node kontrol. Nový browser/E2E průchod neproběhl, protože místní prohlížeč je vypnutý. Code review opravil ochranu draftů, plný fingerprint těla požadavku, rozdělené ukládání odměn a znepřístupnění dat po odebrání role.
+
+**Není aktivovaný sdílený provoz:** migrace na skutečný projekt, individuální granty, převod místní evidence a nasazení neproběhly. Uložená adresa projektu při diagnostice nešla přeložit v DNS; dostupný klíč je veřejný klientský, nikoli přístup k úplnému dumpu. Skutečná SQLite 2027 a historie2026/2025 zůstávají zachované. Úplné automatické zálohy mimo počítač nejsou aktivní. [Model a stav](28-SDILENA-CREW-A-OPRAVNENI.md), [aktivace a ruční kontroly](31-AKTIVACE-A-RUCNI-KONTROLY.md).
+
+Další pořadí: šifrovaný úplný zálohovací balíček/obnova, kolektory a vzdálené ověření podle dostupných přístupů; potom adaptéry/rozhraní úkolů, registrací, zón a provozního mobilního pohledu nad již připraveným datovým základem. Konkrétní finanční rozsah jednotlivých lidí zůstává otevřený, nic se neuděluje podle jmen.
+
+Tento blok nahrazuje starší operativní stavy níže; starší zápisy jsou historie předání.
+
+
 ## Aktuální pokračování — 2026-11-02
 
 Souhrny kategorií 25 dokončené v kódu, devět nových syntetických testů (37 Node kontrol celkem), lokální aktivace beze změny DB. Nová vizuální kontrola čeká kvůli vypnutému místnímu browseru. Historické hlášení CLAUDE_ACCOUNT_BUSY níže již není současný blok tohoto kroku. Uživatel výslovně zadal navazující implementaci: [27](27-NAVAZUJICI-IMPLEMENTACE.md). Další celek: ročníková crew a role/obsazenost se skutečně oddělenými oprávněními a soukromými odměnami. Neprovádět neodsouhlasené individuální granty nebo automatické slučování historických osob.

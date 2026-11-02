@@ -4,7 +4,7 @@ Tato pravidla se týkají organizační aplikace v této složce a její dokumen
 
 - Source of truth je `../event-app-zadani/`. Při převzetí práce začni `HANDOFF-CLAUDE.md`, aktuálním `IMPLEMENTATION-STATUS.md` a `DECISIONS.md`; potom čti model konkrétního modulu. Původní architektura popisuje i budoucí záměr, nikoli jen hotový software. Nejnovější výslovný pokyn uživatele má přednost; rozpor oprav v dokumentaci.
 - Nové důležité rozhodnutí zapiš současně do příslušného `.md` a případně `DECISIONS.md`. Implementátor aktualizuje dokumentaci v téže změně. Rozlišuj návrh, implementaci, lokální test a skutečně ověřený provoz.
-- Cíl: Partneři → Finance → další moduly. Finální vzhled připravuje Claude Design. Při funkčních změnách zachovej stávající tokeny a ovládání; rozsáhlý redesign dělej jen podle zadání.
+- Aktuální pořadí podle2026-11-02: Lidi a crew → sdílení/účty → úplné zálohy → úkoly/harmonogram, registrace, zóny/mapa a provozní mobilní pohled. Staré Partneři → Finance tuto prioritu nenahrazují. Finální vzhled připravuje Claude Design. Při funkčních změnách zachovej stávající tokeny a ovládání; rozsáhlý redesign dělej jen podle zadání.
 - WhatsApp/Twilio jsou odložené na výslovný pokyn uživatele. Připravený kód nech vypnutý a konfiguraci neřeš, dokud se k tomu uživatel nevrátí.
 - Před změnami zkontroluj Git a existující necommitnutou práci. Jeden autor zapisuje do konkrétních souborů v danou chvíli. Nevynucuj reset/clean ani force-push přes cizí práci. Nový klon neobsahuje lokální necommitnuté soubory.
 - Demo má pouze fiktivní data v localStorage, skutečná evidence je Supabase. Žádný tichý fallback skutečné evidence do dema. Auth účet sám neuděluje členství; skutečná oprávnění kontroluje databáze, ne skrytá tlačítka.

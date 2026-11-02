@@ -236,3 +236,13 @@ export function crewMessage(error: unknown): string {
     return "Zadané údaje nejsou platné. Zkontroluj formulář a zkus to znovu.";
   return "Změnu se nepodařilo uložit.";
 }
+
+/** Canonical identity for the flat JSON payload accepted by crew_write. */
+export function crewRequestFingerprint(edition: string, kind: CrewWriteKind, payload: Record<string, unknown>): string {
+  const fields = Object.keys(payload).sort().filter(key => payload[key] !== undefined).map(key => {
+    const value = payload[key];
+    if (value !== null && typeof value !== "string" && typeof value !== "boolean" && !(typeof value === "number" && Number.isFinite(value))) throw Error("CREW_INVALID_INPUT");
+    return [key, value];
+  });
+  return JSON.stringify([edition, kind, fields]);
+}

@@ -1,5 +1,13 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-02 — technická pravidla sdílené crew
+
+- Role a soukromé odměny vynucuje nová DB vrstva; žádné skutečné individuální členství nebylo přidělené. Konkrétní finanční rozsahy z dřívějšího UX zůstávají OPEN.
+- Archiv zamyká personální/finanční data, ale správce může nadále odebrat přístup. E-mail pro nové členství musí odpovídat právě jednomu Auth účtu.
+- Jedna rozepsaná část najednou, explicitní zahození, stejný request pro stejné tělo při nejisté odpovědi; finanční uložení je oddělené od rosteru. Změna identity remountuje workspace, token refresh stejného účtu jej nezahazuje.
+- Sdílený modul nepřebírá místní SQLite automaticky. Aktivace/import/živé účty a úplné zálohy čekají podle31; syntetické testy a build nejsou důkaz živého provozu.
+
+
 ## Potvrzené pokračování — 2026-11-02
 
 CONFIRMED: uživatel zadal dokončit souhrny kategorií a navazující personální přehled, potom sdílení crew s účty a oprávněními, automatické úplné zálohy mimo počítač a následně úkoly/harmonogram, registrace závodníků, zóny/mapu a provozní mobilní pohled. Jde o skutečnou implementaci po ověřitelných celcích, ne pouhý návrh. Konkrétní totožnost účtů, rozsahy přístupů, cílové obsazení, pravidla registrací a provozní volby bez podkladů zůstávají k pozdějšímu potvrzení; nevyžadovat je jako podmínku nezávislé práce. Stávající skutečná evidence a historie se zachovávají. Podrobný sled a podmínky dokončení v [27](27-NAVAZUJICI-IMPLEMENTACE.md).

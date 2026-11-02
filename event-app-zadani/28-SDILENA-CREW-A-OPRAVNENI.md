@@ -24,7 +24,7 @@ Databázové negativní scénáře: cizí ročník, nepřihlášený, partner-vi
 
 Aplikační část: samostatná /crew, přihlášení přes existující Supabase klient, výběr dostupného ročníku, sbalené kategorie, detail pod řádkem, ochrana rozepsaných změn, cíle obsazenosti, zvlášť odměny jen oprávněným a správa členství jen správci. Chyba nebo chybějící migrace nesmí otevřít demo ani vymazat data. Místní SQLite a historie se dál používají samostatně až do schváleného řízeného převodu.
 
-Stav: IN PROGRESS. Konkrétní účty, hosting, skutečná migrace/import a živý víceuživatelský průchod nejsou zatím provedené. Vizuální kontrola čeká na dostupný browser.
+Stav: IMPLEMENTED / synteticky ověřeno, bez aktivace skutečné služby. Konkrétní účty, hosting, skutečná migrace/import a živý víceuživatelský průchod nejsou zatím provedené. Vizuální kontrola čeká na dostupný browser.
 
 Správa přístupů je výjimkou ze zamčení archivu: správce může i po archivaci odebrat/znovu upravit členství, aniž změní historickou crew nebo odměny. Ověřeno samostatným databázovým scénářem.
 
@@ -37,3 +37,5 @@ Samostatný workspace #32 také překročil900s bez výstupu; přihlašovací ob
 Čistý tabulkový krok #33 vrátil INCONSISTENT_RESPONSE; žádné soubory se neaplikovaly. Před dalším konkrétním běhen opravený kontrakt a soukromé uchování návrhu v hostitelském runneru, nikoli oslabená validace.
 
 Tabulka #33 po zpřesnění kontraktu dodaná, host opravil importy, izolaci readonly člena, nový UUID draft, archiv ročníku, soukromé odměny a sloupce.17 scénářů renderu a cílený TypeScript prošly. Auth integrace zachovává již připravené sociální metody s návratem /crew (jen serverem zapnuté), bez WhatsApp. Celá stránka/build ještě čeká na controller28h.
+
+Controller #34 dodaný, host opravil fingerprint celého těla, guarded refresh/navigaci, synchronní dirty ochranu a skrytí dat po access-denied. Celá /crew sestavená, TypeScript a66 aplikačních testů prošlo. Browser/live ověření a řízený import zůstávají otevřené.

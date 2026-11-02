@@ -291,6 +291,10 @@ export function PartnersApp({ demo = false }: { demo?: boolean }) {
           SVDT<span>ORGANIZACE</span>
         </a>
         <div className="side-label">Pracovní prostor</div>
+        {!demo && <a className="nav" href="/crew" onClick={(event) => {
+          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+          if ((draft || Object.keys(inlineEdits).length > 0) && !window.confirm("Opustit rozepsané údaje partnerů a přejít do crew?")) event.preventDefault();
+        }}>Lidi a crew <span>↗</span></a>}
         <button
           className={view === "partners" ? "nav active" : "nav"}
           onClick={() => {

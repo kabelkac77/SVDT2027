@@ -7,7 +7,7 @@ Neuzavírat mlčením. Uživatel chce samostatnou implementaci a společný prů
 - Ověřit správnou adresu a dostupnost existujícího Supabase projektu. Diagnostika 2026-11-02: uložená projektová adresa má očekávaný formát, její DNS vrací ENOTFOUND, veřejná doména služby se překládá; žádný skutečný záznam se nečetl ani neměnil. Nevyvozovat z toho zánik projektu.
 - Doplnit přístup oprávněný aplikovat nové schema-only migrace; veřejný klient je nedostatečný. Existující bootstrap/migrace neopakovat naslepo.
 - Určit již existující účty obou správců a konkrétních dalších lidí, přístupy crew/finance/registrace, případně založení účtů standardním postupem. Nic se neuděluje podle odhadnutého jména nebo telefonu.
-- Nasazení/HTTPS/doména, reálné přihlášení alespoň dvou účtů a negativní průchody přístupu. Lokální test RLS není živé víceuživatelské ověření.
+- Nasazení/HTTPS/doména a přesné OAuth návraty včetně /crew, reálné přihlášení alespoň dvou účtů a negativní průchody přístupu. Lokální test RLS není živé víceuživatelské ověření.
 - Řízený převod místní evidence: nezměnit historii, zachovat zdrojová pole a domluvy; nejasné identity/skupiny a termíny před potvrzením neslučovat, nezahazovat sloupce ani nepřeklasifikovat mlčky. Přesný importní náhled a uživatelem odsouhlasené mapování jsou další celek. Současná SQLite dál platí jako pracovní evidence do tohoto převodu.
 
 ## Úplné zálohy
