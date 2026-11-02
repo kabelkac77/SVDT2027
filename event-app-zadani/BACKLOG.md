@@ -1,5 +1,9 @@
 # MASTER BACKLOG
 
+## Potvrzené pokračování — 2026-11-02
+
+CONFIRMED: uživatel zadal dokončit souhrny kategorií a navazující personální přehled, potom sdílení crew s účty a oprávněními, automatické úplné zálohy mimo počítač a následně úkoly/harmonogram, registrace závodníků, zóny/mapu a provozní mobilní pohled. Jde o skutečnou implementaci po ověřitelných celcích, ne pouhý návrh. Konkrétní totožnost účtů, rozsahy přístupů, cílové obsazení, pravidla registrací a provozní volby bez podkladů zůstávají k pozdějšímu potvrzení; nevyžadovat je jako podmínku nezávislé práce. Stávající skutečná evidence a historie se zachovávají. Podrobný sled a podmínky dokončení v [27](27-NAVAZUJICI-IMPLEMENTACE.md).
+
 ## Aktuální priorita uživatele — 2026-10-29
 
 - [x] Přidat editovatelné a trvale ukládané sloupce PÁ (od–do), SO (od–do). [Zadání 26](26-CREW-PATEK-SOBOTA.md).
@@ -7,7 +11,8 @@
 
 ## Samostatná práce — 2026-10-29
 
-- [ ] Přehled stavů uložených záznamů v záhlaví kategorií 2027, viditelný i při sbalení; filtry a historie zachované. Připravený další krok issue #22; spuštění modelu zatím blokuje společný účtový zámek CLAUDE_ACCOUNT_BUSY, bez změn kódu. [Zadání 25](25-CREW-STAVY-KATEGORII.md).
+- [x] Souhrny stavů zobrazených uložených záznamů v záhlaví kategorií 2027, i při sbalení. Implementováno 2026-11-02, 9 nových testů / 37 Node kontrol. [Zadání 25](25-CREW-STAVY-KATEGORII.md).
+- [ ] Později vizuálně ověřit souhrny na desktopu a mobilu; místní browser byl při tomto kroku vypnutý.
 - [ ] Později s uživatelem potvrdit čitelnost přehledu a potřebné počty/role/termíny pro skutečnou obsazenost. Počty záznamů nejsou počty unikátních lidí ani potvrzení personální připravenosti.
 
 ## Ruční potvrzení odložená uživatelem — 2026-10-28

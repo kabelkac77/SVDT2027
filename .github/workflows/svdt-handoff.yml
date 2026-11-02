@@ -12,6 +12,7 @@ on:
       - "event-app/tests/crew_csv_test.cjs"
       - "event-app/tests/crew_days_test.py"
       - "event-app/tests/crew_days_test.cjs"
+      - "event-app/tests/crew_category_test.cjs"
       - "event-app/tests/crew_snapshot_host_test.py"
       - "event-app/tests/crew_snapshot_io_host_test.py"
       - "event-app-zadani/wireframes/**"
@@ -28,6 +29,7 @@ on:
       - "event-app/tests/crew_csv_test.cjs"
       - "event-app/tests/crew_days_test.py"
       - "event-app/tests/crew_days_test.cjs"
+      - "event-app/tests/crew_category_test.cjs"
       - "event-app/tests/crew_snapshot_host_test.py"
       - "event-app/tests/crew_snapshot_io_host_test.py"
       - "event-app-zadani/wireframes/**"
@@ -60,4 +62,4 @@ jobs:
           node --check event-app-zadani/wireframes/crew-review.js
           node --check event-app-zadani/wireframes/prototype.js
       - name: Ověřit CSV a časové sloupce na fiktivních datech
-        run: node --test event-app/tests/crew_csv_test.cjs event-app/tests/crew_days_test.cjs
+        run: node --test event-app/tests/crew_csv_test.cjs event-app/tests/crew_days_test.cjs event-app/tests/crew_category_test.cjs
