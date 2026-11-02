@@ -1,6 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  operationRequestFingerprint,
+  isOperationAccessError,
   localDateTime,
   dateTimeInput,
   dateTimeLabel,
@@ -160,3 +162,12 @@ test("timeline normalizes server and input separators and preserves nonzero seco
   assert.equal(dateTimeInput("2027-06-05 08:30:45"), "2027-06-05T08:30:45");
   assert.equal(dateTimeLabel("2027-06-05 08:30:45"), "05. 06. 2027 08:30:45");
 });
+
+test('operation request identity includes typed amounts, edition, action and every payload field',()=>{
+ const p={id:'synthetic',version:1,fee_due:null,fee_paid:0};const fp=operationRequestFingerprint('e1','registration',p);
+ assert.equal(fp,operationRequestFingerprint('e1','registration',{fee_paid:0,fee_due:null,version:1,id:'synthetic',omitted:undefined}));
+ for(const next of [{...p,fee_due:0},{...p,fee_paid:null},{...p,version:2},{...p,id:'other'},{...p,notes:'new'}])assert.notEqual(fp,operationRequestFingerprint('e1','registration',next));
+ assert.notEqual(fp,operationRequestFingerprint('e2','registration',p));assert.notEqual(fp,operationRequestFingerprint('e1','task',p));
+ for(const value of [NaN,Infinity,{},[],1n])assert.throws(()=>operationRequestFingerprint('e1','task',{value}),/OPERATIONS_INVALID_INPUT/);
+});
+test('operation access failures are recognized without exposing backend values',()=>{assert.equal(isOperationAccessError({code:'42501',message:'private'}),true);assert.equal(isOperationAccessError({message:'CREW_ACCESS_DENIED'}),true);assert.equal(isOperationAccessError({message:'OPERATIONS_ACCESS_DENIED'}),true);assert.equal(isOperationAccessError({message:'synthetic network error'}),false);assert.equal(isOperationAccessError(null),false);});
