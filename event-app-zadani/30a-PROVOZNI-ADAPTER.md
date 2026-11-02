@@ -1,0 +1,7 @@
+# Provozní adapter — omezený implementační krok
+
+Implementovat pouze event-app/src/lib/operations-backend.ts. Použít stávající supabase z ./backend a OperationsData/OperationKind/Zone/OperationTask/Registration/RegistrationGrant z ./operations-model. Žádné nové SQL, UI, package, skutečná data, granty nebo importy.
+
+export loadOperations(editionId:string):Promise<OperationsData>. Nejprve rpc crew_role({e:editionId}) a odmítnout null/není klient pomocí konstantní chyby OPERATIONS_ACCESS_DENIED/OPERATIONS_CONFIG_MISSING, žádný fallback nebo falešné prázdné úspěšné údaje. Pak rpc operations_registration_access({e:editionId}), boolean canRegistration. Tabulky operations_zones,operations_tasks,operations_grants stránkovat po500 s eq('edition_id',editionId), stabilním order(id) nebo user_id u grants. RLS se nesmí obcházet. Registrations požadovat jen canRegistration=true, jinak []; už samotný síťový požadavek musí být vynechaný. Pro jakýkoliv read/rpc error throw, ne ignorování. Vrátit {zones,tasks,registrations,grants,canRegistration}. Žádné osobní údaje nebo tokeny do logu.
+
+export writeOperation(editionId:string,kind:OperationKind,payload:Record<string,unknown>,requestId:string):Promise<unknown> přes rpc operations_write({e:editionId,k:kind,p:payload,request_id:requestId}), throwerror. Request identitu dodává UI, adapter ji nezmění nebo nevygeneruje znovu. Žádný automatický výchozí admin, create-on-read, místní persistence nebo zprávy.
