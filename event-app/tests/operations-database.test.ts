@@ -360,3 +360,36 @@ test("operations validate local Prague date ranges, map coordinates and nullable
     await db.close();
   }
 });
+
+test("archived operational data stays immutable while registration access can be revoked", async () => {
+  const db = await setup();
+  try {
+    await seed(db);
+    await op(db, "registration", registration());
+    await op(db, "registration_grant", {
+      user_id: actor.member,
+      version: 0,
+      can_registration: true,
+    });
+    await db.exec(
+      "reset role;update editions set archived=true where id='" + e1 + "'",
+    );
+    await as(db, actor.member);
+    assert.equal(await count(db, "operations_registrations"), 1);
+    await assert.rejects(
+      () => op(db, "registration", registration()),
+      /OPERATIONS_EDITION_ARCHIVED/,
+    );
+    await as(db, actor.admin);
+    await op(db, "registration_grant", {
+      user_id: actor.member,
+      version: 1,
+      can_registration: false,
+    });
+    await as(db, actor.member);
+    assert.equal(await count(db, "operations_registrations"), 0);
+    assert.equal(await count(db, "crew_roster"), 1);
+  } finally {
+    await db.close();
+  }
+});

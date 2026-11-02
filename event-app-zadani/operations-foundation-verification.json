@@ -1,7 +1,7 @@
 {
   "verified_on": "2026-11-02",
   "scope": "schema_and_domain_foundation_only",
-  "database_tests": 6,
+  "database_tests": 7,
   "domain_tests": 10,
   "typescript": "scoped pass",
   "schema_applied_to_actual_service": false,
@@ -11,7 +11,7 @@
   "files": {
     "event-app/supabase/migrations/202611020002_operations.sql": "8b73cac12d98faf8f4d3a97be3cebe7d9bfd3c62b93a8ede03f043428edf7d46",
     "event-app/src/lib/operations-model.ts": "87933cab7e1d8d9f843fa0b1c429ded96034d5c143e82c448fa6ad705261c31a",
-    "event-app/tests/operations-database.test.ts": "8780fa7f935315755f34b8cdebc268fc3e9de1948f525f2dabca8eb0e270197a",
+    "event-app/tests/operations-database.test.ts": "b41cef46daaa0f66801277d460f5e53c271abcbeedcbc1e47185d73c184c9261",
     "event-app/tests/operations-model.test.ts": "4859c77b563e7b3d867227909e2fc9b6f92d2bd048fc0b647cf162895969563c"
   }
 }

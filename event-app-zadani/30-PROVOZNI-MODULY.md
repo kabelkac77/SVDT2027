@@ -21,4 +21,6 @@ Zápisy přes operations_write, verzované a idempotentní; audit je neveřejný
 
 Syntetické databázové scénáře pro vlastní/cizí úkol, samostatný grant Registrace, zakázané kontakty/odměny, archiv, cizí ročník, podvržená pole, verze/opakování/revokaci, rozsahy času/mapy a neznámé/nulové peníze. Doménové scénáře pro řazení harmonogramu beze změny pásma, přestupná data, stavy úhrady, whitelist payloadů a chybějící polohu. To není potvrzení skutečných pravidel závodu ani produkčního provozu.
 
-Datový základ ověřen 2026-11-02: 6 PGlite scénářů a10 doménových scénářů, cílený TypeScript prošel. [Evidence](operations-foundation-verification.json). Jde o izolované ověření schématu/modelu, nikoli celkový build dosud rozpracovaného sdíleného rozhraní nebo skutečný provoz.
+Datový základ ověřen 2026-11-02: 7 PGlite scénářů a10 doménových scénářů, cílený TypeScript prošel. [Evidence](operations-foundation-verification.json). Jde o izolované ověření schématu/modelu, nikoli celkový build dosud rozpracovaného sdíleného rozhraní nebo skutečný provoz.
+
+Správce smí i v archivu odebrat právo Registrace, aniž mění historická data. Samostatný databázový scénář ověřuje zamčení registrací a následné znepřístupnění kontaktů po revokaci.
