@@ -92,9 +92,14 @@ export async function loadCrew(editionId: string): Promise<CrewData> {
   const entries = await allCrewRows<CrewEntry>(client, "crew_roster", editionId);
   let members: CrewMembership[];
   if (role === "admin") {
-    const result = await client.rpc("crew_member_directory", { e: editionId });
-    if (result.error) throw result.error;
-    members = (result.data ?? []) as CrewMembership[];
+    members = [];
+    for (let from = 0; ; from += 500) {
+      const result = await client.rpc("crew_member_directory", { e: editionId })
+        .order("user_id").range(from, from + 499);
+      if (result.error) throw result.error;
+      members.push(...((result.data ?? []) as CrewMembership[]));
+      if (!result.data || result.data.length < 500) break;
+    }
   } else members = await allCrewRows<CrewMembership>(client, "crew_members", editionId);
   const compensation = canFinance
     ? await allCrewRows<CrewCompensation>(client, "crew_compensation", editionId)

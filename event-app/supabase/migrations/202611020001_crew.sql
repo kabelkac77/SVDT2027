@@ -87,7 +87,7 @@ begin
  perform public.require_crew_writer(e,k);
  if request_id is null or p is null or jsonb_typeof(p)<>'object' then raise exception 'CREW_INVALID_INPUT' using errcode='22023'; end if;
  perform pg_advisory_xact_lock(hashtextextended(e::text||uid::text||request_id::text,0));
- fp:=md5(k||p::text);
+ fp:=encode(sha256(convert_to(k||p::text,'UTF8')),'hex');
  select * into cached from public.crew_requests q where q.edition_id=e and q.actor_id=uid and q.request_id=crew_write.request_id;
  if found then
   if cached.fingerprint<>fp then raise exception 'CREW_REQUEST_REUSED' using errcode='40001'; end if;

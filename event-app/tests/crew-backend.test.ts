@@ -1,0 +1,25 @@
+import {test,after} from 'node:test';
+import assert from 'node:assert/strict';
+import {createServer} from 'node:http';
+import {once} from 'node:events';
+let role:string|null='coordinator',finance=false,failTable='',failRole=false;
+const log:{path:string,query:URLSearchParams,body:any}[]=[];
+const fixtures:Record<string,any[]>={editions:[{id:'edition-a',year:2027,name:'Synthetic',archived:false}],crew_categories:[{id:'category-a',edition_id:'edition-a',version:1}],crew_roster:[],crew_members:[{user_id:'synthetic-coordinator',edition_id:'edition-a',role:'coordinator',version:1}],crew_compensation:[{roster_id:'synthetic-row',edition_id:'edition-a',agreed:100,version:1}]};
+const server=createServer(async(req,res)=>{let raw='';for await(const chunk of req)raw+=chunk;const url=new URL(req.url!,'http://localhost'),body=raw?JSON.parse(raw):null;log.push({path:url.pathname,query:url.searchParams,body});res.setHeader('content-type','application/json');const name=url.pathname.split('/').at(-1)!;
+ if(name==='crew_role'){if(failRole){res.statusCode=500;res.end(JSON.stringify({message:'synthetic-role-error'}));}else res.end(JSON.stringify(role));return;}
+ if(name==='crew_finance'){res.end(JSON.stringify(finance));return;}
+ if(name==='crew_write'){res.end(JSON.stringify({id:'synthetic-saved',version:1}));return;}
+ if(name==='crew_member_directory'){const from=Number(url.searchParams.get('offset')||0),limit=Number(url.searchParams.get('limit')||500);res.end(JSON.stringify(fixtures.crew_members.slice(from,from+limit)));return;}
+ if(name===failTable){res.statusCode=500;res.end(JSON.stringify({message:'synthetic-read-error'}));return;}
+ const from=Number(url.searchParams.get('offset')||0),limit=Number(url.searchParams.get('limit')||500);res.end(JSON.stringify((fixtures[name]||[]).slice(from,from+limit)));
+});server.listen(0,'127.0.0.1');await once(server,'listening');const addr=server.address() as any;const base='http://127.0.0.1:'+addr.port;process.env.NEXT_PUBLIC_SUPABASE_URL=base;process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY='synthetic-public-key';
+const {loadCrew,loadCrewEditions,writeCrew}=await import('../src/lib/crew-backend');
+after(()=>new Promise<void>(resolve=>{server.close(()=>resolve());server.closeAllConnections();}));
+function reset(){log.length=0;role='coordinator';finance=false;failTable='';failRole=false;fixtures.crew_roster=[];}
+test('backend paginates crew rows and scopes every table query to the chosen edition',async()=>{reset();fixtures.crew_roster=Array.from({length:501},(_,i)=>({id:'synthetic-'+i,edition_id:'edition-a'}));const data=await loadCrew('edition-a');assert.equal(data.entries.length,501);for(const request of log.filter(r=>!r.path.includes('/rpc/')))assert.equal(request.query.get('edition_id'),'eq.edition-a');assert.equal(log.filter(r=>r.path.endsWith('/crew_roster')).length,2);});
+test('non-financial coordinator never even requests compensation or account-email directory',async()=>{reset();const data=await loadCrew('edition-a');assert.equal(data.canFinance,false);assert.deepEqual(data.compensation,[]);assert.ok(!log.some(r=>r.path.endsWith('/crew_compensation')));assert.ok(!log.some(r=>r.path.endsWith('/crew_member_directory')));});
+test('admin loads the scoped private directory and explicit financial records',async()=>{reset();role='admin';finance=true;const data=await loadCrew('edition-a');assert.equal(data.compensation[0].agreed,100);assert.ok(log.some(r=>r.path.endsWith('/crew_member_directory')&&r.body.e==='edition-a'));});
+test('private account directory paginates beyond the service default',async()=>{reset();role='admin';const original=fixtures.crew_members;try{fixtures.crew_members=Array.from({length:1001},(_,i)=>({user_id:'synthetic-'+i,edition_id:'edition-a'}));const data=await loadCrew('edition-a');assert.equal(data.members.length,1001);assert.equal(log.filter(r=>r.path.endsWith('/crew_member_directory')).length,3);}finally{fixtures.crew_members=original;}});
+test('null role and transport errors fail without a fake empty-success result',async()=>{reset();role=null;await assert.rejects(()=>loadCrew('edition-a'));assert.ok(!log.some(r=>r.path.endsWith('/crew_roster')));reset();failTable='crew_roster';await assert.rejects(()=>loadCrew('edition-a'));reset();failRole=true;await assert.rejects(()=>loadCrewEditions());});
+test('write adapter forwards caller request identity and payload without adding identity or rights',async()=>{reset();const payload={version:0,name:'Synthetic',color:'cat-0'};const result=await writeCrew('edition-a','category',payload,'request-synthetic');assert.deepEqual(result,{id:'synthetic-saved',version:1});const body=log.at(-1)!.body;assert.deepEqual(body,{e:'edition-a',k:'category',p:payload,request_id:'request-synthetic'});});
+test('missing public configuration is explicit and performs no network access',async()=>{reset();delete process.env.NEXT_PUBLIC_SUPABASE_URL;try{await assert.rejects(()=>loadCrew('edition-a'),/CREW_CONFIG_MISSING/);assert.equal(log.length,0);}finally{process.env.NEXT_PUBLIC_SUPABASE_URL=base;}});
