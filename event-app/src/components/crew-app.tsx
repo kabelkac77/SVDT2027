@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { supabase } from '../lib/backend';
 import { CrewWorkspace } from './crew-workspace';
+import { SocialLogin } from './social-login';
 
 const AUTH_ERROR = 'Přihlášení se nezdařilo. Zkontroluj e-mail a heslo.';
 const LOGOUT_ERROR = 'Odhlášení se nezdařilo. Zkus to znovu.';
@@ -19,6 +20,7 @@ function getClient() {
 
 export function CrewApp() {
   const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState('');
   const [checking, setChecking] = useState(true);
   const [configError, setConfigError] = useState(false);
   const [email, setEmail] = useState('');
@@ -33,7 +35,8 @@ export function CrewApp() {
   const identityVersionRef = useRef(0);
   const signingInRef = useRef(false);
 
-  const applyUserId = useCallback((nextId: string | null) => {
+  const applyUserId = useCallback((nextId: string | null, accountEmail = '') => {
+    setUserEmail(nextId ? accountEmail : '');
     if (currentUserIdRef.current === nextId) return;
     currentUserIdRef.current = nextId;
     identityVersionRef.current += 1;
@@ -44,6 +47,16 @@ export function CrewApp() {
 
   useEffect(() => {
     activeRef.current = true;
+    const callback = new URL(window.location.href);
+    const fragment = new URLSearchParams(callback.hash.slice(1));
+    if (callback.searchParams.has('error') || fragment.has('error')) {
+      setError('Přihlášení nebylo dokončeno. Zkus to znovu nebo zvol jiný účet.');
+      for (const key of ['error', 'error_code', 'error_description']) {
+        callback.searchParams.delete(key); fragment.delete(key);
+      }
+      callback.hash = fragment.toString();
+      window.history.replaceState(null, '', callback.pathname + callback.search + callback.hash);
+    }
     const generation = ++effectGenerationRef.current;
     const live = () => activeRef.current && generation === effectGenerationRef.current;
     const client = getClient();
@@ -59,7 +72,7 @@ export function CrewApp() {
     const { data: authListener } = client.auth.onAuthStateChange((_event, session) => {
       if (!live()) return;
       eventSeqRef.current += 1;
-      applyUserId(session?.user?.id ?? null);
+      applyUserId(session?.user?.id ?? null, session?.user?.email ?? '');
       setChecking(false);
     });
 
@@ -67,7 +80,7 @@ export function CrewApp() {
     client.auth.getSession().then(({ data, error: sessionError }) => {
       if (!live() || eventSeqRef.current !== seqAtRequest) return;
       if (sessionError) setError('Přihlášení se nepodařilo ověřit. Zkus obnovit stránku.');
-      else applyUserId(data.session?.user?.id ?? null);
+      else applyUserId(data.session?.user?.id ?? null, data.session?.user?.email ?? '');
       setChecking(false);
     }).catch(() => {
       if (!live() || eventSeqRef.current !== seqAtRequest) return;
@@ -131,7 +144,7 @@ export function CrewApp() {
   );
 
   if (userId) {
-    return <>{error && <p className="crew-auth-error" role="alert">{error}</p>}<CrewWorkspace key={userId} userId={userId} onLogout={logout} /></>;
+    return <>{error && <p className="crew-auth-error" role="alert">{error}</p>}<CrewWorkspace key={userId} userId={userId} userEmail={userEmail} onLogout={logout} /></>;
   }
 
   return (
@@ -143,7 +156,7 @@ export function CrewApp() {
       {checking ? <p role="status">Ověřuji přihlášení…</p> : configError ? (
         <p>{CONFIG_ERROR}</p>
       ) : (
-        <form onSubmit={handleSubmit}>
+        <><SocialLogin disabled={signingIn} returnPath="/crew" allowPhone={false} /><form onSubmit={handleSubmit}>
           <label>
             E-mail
             <input
@@ -170,7 +183,7 @@ export function CrewApp() {
           <button type="submit" disabled={signingIn}>
             Přihlásit se
           </button>
-        </form>
+        </form></>
       )}
     </div>
   );

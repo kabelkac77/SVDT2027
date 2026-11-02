@@ -35,3 +35,5 @@ E-mail pro nové členství musí odpovídat právě jednomu Auth účtu; více 
 Samostatný workspace #32 také překročil900s bez výstupu; přihlašovací obal #31 dodaný. Další skutečná změna rozsahu: čistý tabulkový pohled oddělený od asynchronního controlleru (28g). Nejde o opakování stejného promptu.
 
 Čistý tabulkový krok #33 vrátil INCONSISTENT_RESPONSE; žádné soubory se neaplikovaly. Před dalším konkrétním běhen opravený kontrakt a soukromé uchování návrhu v hostitelském runneru, nikoli oslabená validace.
+
+Tabulka #33 po zpřesnění kontraktu dodaná, host opravil importy, izolaci readonly člena, nový UUID draft, archiv ročníku, soukromé odměny a sloupce.17 scénářů renderu a cílený TypeScript prošly. Auth integrace zachovává již připravené sociální metody s návratem /crew (jen serverem zapnuté), bez WhatsApp. Celá stránka/build ještě čeká na controller28h.
