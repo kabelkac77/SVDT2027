@@ -12,7 +12,7 @@ Kategorie mají volitelný požadovaný počet a přesný termín. Roster zachov
 
 ## Zápisy a audit
 
-Pouze RPC crew_write(e,kind,p,request_id), kind category/roster/compensation/member. Prohlížeč nemá přímý INSERT/UPDATE/DELETE. Každý zápis ověří aktuálního uživatele, roli, nearchivovaný ročník, verzi a přesné povolené klíče. Ročníkové vazby kontrolují složené FK. Opakovaný request stejného aktéra/ročníku vrací týž výsledek, jiné tělo téhož requestu je konflikt. Oprávnění se znovu ověřuje před vrácením cache. Requesty a audit nemohou odhalit odměny běžnému členovi. Změny mají databází ověřeného autora. Členství se vypíná místo smazání vazeb, posledního správce nelze odebrat; zděděný správce se neodnímá přes crew formulář.
+Pouze RPC crew_write(e,kind,p,request_id), kind category/roster/compensation/member. Prohlížeč nemá přímý INSERT/UPDATE/DELETE. Každý zápis ověří aktuálního uživatele, roli, nearchivovaný ročník pro provozní/finanční změny, verzi a přesné povolené klíče. Ročníkové vazby kontrolují složené FK. Opakovaný request stejného aktéra/ročníku vrací týž výsledek, jiné tělo téhož requestu je konflikt. Oprávnění se znovu ověřuje před vrácením cache. Requesty a audit nemohou odhalit odměny běžnému členovi. Změny mají databází ověřeného autora. Členství se vypíná místo smazání vazeb, posledního správce nelze odebrat; zděděný správce se neodnímá přes crew formulář.
 
 ## Obsazenost
 
@@ -25,3 +25,7 @@ Databázové negativní scénáře: cizí ročník, nepřihlášený, partner-vi
 Aplikační část: samostatná /crew, přihlášení přes existující Supabase klient, výběr dostupného ročníku, sbalené kategorie, detail pod řádkem, ochrana rozepsaných změn, cíle obsazenosti, zvlášť odměny jen oprávněným a správa členství jen správci. Chyba nebo chybějící migrace nesmí otevřít demo ani vymazat data. Místní SQLite a historie se dál používají samostatně až do schváleného řízeného převodu.
 
 Stav: IN PROGRESS. Konkrétní účty, hosting, skutečná migrace/import a živý víceuživatelský průchod nejsou zatím provedené. Vizuální kontrola čeká na dostupný browser.
+
+Správa přístupů je výjimkou ze zamčení archivu: správce může i po archivaci odebrat/znovu upravit členství, aniž změní historickou crew nebo odměny. Ověřeno samostatným databázovým scénářem.
+
+UI předání #27 (dva soubory) a #30 (celá stránka) překročila limit900s bez aplikovaného návrhu. Formuláře #28 byly zúžením úspěšně dodané a hostem opravené/testované. Další krok proto dělí auth obal od pracovního workspace; žádný slepý stejný retry nebo alternativní účet/model.

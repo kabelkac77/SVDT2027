@@ -1,0 +1,28 @@
+# Aktivace a odložené ruční kontroly
+
+Neuzavírat mlčením. Uživatel chce samostatnou implementaci a společný průchod později. Tento dokument odděluje konkrétní potřebné vstupy od dalších nezávislých vývojových úkolů. Neobsahuje secrets nebo osobní kontakty.
+
+## Sdílený provoz
+
+- Ověřit správnou adresu a dostupnost existujícího Supabase projektu. Diagnostika 2026-11-02: uložená projektová adresa má očekávaný formát, její DNS vrací ENOTFOUND, veřejná doména služby se překládá; žádný skutečný záznam se nečetl ani neměnil. Nevyvozovat z toho zánik projektu.
+- Doplnit přístup oprávněný aplikovat nové schema-only migrace; veřejný klient je nedostatečný. Existující bootstrap/migrace neopakovat naslepo.
+- Určit již existující účty obou správců a konkrétních dalších lidí, přístupy crew/finance/registrace, případně založení účtů standardním postupem. Nic se neuděluje podle odhadnutého jména nebo telefonu.
+- Nasazení/HTTPS/doména, reálné přihlášení alespoň dvou účtů a negativní průchody přístupu. Lokální test RLS není živé víceuživatelské ověření.
+- Řízený převod místní evidence: nezměnit historii, zachovat zdrojová pole a domluvy; nejasné identity/skupiny a termíny před potvrzením neslučovat, nezahazovat sloupce ani nepřeklasifikovat mlčky. Přesný importní náhled a uživatelem odsouhlasené mapování jsou další celek. Současná SQLite dál platí jako pracovní evidence do tohoto převodu.
+
+## Úplné zálohy
+
+- Doplnit oddělené přístupy pro úplný DB dump včetně deklarovaného Auth/schémat a soukromé Storage soubory/inventář, kompatibilní exportní nástroje a potřebný rozsah. Veřejné RLS čtení není úplný dump.
+- Uchovat obnovovací klíč mimo zálohy ve správci tajemství; žádná hesla do veřejného MD nebo klienta.
+- Vzdálený vykonavatel a dříve zvolený neveřejný cíl, doklad uploadu/stažení nové šifrované kopie. Místní iCloud složka sama nedokazuje vzdálenou kopii nebo běh při vypnutém Macu.
+- Skutečný plánovaný běh, hlášení chyb i chybějícího běhu, retence a ověřená izolovaná obnova DB/Auth/příloh. Až pak označit automatické úplné zálohy za aktivní.
+
+## Produkční pravidla a UX
+
+- Potřebné počty a přesné termíny obsazení kategorií, nejasné identity a zástupy; neodvozovat člověka ze skupinového řádku.
+- Registrace: pravidla kategorií/kapacit/čísel, skutečná databáze/import, podklady k prezenci a význam potvrzení. Ruční stav úhrady není ověření banky.
+- Úkoly: skutečný harmonogram a odpovědnosti; časy se zobrazují v místním čase akce Europe/Prague.
+- Mapový podklad, práva k použití, skutečné polohy a vedoucí zón. Pracovní kontakt ke sdílení s crew vybrat vědomě.
+- Kdo potvrzuje příchod a dokončení úkolu, eskalace problémů. Samoobslužné potvrzování do té doby nepřidávat jako schválený proces.
+- Desktop/mobil, klávesnice, otevření detailů, úzký displej a ochrana draftu v prohlížeči. Místní browser byl během implementace vypnutý; bez jeho dostupnosti nelze tvrdit novou vizuální/E2E akceptaci.
+- WhatsApp/Twilio zůstávají výslovně odložené. Žádná nová automatická zpráva nebo placená služba.

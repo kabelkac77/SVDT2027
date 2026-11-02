@@ -59,7 +59,7 @@ $$;
 create function public.require_crew_writer(e uuid, k text) returns void language plpgsql security definer set search_path='' as $$
 begin
  if auth.uid() is null or not (case when k='member' then coalesce(public.crew_role(e)='admin',false) when k='compensation' then public.crew_finance(e) else public.crew_editor(e) end) then raise exception 'CREW_ACCESS_DENIED' using errcode='42501'; end if;
- if k='member' then perform 1 from public.editions where id=e and not archived for update; else perform 1 from public.editions where id=e and not archived for share; end if;
+ if k='member' then perform 1 from public.editions where id=e for update; else perform 1 from public.editions where id=e and not archived for share; end if;
  if not found then raise exception 'CREW_EDITION_ARCHIVED' using errcode='42501'; end if;
  if not (case when k='member' then coalesce(public.crew_role(e)='admin',false) when k='compensation' then public.crew_finance(e) else public.crew_editor(e) end) then raise exception 'CREW_ACCESS_DENIED' using errcode='42501'; end if;
 end;
