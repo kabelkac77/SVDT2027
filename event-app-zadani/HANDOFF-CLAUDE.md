@@ -1,5 +1,9 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## Aktuální pokračování — 2026-11-02
+
+Souhrny kategorií 25 dokončené v kódu, devět nových syntetických testů (37 Node kontrol celkem), lokální aktivace beze změny DB. Nová vizuální kontrola čeká kvůli vypnutému místnímu browseru. Historické hlášení CLAUDE_ACCOUNT_BUSY níže již není současný blok tohoto kroku. Uživatel výslovně zadal navazující implementaci: [27](27-NAVAZUJICI-IMPLEMENTACE.md). Další celek: ročníková crew a role/obsazenost se skutečně oddělenými oprávněními a soukromými odměnami. Neprovádět neodsouhlasené individuální granty nebo automatické slučování historických osob.
+
 ## Další samostatný bod — stav po PÁ/SO
 
 Zadání [25](25-CREW-STAVY-KATEGORII.md), issue #22: stavové součty kategorií. Dry-run prošel, skutečný běh se zastavil CLAUDE_ACCOUNT_BUSY ještě před modelem. Žádné změny rendereru/souhrnů nebyly aplikované. Respektovat společný účet/zámek a nepoužívat alternativní účet nebo kvótu. Nezávislé syntetické testy jsou připravené hostem mimo publikovaný kód a před dalším předáním se znovu zkontrolují proti aktuálním časovým sloupcům. Uživatelská potvrzení zůstávají odložená a nejsou touto technickou překážkou vyžadovaná.

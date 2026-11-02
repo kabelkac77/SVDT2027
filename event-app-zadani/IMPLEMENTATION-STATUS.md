@@ -1,5 +1,9 @@
 # Stav implementace
 
+## 2026-11-02 — souhrny kategorií
+
+IMPLEMENTED / místně aktivované: souhrny uložených stavů u sbalených kategorií, podle aktuálních filtrů, neuložené zvlášť. 9 nových testů a 37 Node kontrol prošlo. PÁ/SO, CSV, historie a ochrana draftu zachované; DB obsah nezměněný. Nové vizuální/browser ověření neproběhlo kvůli vypnutému místnímu prohlížeči. [25](25-CREW-STAVY-KATEGORII.md).
+
 ## 2026-10-29 — PÁ a SO v hlavním personálním řádku
 
 **IMPLEMENTED / ověřeno místně:** sloupce PÁ (od–do) a SO (od–do), editace v detailu pod řádkem a trvalé ukládání v 2027. Starší otevřené okno, které nová pole neposílá, zachová uložené časy; explicitní prázdná hodnota je smaže. Bez automatického potvrzení účasti nebo přebírání minulých časů. Claude dodal omezený serverový krok, host integraci a nezávislé testy: 96 Python + 28 Node testů prošlo. Prohlížeč ověřil uložení přes restart serveru, reload, CSV i mobil 390 px bez vodorovného přetékání. Místní aplikace aktualizovaná se snímkem a soukromě doloženým zachováním celé DB. [26](26-CREW-PATEK-SOBOTA.md), [evidence](crew-days-verification.json). Ruční vzhled/časové domluvy zůstávají na později; zadání souhrnu kategorií 25 čeká v backlogu.

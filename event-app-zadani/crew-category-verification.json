@@ -1,0 +1,15 @@
+{
+  "verified_at": "2026-11-02",
+  "issue": 22,
+  "implementation": "completed",
+  "node_tests_passed": 37,
+  "new_tests": 9,
+  "local_activation": "complete_database_unchanged",
+  "browser_visual": "not_run_local_browser_disabled",
+  "user_visual_review": "deferred",
+  "files_sha256": {
+    "event-app-zadani/wireframes/crew-sheet.js": "242d4f237438496741d06bc77738d07990ab2b876f78477008ab9f809f58f516",
+    "event-app-zadani/wireframes/crew-category-colors.css": "77a89b8055e97df1a5c7e8f789476b22cb264a1ea2239f5676d4e395e42d0b54",
+    "event-app/tests/crew_category_test.cjs": "ca1ee9af5cfa079c7f4751add24ff23567f86a80498db971a8a6454c62b11985"
+  }
+}
