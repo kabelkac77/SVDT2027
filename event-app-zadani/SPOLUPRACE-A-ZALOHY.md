@@ -1,5 +1,9 @@
 # Spolupráce při vývoji a denní zálohy
 
+## 2026-11-02 — ověřený šifrovaný formát, aktivace otevřená
+
+Knihovna29a a15 testů kryptografie/obnovy jsou hotové v kódu. Nejde o aktivní úplnou automatickou zálohu. Kolektory a skutečné přístupy, konzistence DB/Storage, vzdálená kopie, plánovač a test skutečné obnovy zůstávají otevřené podle [29b](29b-ZALOHY-KOLEKTORY.md) a [31](31-AKTIVACE-A-RUCNI-KONTROLY.md). Zápis do synchronizované místní složky neprokazuje vzdálený upload nebo běh bez tohoto Macu.
+
 ## Aktuální spolupráce — 2026-10-28
 
 Uživatel nyní výslovně zadal tok Codex → místní Claude Code: Codex zadání, nezávislé review, skutečné testy a Git; Claude implementace a opravy. Konkrétní nastavení, ověření přístupů, datové hranice a stav zkoušky jsou v [22-CODEX-CLAUDE-SPOLUPRACE.md](22-CODEX-CLAUDE-SPOLUPRACE.md). Historické doporučení modelu níže je nahrazené stávajícím nativním Claude Pro a výchozím modelem CLI bez API fallbacku. Toto není aktivace denních záloh.

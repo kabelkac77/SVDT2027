@@ -1,5 +1,7 @@
 # Provozní pracovní přehled — omezený krok
 
+Implementačně rozděleno do30d (přehledy),30e (stav/ukládání),30f (panel) a integrace do crew workspace. Tyto části jsou hotové v kódu; širší text níže zůstává popisem cílového chování, nikoli pokynem k monolitickému přepisu. Aktuální ověření viz30 a operations-ui-verification.json.
+
 Implementovat pouze event-app/src/components/operations-panel.tsx. Client export OperationsPanel({edition,crew,userId,onGuardChange}): edition Edition,crew CrewData,userId string,onGuardChange:(guard:()=>boolean)=>void. CrewApp host dodá auth/ročník a zapojí guard do navigace/odhlášení/přepnutí roku. Root panel key userId+edition.id, nesmí uchovávat data minulého účtu. Komponenta používá loadOperations/writeOperation a model/formuláře. Žádná další auth nebo localStorage/demo/import/SQL/účty/zprávy. Nadpisy česky, stávající design/třídy crew-app/panel/crew-form-grid/badge.
 
 ## Lifecycle a draft

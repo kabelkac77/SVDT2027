@@ -59,3 +59,45 @@
  .crew-app .crew-account button { min-height:44px; flex-shrink:0; }
  .crew-app .crew-settings { padding:16px; }
 }
+
+/* Operational views share the crew shell and SVDT design tokens. */
+.crew-app .sidebar button.nav { width:100%; text-align:left; border-radius:8px; }
+.crew-app .ops-panel { min-width:0; }
+.crew-app .ops-tabs,.crew-app .ops-toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:20px; }
+.crew-app .ops-tabs button[aria-pressed=true] { border-color:var(--svdt-brand); color:var(--svdt-brand); }
+.crew-app .ops-toolbar input[type=search] { flex:1 1 220px; width:auto; }
+.crew-app .ops-toolbar select { flex:0 1 200px; width:auto; }
+.crew-app .ops-toolbar label { display:flex; gap:8px; align-items:center; margin:0; }
+.crew-app .ops-list { padding:0; margin:0; list-style:none; }
+.crew-app .ops-row { padding:16px; border-bottom:1px solid var(--svdt-border); overflow-wrap:anywhere; }
+.crew-app .ops-row > button { text-align:left; font-weight:800; }
+.crew-app .ops-row > div { display:flex; flex-wrap:wrap; gap:8px 20px; align-items:baseline; margin-top:8px; }
+.crew-app .ops-row p { white-space:pre-wrap; }
+.crew-app .ops-row dl,.crew-app .ops-service-card dl { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 20px; }
+.crew-app .ops-row dt,.crew-app .ops-service-card dt { color:var(--svdt-text-soft); font-size:11px; }
+.crew-app .ops-row dd,.crew-app .ops-service-card dd { margin:0; }
+.crew-app .ops-detail { padding:20px; margin-top:12px; background:var(--svdt-bg-card-soft); border:1px solid var(--svdt-border); border-radius:8px; }
+.crew-app .ops-service-card { padding:20px; margin-bottom:16px; border:1px solid var(--svdt-border); border-left:6px solid var(--category-color,var(--svdt-brand)); border-radius:8px; }
+.crew-app .ops-service-card p { white-space:pre-wrap; }
+.crew-app .ops-panel .crew-category { border-left:6px solid var(--category-color); }
+.crew-app .ops-panel svg { display:block; width:100%; max-width:640px; height:auto; margin:16px auto; border:1px solid var(--svdt-border); border-radius:8px; background:var(--svdt-bg-card-soft); }
+.crew-app .ops-panel svg circle { fill:var(--category-color,var(--svdt-brand)); stroke:var(--svdt-text); stroke-width:0.4; cursor:pointer; }
+.crew-app .ops-panel svg [role=button]:focus-visible { outline:2px solid var(--svdt-brand); outline-offset:3px; }
+.crew-app .ops-panel details { margin-top:24px; padding:16px; border:1px solid var(--svdt-border); border-radius:8px; }
+.crew-app .ops-panel summary { cursor:pointer; min-height:44px; font-weight:800; }
+@media(max-width:760px) {
+ .crew-app .ops-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .crew-app .ops-tabs button { min-height:44px; white-space:normal; }
+ .crew-app .ops-toolbar { align-items:stretch; }
+ .crew-app .ops-toolbar input[type=search],.crew-app .ops-toolbar select { flex:1 1 100%; }
+ .crew-app .ops-row,.crew-app .ops-service-card,.crew-app .ops-detail { padding:14px; }
+ .crew-app .ops-row dl,.crew-app .ops-service-card dl { grid-template-columns:minmax(0,1fr); }
+ .crew-app .ops-row > div { flex-direction:column; gap:6px; }
+ .crew-app .ops-row button,.crew-app .ops-service-card a { min-height:44px; }
+}
+
+.crew-app .ops-row > button { display:block; }
+.crew-app .ops-row > span { display:inline-block; margin:8px 16px 0 0; }
+.crew-app .ops-toolbar > label:has(input[type=search]) { flex:1 1 220px; }
+.crew-app .ops-panel svg { overflow:visible; }
+@media(max-width:760px) { .crew-app .ops-row > span { display:block; margin:6px 0 0; } }

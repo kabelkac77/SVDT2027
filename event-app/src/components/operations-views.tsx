@@ -21,11 +21,7 @@ import {
 } from "../lib/operations-model";
 
 export type OperationView =
-  | "tasks"
-  | "timeline"
-  | "zones"
-  | "registrations"
-  | "service";
+  "tasks" | "timeline" | "zones" | "registrations" | "service";
 
 type OperationsViewsProps = {
   edition: Edition;
@@ -44,8 +40,18 @@ type OperationsViewsProps = {
 };
 
 const CATEGORY_COLORS = [
-  "cat-0", "cat-1", "cat-2", "cat-3", "cat-4", "cat-5",
-  "cat-6", "cat-7", "cat-8", "cat-9", "cat-10", "cat-11",
+  "cat-0",
+  "cat-1",
+  "cat-2",
+  "cat-3",
+  "cat-4",
+  "cat-5",
+  "cat-6",
+  "cat-7",
+  "cat-8",
+  "cat-9",
+  "cat-10",
+  "cat-11",
 ];
 
 function categoryClass(color: string): string {
@@ -77,7 +83,8 @@ export function OperationsViews(props: OperationsViewsProps) {
   } = props;
 
   const role = crew.role;
-  const isCrew = role === "admin" || role === "coordinator" || role === "member";
+  const isCrew =
+    role === "admin" || role === "coordinator" || role === "member";
   const isEditor = role === "admin" || role === "coordinator";
   const canSeeArchived = isEditor && includeArchived;
   const term = search.trim().toLowerCase();
@@ -109,7 +116,9 @@ export function OperationsViews(props: OperationsViewsProps) {
   }
 
   function taskStatusFilter(): TaskStatus | null {
-    return status !== "all" && status in taskLabels ? (status as TaskStatus) : null;
+    return status !== "all" && status in taskLabels
+      ? (status as TaskStatus)
+      : null;
   }
 
   function registrationStatusFilter(): RegistrationStatus | null {
@@ -157,12 +166,13 @@ export function OperationsViews(props: OperationsViewsProps) {
     if (!canSeeArchived) list = list.filter((r) => !r.archived);
     const statusFilter = registrationStatusFilter();
     if (statusFilter) list = list.filter((r) => r.status === statusFilter);
-    if (term) list = list.filter((r) => r.full_name.toLowerCase().includes(term));
+    if (term)
+      list = list.filter((r) => r.full_name.toLowerCase().includes(term));
     return list;
   }
 
   function detail(kind: "task" | "zone" | "registration", id: string) {
-    const content = renderDetail(kind,id);
+    const content = renderDetail(kind, id);
     return content ? <div className="ops-detail">{content}</div> : null;
   }
 
@@ -203,7 +213,8 @@ export function OperationsViews(props: OperationsViewsProps) {
     const tasks = scopedTimeline();
     const groups = new Map<string | null, OperationTask[]>();
     for (const t of tasks) {
-      const day = localDateTime(t.starts_at || t.due_at || "")?.slice(0, 10) ?? null;
+      const day =
+        localDateTime(t.starts_at || t.due_at || "")?.slice(0, 10) ?? null;
       const arr = groups.get(day) ?? [];
       arr.push(t);
       groups.set(day, arr);
@@ -215,7 +226,9 @@ export function OperationsViews(props: OperationsViewsProps) {
     if (groups.has(null)) ordered.push(null);
     return (
       <div className="panel">
-        <p>Počet úkolů v harmonogramu: {tasks.length} · Čas akce: Europe/Prague</p>
+        <p>
+          Počet úkolů v harmonogramu: {tasks.length} · Čas akce: Europe/Prague
+        </p>
         {tasks.length === 0 ? (
           <p>V harmonogramu nejsou žádné úkoly.</p>
         ) : (
@@ -355,7 +368,9 @@ export function OperationsViews(props: OperationsViewsProps) {
     );
   }
   const own = new Set(
-    ownEntries.map((e) => e.id).filter((id): id is string => typeof id === "string"),
+    ownEntries
+      .map((e) => e.id)
+      .filter((id): id is string => typeof id === "string"),
   );
   const myTasks = taskTimeline(data.tasks, edition.id).filter(
     (t) => t.assignee_roster_id !== null && own.has(t.assignee_roster_id),
@@ -367,7 +382,10 @@ export function OperationsViews(props: OperationsViewsProps) {
           (c) => c.id === entry.category_id && c.edition_id === edition.id,
         );
         return (
-          <div key={entry.id ?? entry.category_id} className={`ops-service-card ${categoryClass(category?.color ?? "")}`}>
+          <div
+            key={entry.id ?? entry.category_id}
+            className={`ops-service-card ${categoryClass(category?.color ?? "")}`}
+          >
             <span className={categoryClass(category?.color ?? "")}>
               {category?.name || "Kategorie neurčena"}
             </span>
@@ -405,7 +423,9 @@ export function OperationsViews(props: OperationsViewsProps) {
                   <div>
                     <p>Zóna: {zone.name || "Zóna bez názvu"}</p>
                     {zone.instructions && (
-                      <p style={{ whiteSpace: "pre-wrap" }}>{zone.instructions}</p>
+                      <p style={{ whiteSpace: "pre-wrap" }}>
+                        {zone.instructions}
+                      </p>
                     )}
                     <p>Kontakt: {zone.contact_name || "Neurčen"}</p>
                     <p>Telefon: {zone.contact_phone || "Neurčen"}</p>

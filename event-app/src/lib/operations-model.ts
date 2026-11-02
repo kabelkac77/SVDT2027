@@ -291,15 +291,32 @@ function compareTaskTime(a: OperationTask, b: OperationTask): number {
 }
 
 /** Canonical identity includes every transmitted scalar, its type, edition and operation. */
-export function operationRequestFingerprint(edition: string, kind: OperationKind, payload: Record<string, unknown>): string {
-  const fields = Object.keys(payload).sort().filter(key => payload[key] !== undefined).map(key => {
-    const value = payload[key];
-    if (value !== null && typeof value !== 'string' && typeof value !== 'boolean' && !(typeof value === 'number' && Number.isFinite(value))) throw Error('OPERATIONS_INVALID_INPUT');
-    return [key,value];
-  });
-  return JSON.stringify([edition,kind,fields]);
+export function operationRequestFingerprint(
+  edition: string,
+  kind: OperationKind,
+  payload: Record<string, unknown>,
+): string {
+  const fields = Object.keys(payload)
+    .sort()
+    .filter((key) => payload[key] !== undefined)
+    .map((key) => {
+      const value = payload[key];
+      if (
+        value !== null &&
+        typeof value !== "string" &&
+        typeof value !== "boolean" &&
+        !(typeof value === "number" && Number.isFinite(value))
+      )
+        throw Error("OPERATIONS_INVALID_INPUT");
+      return [key, value];
+    });
+  return JSON.stringify([edition, kind, fields]);
 }
 export function isOperationAccessError(error: unknown): boolean {
-  const value = error as {code?:unknown;message?:unknown}|null;
-  return value?.code === '42501' || (typeof value?.message === 'string' && /(CREW|OPERATIONS)_ACCESS_DENIED/.test(value.message));
+  const value = error as { code?: unknown; message?: unknown } | null;
+  return (
+    value?.code === "42501" ||
+    (typeof value?.message === "string" &&
+      /(CREW|OPERATIONS)_ACCESS_DENIED/.test(value.message))
+  );
 }

@@ -1,27 +1,363 @@
-import {test} from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {runInNewContext} from 'node:vm';import {setImmediate} from 'node:timers/promises';import {transformSync} from 'esbuild';
-import * as domain from '../src/lib/operations-model';import {emptyCrewEntry} from '../src/lib/crew-model';
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { runInNewContext } from "node:vm";
+import { setImmediate } from "node:timers/promises";
+import { transformSync } from "esbuild";
+import * as domain from "../src/lib/operations-model";
+import { emptyCrewEntry } from "../src/lib/crew-model";
 // Unit harness for the hook's state/effect boundary; this does not emulate browser rendering or React scheduling.
-const source=readFileSync(new URL('../src/components/use-operations-workspace.ts',import.meta.url),'utf8');
-const js=transformSync(source,{loader:'ts',format:'cjs',target:'es2022'}).code;
-function deferred(){let resolve!:(value:any)=>void,reject!:(error:any)=>void;const promise=new Promise<any>((a,b)=>{resolve=a;reject=b});return {promise,resolve,reject};}
-function harness(options:any={}){
- let cursor=0,pending=true,mounted=true,postUnmount=0,uuid=0;const slots:any[]=[],effects:(()=>void)[]=[];let current:any;const requests:any[]=[],confirmations:string[]=[];let guard:()=>boolean=()=>true;
- const snapshot:any={zones:[{...domain.newZone('e1','z'),name:'Zone'}],tasks:[{...domain.newTask('e1','t'),title:'Task',assignee_roster_id:'mine'},{...domain.newTask('e2','foreign'),title:'Foreign'}],registrations:[{...domain.newRegistration('e1','r'),full_name:'Private rider'}],grants:[],canRegistration:true};
- let loader=options.load||(()=>Promise.resolve(snapshot));let writer=options.write||(()=>Promise.resolve({}));
- const hooks={useState(init:any){const i=cursor++;if(!slots[i])slots[i]={value:typeof init==='function'?init():init};return[slots[i].value,(next:any)=>{if(!mounted){postUnmount++;return;}slots[i].value=typeof next==='function'?next(slots[i].value):next;pending=true}]},useRef(init:any){const i=cursor++;if(!slots[i])slots[i]={ref:{current:init}};return slots[i].ref},useEffect(fn:any,deps:any[]){const i=cursor++;const old=slots[i];if(!old||deps.some((v,j)=>!Object.is(v,old.deps[j]))){slots[i]={deps,cleanup:old?.cleanup};effects.push(()=>{slots[i].cleanup?.();slots[i].cleanup=fn()})}}};
- const props:any={edition:{id:'e1',year:2027,archived:options.archived||false},crew:{role:options.role===undefined?'admin':options.role,canFinance:false,categories:[],entries:[{...emptyCrewEntry('cat'),id:'mine',edition_id:'e1',linked_user_id:'u1'}],members:[{edition_id:'e1',user_id:'u1',email:'synthetic@example.invalid',role:'member',enabled:true,version:1}],compensation:[]},userId:'u1',onGuardChange:(next:any)=>{guard=next}};
- const mod:any={exports:{}};runInNewContext(js,{exports:mod.exports,module:mod,require:(name:string)=>name==='react'?hooks:name==='../lib/operations-model'?domain:name==='../lib/operations-backend'?{loadOperations:(...a:any[])=>loader(...a),writeOperation:(...a:any[])=>{requests.push(a);return writer(...a)}}:(()=>{throw Error('Unexpected test import')})(),crypto:{randomUUID:()=>{if(options.uuidFail)throw Error('synthetic crypto error');return 'synthetic-uuid-'+(++uuid)}},window:{confirm:(text:string)=>{confirmations.push(text);return options.confirm!==false},addEventListener:()=>{},removeEventListener:()=>{}},Map,Set});
- async function flush(){for(let i=0;i<8;i++){if(pending){cursor=0;pending=false;current=mod.exports.useOperationsWorkspace(props);while(effects.length)effects.shift()!()}await setImmediate()}}
- return {flush,get state(){return current},requests,snapshot,confirmations,get guard(){return guard},setLoader(fn:any){loader=fn},setWriter(fn:any){writer=fn},unmount(){mounted=false;for(const s of slots)s?.cleanup?.()},get postUnmount(){return postUnmount}};
+const source = readFileSync(
+  new URL("../src/components/use-operations-workspace.ts", import.meta.url),
+  "utf8",
+);
+const js = transformSync(source, {
+  loader: "ts",
+  format: "cjs",
+  target: "es2022",
+}).code;
+function deferred() {
+  let resolve!: (value: any) => void, reject!: (error: any) => void;
+  const promise = new Promise<any>((a, b) => {
+    resolve = a;
+    reject = b;
+  });
+  return { promise, resolve, reject };
 }
-test('hook accepted navigation discard clears draft and rejected discard preserves it',async()=>{const h=harness();await h.flush();h.state.open('task','t');await h.flush();h.state.change({...h.state.selection.value,title:'Edited'});await h.flush();assert.equal(h.state.dirty,true);assert.equal(h.guard(),true);await h.flush();assert.equal(h.state.selection,null);assert.equal(h.state.dirty,false);const no=harness({confirm:false});await no.flush();no.state.open('task','t');await no.flush();no.state.change({...no.state.selection.value,title:'Keep'});await no.flush();assert.equal(no.guard(),false);assert.equal(no.state.selection.value.title,'Keep');});
-test('archived registration opens readonly but save cannot write and a foreign edition never opens',async()=>{const h=harness({archived:true});await h.flush();h.state.open('registration','r');await h.flush();assert.equal(h.state.selection.value.full_name,'Private rider');assert.equal(h.state.canRegister,false);await h.state.save(h.state.selection.value);assert.equal(h.requests.length,0);h.state.open('task','foreign');await h.flush();assert.equal(h.state.selection,null);});
-test('ambiguous write failure preserves exact request identity for retry and changed body uses a new identity',async()=>{const h=harness({write:()=>Promise.reject(Error('synthetic lost response'))});await h.flush();h.state.open('task','t');await h.flush();const next={...h.state.selection.value,title:'Edited'};h.state.change(next);await h.flush();await h.state.save(next);await h.flush();await h.state.save(next);await h.flush();assert.equal(h.requests[0][3],h.requests[1][3]);await h.state.save({...next,title:'Another body'});assert.notEqual(h.requests[1][3],h.requests[2][3]);assert.equal(h.state.selection.value.title,'Edited');});
-test('confirmed write followed by read failure keeps draft and repeats the same request',async()=>{const h=harness();await h.flush();h.state.open('task','t');await h.flush();const next={...h.state.selection.value,title:'Edited'};h.state.change(next);await h.flush();h.setLoader(()=>Promise.reject(Error('synthetic read failure')));await h.state.save(next);await h.flush();assert.equal(h.state.dirty,true);assert.match(h.state.error,/Zápis byl potvrzený/);assert.equal(h.state.selection.value.title,'Edited');await h.state.save(next);assert.equal(h.requests[0][3],h.requests[1][3]);});
-test('synchronous saving lock prevents duplicate submit and navigation while write is pending',async()=>{const d=deferred(),h=harness({write:()=>d.promise});await h.flush();h.state.open('task','t');await h.flush();const first=h.state.save(h.state.selection.value);const second=h.state.save(h.state.selection.value);assert.equal(h.requests.length,1);assert.equal(h.guard(),false);d.resolve({});await Promise.all([first,second]);await h.flush();assert.equal(h.state.saving,false);assert.equal(h.state.notice,'Uloženo');});
-test('access loss hides loaded rider data and its open draft',async()=>{const h=harness({write:()=>Promise.reject({code:'42501',message:'private backend detail'})});await h.flush();h.state.open('registration','r');await h.flush();await h.state.save(h.state.selection.value);await h.flush();assert.equal(h.state.data,null);assert.equal(h.state.selection,null);assert.doesNotMatch(h.state.error,/private backend/);});
-test('late completion after unmount cannot set state or initiate a refresh',async()=>{const d=deferred(),h=harness({write:()=>d.promise});await h.flush();h.state.open('task','t');await h.flush();const action=h.state.save(h.state.selection.value);h.unmount();d.resolve({});await action;assert.equal(h.postUnmount,0);});
-test('missing UUID support fails safely without a write or unhandled rejection',async()=>{const h=harness({uuidFail:true});await h.flush();h.state.create('task');await h.flush();assert.equal(h.state.selection,null);assert.ok(h.state.error);h.state.open('task','t');await h.flush();await h.state.save(h.state.selection.value);await h.flush();assert.equal(h.requests.length,0);assert.ok(h.state.error);});
+function harness(options: any = {}) {
+  let cursor = 0,
+    pending = true,
+    mounted = true,
+    postUnmount = 0,
+    uuid = 0;
+  const slots: any[] = [],
+    effects: (() => void)[] = [];
+  let current: any;
+  const requests: any[] = [],
+    confirmations: string[] = [];
+  let guard: () => boolean = () => true;
+  const snapshot: any = {
+    zones: [{ ...domain.newZone("e1", "z"), name: "Zone" }],
+    tasks: [
+      {
+        ...domain.newTask("e1", "t"),
+        title: "Task",
+        assignee_roster_id: "mine",
+      },
+      { ...domain.newTask("e2", "foreign"), title: "Foreign" },
+    ],
+    registrations: [
+      { ...domain.newRegistration("e1", "r"), full_name: "Private rider" },
+    ],
+    grants: [],
+    canRegistration: true,
+  };
+  let loader = options.load || (() => Promise.resolve(snapshot));
+  let writer = options.write || (() => Promise.resolve({}));
+  const hooks = {
+    useState(init: any) {
+      const i = cursor++;
+      if (!slots[i])
+        slots[i] = { value: typeof init === "function" ? init() : init };
+      return [
+        slots[i].value,
+        (next: any) => {
+          if (!mounted) {
+            postUnmount++;
+            return;
+          }
+          slots[i].value =
+            typeof next === "function" ? next(slots[i].value) : next;
+          pending = true;
+        },
+      ];
+    },
+    useRef(init: any) {
+      const i = cursor++;
+      if (!slots[i]) slots[i] = { ref: { current: init } };
+      return slots[i].ref;
+    },
+    useEffect(fn: any, deps: any[]) {
+      const i = cursor++;
+      const old = slots[i];
+      if (!old || deps.some((v, j) => !Object.is(v, old.deps[j]))) {
+        slots[i] = { deps, cleanup: old?.cleanup };
+        effects.push(() => {
+          slots[i].cleanup?.();
+          slots[i].cleanup = fn();
+        });
+      }
+    },
+  };
+  const props: any = {
+    edition: { id: "e1", year: 2027, archived: options.archived || false },
+    crew: {
+      role: options.role === undefined ? "admin" : options.role,
+      canFinance: false,
+      categories: [],
+      entries: [
+        {
+          ...emptyCrewEntry("cat"),
+          id: "mine",
+          edition_id: "e1",
+          linked_user_id: "u1",
+        },
+      ],
+      members: [
+        {
+          edition_id: "e1",
+          user_id: "u1",
+          email: "synthetic@example.invalid",
+          role: "member",
+          enabled: true,
+          version: 1,
+        },
+      ],
+      compensation: [],
+    },
+    userId: "u1",
+    onGuardChange: (next: any) => {
+      guard = next;
+    },
+  };
+  const mod: any = { exports: {} };
+  runInNewContext(js, {
+    exports: mod.exports,
+    module: mod,
+    require: (name: string) =>
+      name === "react"
+        ? hooks
+        : name === "../lib/operations-model"
+          ? domain
+          : name === "../lib/operations-backend"
+            ? {
+                loadOperations: (...a: any[]) => loader(...a),
+                writeOperation: (...a: any[]) => {
+                  requests.push(a);
+                  return writer(...a);
+                },
+              }
+            : (() => {
+                throw Error("Unexpected test import");
+              })(),
+    crypto: {
+      randomUUID: () => {
+        if (options.uuidFail) throw Error("synthetic crypto error");
+        return "synthetic-uuid-" + ++uuid;
+      },
+    },
+    window: {
+      confirm: (text: string) => {
+        confirmations.push(text);
+        return options.confirm !== false;
+      },
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    },
+    Map,
+    Set,
+  });
+  async function flush() {
+    for (let i = 0; i < 8; i++) {
+      if (pending) {
+        cursor = 0;
+        pending = false;
+        current = mod.exports.useOperationsWorkspace(props);
+        while (effects.length) effects.shift()!();
+      }
+      await setImmediate();
+    }
+  }
+  return {
+    flush,
+    get state() {
+      return current;
+    },
+    requests,
+    snapshot,
+    confirmations,
+    get guard() {
+      return guard;
+    },
+    setLoader(fn: any) {
+      loader = fn;
+    },
+    setWriter(fn: any) {
+      writer = fn;
+    },
+    unmount() {
+      mounted = false;
+      for (const s of slots) s?.cleanup?.();
+    },
+    get postUnmount() {
+      return postUnmount;
+    },
+  };
+}
+test("hook accepted navigation discard clears draft and rejected discard preserves it", async () => {
+  const h = harness();
+  await h.flush();
+  h.state.open("task", "t");
+  await h.flush();
+  h.state.change({ ...h.state.selection.value, title: "Edited" });
+  await h.flush();
+  assert.equal(h.state.dirty, true);
+  assert.equal(h.guard(), true);
+  await h.flush();
+  assert.equal(h.state.selection, null);
+  assert.equal(h.state.dirty, false);
+  const no = harness({ confirm: false });
+  await no.flush();
+  no.state.open("task", "t");
+  await no.flush();
+  no.state.change({ ...no.state.selection.value, title: "Keep" });
+  await no.flush();
+  assert.equal(no.guard(), false);
+  assert.equal(no.state.selection.value.title, "Keep");
+});
+test("archived registration opens readonly but save cannot write and a foreign edition never opens", async () => {
+  const h = harness({ archived: true });
+  await h.flush();
+  h.state.open("registration", "r");
+  await h.flush();
+  assert.equal(h.state.selection.value.full_name, "Private rider");
+  assert.equal(h.state.canRegister, false);
+  await h.state.save(h.state.selection.value);
+  assert.equal(h.requests.length, 0);
+  h.state.open("task", "foreign");
+  await h.flush();
+  assert.equal(h.state.selection, null);
+});
+test("ambiguous write failure preserves exact request identity for retry and changed body uses a new identity", async () => {
+  const h = harness({
+    write: () => Promise.reject(Error("synthetic lost response")),
+  });
+  await h.flush();
+  h.state.open("task", "t");
+  await h.flush();
+  const next = { ...h.state.selection.value, title: "Edited" };
+  h.state.change(next);
+  await h.flush();
+  await h.state.save(next);
+  await h.flush();
+  await h.state.save(next);
+  await h.flush();
+  assert.equal(h.requests[0][3], h.requests[1][3]);
+  await h.state.save({ ...next, title: "Another body" });
+  assert.notEqual(h.requests[1][3], h.requests[2][3]);
+  assert.equal(h.state.selection.value.title, "Edited");
+});
+test("confirmed write followed by read failure keeps draft and repeats the same request", async () => {
+  const h = harness();
+  await h.flush();
+  h.state.open("task", "t");
+  await h.flush();
+  const next = { ...h.state.selection.value, title: "Edited" };
+  h.state.change(next);
+  await h.flush();
+  h.setLoader(() => Promise.reject(Error("synthetic read failure")));
+  await h.state.save(next);
+  await h.flush();
+  assert.equal(h.state.dirty, true);
+  assert.match(h.state.error, /Zápis byl potvrzený/);
+  assert.equal(h.state.selection.value.title, "Edited");
+  await h.state.save(next);
+  assert.equal(h.requests[0][3], h.requests[1][3]);
+});
+test("synchronous saving lock prevents duplicate submit and navigation while write is pending", async () => {
+  const d = deferred(),
+    h = harness({ write: () => d.promise });
+  await h.flush();
+  h.state.open("task", "t");
+  await h.flush();
+  const first = h.state.save(h.state.selection.value);
+  const second = h.state.save(h.state.selection.value);
+  assert.equal(h.requests.length, 1);
+  assert.equal(h.guard(), false);
+  d.resolve({});
+  await Promise.all([first, second]);
+  await h.flush();
+  assert.equal(h.state.saving, false);
+  assert.equal(h.state.notice, "Uloženo");
+});
+test("access loss hides loaded rider data and its open draft", async () => {
+  const h = harness({
+    write: () =>
+      Promise.reject({ code: "42501", message: "private backend detail" }),
+  });
+  await h.flush();
+  h.state.open("registration", "r");
+  await h.flush();
+  await h.state.save(h.state.selection.value);
+  await h.flush();
+  assert.equal(h.state.data, null);
+  assert.equal(h.state.selection, null);
+  assert.doesNotMatch(h.state.error, /private backend/);
+});
+test("late completion after unmount cannot set state or initiate a refresh", async () => {
+  const d = deferred(),
+    h = harness({ write: () => d.promise });
+  await h.flush();
+  h.state.open("task", "t");
+  await h.flush();
+  const action = h.state.save(h.state.selection.value);
+  h.unmount();
+  d.resolve({});
+  await action;
+  assert.equal(h.postUnmount, 0);
+});
+test("missing UUID support fails safely without a write or unhandled rejection", async () => {
+  const h = harness({ uuidFail: true });
+  await h.flush();
+  h.state.create("task");
+  await h.flush();
+  assert.equal(h.state.selection, null);
+  assert.ok(h.state.error);
+  h.state.open("task", "t");
+  await h.flush();
+  await h.state.save(h.state.selection.value);
+  await h.flush();
+  assert.equal(h.requests.length, 0);
+  assert.ok(h.state.error);
+});
 
-test('stale positive registration data cannot grant an unknown crew role write access',async()=>{const h=harness({role:null});await h.flush();assert.equal(h.state.canRegister,false);h.state.create('registration');await h.flush();assert.equal(h.state.selection,null);assert.equal(h.requests.length,0);});
-test('a late old load cannot replace a newer explicit refresh',async()=>{const d=deferred(),h=harness({load:()=>d.promise});await h.flush();h.setLoader(()=>Promise.resolve({...h.snapshot,tasks:[{...domain.newTask('e1','new'),title:'New snapshot'}]}));h.state.reload();await h.flush();assert.equal(h.state.data.tasks[0].title,'New snapshot');d.resolve({...h.snapshot,tasks:[{...domain.newTask('e1','old'),title:'Old snapshot'}]});await h.flush();assert.equal(h.state.data.tasks[0].title,'New snapshot');});
+test("stale positive registration data cannot grant an unknown crew role write access", async () => {
+  const h = harness({ role: null });
+  await h.flush();
+  assert.equal(h.state.canRegister, false);
+  h.state.create("registration");
+  await h.flush();
+  assert.equal(h.state.selection, null);
+  assert.equal(h.requests.length, 0);
+});
+test("a late old load cannot replace a newer explicit refresh", async () => {
+  const d = deferred(),
+    h = harness({ load: () => d.promise });
+  await h.flush();
+  h.setLoader(() =>
+    Promise.resolve({
+      ...h.snapshot,
+      tasks: [{ ...domain.newTask("e1", "new"), title: "New snapshot" }],
+    }),
+  );
+  h.state.reload();
+  await h.flush();
+  assert.equal(h.state.data.tasks[0].title, "New snapshot");
+  d.resolve({
+    ...h.snapshot,
+    tasks: [{ ...domain.newTask("e1", "old"), title: "Old snapshot" }],
+  });
+  await h.flush();
+  assert.equal(h.state.data.tasks[0].title, "New snapshot");
+});
+
+test("switching operational context resets incompatible search and status filters", async () => {
+  const h = harness();
+  await h.flush();
+  h.state.changeFilters({ search: "old task", status: "blocked" });
+  await h.flush();
+  h.state.changeView("registrations");
+  await h.flush();
+  assert.equal(h.state.filters.search, "");
+  assert.equal(h.state.filters.status, "all");
+});

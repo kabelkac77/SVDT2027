@@ -1,27 +1,301 @@
-import {test} from 'node:test';import assert from 'node:assert/strict';import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';
-import {OperationsViews,OperationView} from '../src/components/operations-views';
-import {OperationsData,newZone,newTask,newRegistration} from '../src/lib/operations-model';
-import {CrewData,emptyCrewEntry} from '../src/lib/crew-model';import {Edition} from '../src/lib/model';
-const edition={id:'e1',year:2027,archived:false} as Edition;
-const own={...emptyCrewEntry('c1'),edition_id:'e1',id:'r-own',name:'Own Crew',linked_user_id:'u1',position:'Registration desk',friday:'07–12',saturday:'08–18',term:'Race weekend',phone:'PRIVATE-CREW-PHONE',email:'PRIVATE-CREW-EMAIL'};
-const other={...own,id:'r-other',name:'Other Crew',linked_user_id:'u2'};
-const foreign={...own,id:'r-foreign',edition_id:'e2',name:'FOREIGN-CREW'};
-const crew:CrewData={role:'admin',canFinance:true,categories:[{id:'c1',edition_id:'e1',name:'Registrace',color:'cat-2',required_count:null,required_term:'',version:1}],entries:[own,other,foreign],members:[],compensation:[{roster_id:'r-own',edition_id:'e1',agreed:998877,estimate:null,total:null,paid:null,barter:'PRIVATE-BARTER',merch:'PRIVATE-MERCH',version:1}]};
-const data:OperationsData={canRegistration:false,grants:[],zones:[{...newZone('e1','z1'),name:'Main zone',map_x:0,map_y:50,contact_name:'Work leader',contact_phone:'+420 111 222 333',instructions:'Work directions'},{...newZone('e1','z2'),name:'Unplaced zone'},{...newZone('e2','zf'),name:'FOREIGN-ZONE',map_x:50,map_y:50}],tasks:[{...newTask('e1','t-own'),title:'Own task',assignee_roster_id:'r-own',zone_id:'z1',starts_at:'2027-06-18 07:30:00'},{...newTask('e1','t-other'),title:'Other task',assignee_roster_id:'r-other',starts_at:'2027-06-19 08:00:00'},{...newTask('e2','tf'),title:'FOREIGN-TASK',assignee_roster_id:'r-own'}],registrations:[{...newRegistration('e1','reg'),full_name:'PRIVATE-RIDER',email:'PRIVATE-RIDER-EMAIL',phone:'PRIVATE-RIDER-PHONE',notes:'PRIVATE-RIDER-NOTES'}]};
-function render(view:OperationView,extra:Record<string,unknown>={}){return renderToStaticMarkup(React.createElement(OperationsViews,{edition,crew,userId:'u1',data,view,search:'',status:'all',includeArchived:false,onOpen:()=>{},renderDetail:(kind,id)=>React.createElement('div',{'data-detail':id},'inline-'+kind),...extra}));}
-test('all operation views isolate editions even with a stale wider data snapshot',()=>{for(const view of ['tasks','timeline','zones','registrations','service'] as OperationView[])assert.doesNotMatch(render(view),/FOREIGN-/);});
-test('member task and timeline views expose only explicitly linked own tasks',()=>{for(const view of ['tasks','timeline'] as OperationView[]){const html=render(view,{crew:{...crew,role:'member'}});assert.match(html,/Own task/);assert.doesNotMatch(html,/Other task|Other Crew/);}});
-test('unknown crew role reveals no operational content',()=>{for(const view of ['tasks','zones','registrations','service'] as OperationView[])assert.doesNotMatch(render(view,{crew:{...crew,role:null}}),/Own task|Main zone|PRIVATE-RIDER|Registration desk/);});
-test('registration permission denies both the list and its detail callback',()=>{assert.doesNotMatch(render('registrations'),/PRIVATE-RIDER|data-detail="reg"/);});
-test('authorized rider list keeps contact details and notes outside main rows',()=>{const html=render('registrations',{data:{...data,canRegistration:true}});assert.match(html,/PRIVATE-RIDER/);assert.doesNotMatch(html,/PRIVATE-RIDER-EMAIL|PRIVATE-RIDER-PHONE|PRIVATE-RIDER-NOTES/);assert.match(html,/data-detail="reg"/);});
-test('registration payment does not treat confirmation or an unknown amount as paid',()=>{const registrations=[{...newRegistration('e1','r-unknown'),full_name:'Unknown fee',status:'confirmed' as const},{...newRegistration('e1','r-free'),full_name:'Free fee',fee_due:0,fee_paid:0},{...newRegistration('e1','r-partial'),full_name:'Partial fee',fee_due:10000,fee_paid:1000}];const html=render('registrations',{data:{...data,canRegistration:true,registrations}});assert.match(html,/Úhrada k ověření/);assert.match(html,/Bez poplatku/);assert.match(html,/Částečně uhrazeno/);});
-test('zone plan includes valid zero coordinates and labels missing map positions',()=>{const html=render('zones');assert.match(html,/Orientační plán zón/);assert.match(html,/bez mapového podkladu/);assert.match(html,/viewBox="0 0 100 100"/);assert.match(html,/cx="0"/);assert.match(html,/Unplaced zone/);assert.match(html,/tabindex="0"/);});
-test('zone work contact never falls back to personal crew contact',()=>{const html=render('zones');assert.match(html,/Work leader/);assert.match(html,/tel:\+420111222333/);assert.doesNotMatch(html,/PRIVATE-CREW/);});
-test('service contains own work, times, instructions and explicit work contact only',()=>{const html=render('service',{crew:{...crew,role:'member'}});assert.match(html,/Registration desk/);assert.match(html,/07–12/);assert.match(html,/08–18/);assert.match(html,/Own task/);assert.match(html,/Work directions/);assert.doesNotMatch(html,/Other task|PRIVATE-|998877|Dorazil jsem|>Hotovo</);});
-test('service without linked assignment does not infer identity from contact or name',()=>{const html=render('service',{userId:'unlinked'});assert.doesNotMatch(html,/Own task|Registration desk|07–12/);});
-test('timeline preserves local Prague times and groups daily work chronologically',()=>{const html=render('timeline');assert.match(html,/Europe\/Prague/);assert.match(html,/07:30/);assert.ok(html.indexOf('Own task')<html.indexOf('Other task'));});
-test('filtered task detail callbacks stay directly under visible rows only',()=>{const html=render('tasks',{search:'Own task'});assert.match(html,/data-detail="t-own"/);assert.doesNotMatch(html,/data-detail="t-other"|Other task/);assert.ok(html.indexOf('Own task')<html.indexOf('data-detail="t-own"'));});
-test('archived rows require explicit editor filter, ordinary crew stays active-only',()=>{const archived={...newTask('e1','archived'),title:'ARCHIVED-TASK',assignee_roster_id:'r-own',archived:true};const props={data:{...data,tasks:[archived]},includeArchived:true};assert.match(render('tasks',props),/ARCHIVED-TASK/);assert.doesNotMatch(render('tasks',{...props,crew:{...crew,role:'member'}}),/ARCHIVED-TASK/);});
-test('zone colors are whitelisted and stored text is escaped',()=>{const zones=[{...newZone('e1','z'),name:'<script>synthetic</script>',color:'unsafe css',map_x:40,map_y:60}];const html=render('zones',{data:{...data,zones}});assert.doesNotMatch(html,/<script>|unsafe css/);assert.match(html,/&lt;script&gt;/);});
-test('an unknown role cannot reuse a stale positive registration permission',()=>{assert.doesNotMatch(render('registrations',{crew:{...crew,role:null},data:{...data,canRegistration:true}}),/PRIVATE-RIDER|data-detail="reg"/);});
-test('collapsed operation rows do not render empty detail panels',()=>{for(const view of ['tasks','timeline','zones','registrations','service'] as OperationView[]){const html=render(view,{data:{...data,canRegistration:true},renderDetail:()=>null});assert.doesNotMatch(html,/class="ops-detail"/);}});
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import {
+  OperationsViews,
+  OperationView,
+} from "../src/components/operations-views";
+import {
+  OperationsData,
+  newZone,
+  newTask,
+  newRegistration,
+} from "../src/lib/operations-model";
+import { CrewData, emptyCrewEntry } from "../src/lib/crew-model";
+import { Edition } from "../src/lib/model";
+const edition = { id: "e1", year: 2027, archived: false } as Edition;
+const own = {
+  ...emptyCrewEntry("c1"),
+  edition_id: "e1",
+  id: "r-own",
+  name: "Own Crew",
+  linked_user_id: "u1",
+  position: "Registration desk",
+  friday: "07–12",
+  saturday: "08–18",
+  term: "Race weekend",
+  phone: "PRIVATE-CREW-PHONE",
+  email: "PRIVATE-CREW-EMAIL",
+};
+const other = {
+  ...own,
+  id: "r-other",
+  name: "Other Crew",
+  linked_user_id: "u2",
+};
+const foreign = {
+  ...own,
+  id: "r-foreign",
+  edition_id: "e2",
+  name: "FOREIGN-CREW",
+};
+const crew: CrewData = {
+  role: "admin",
+  canFinance: true,
+  categories: [
+    {
+      id: "c1",
+      edition_id: "e1",
+      name: "Registrace",
+      color: "cat-2",
+      required_count: null,
+      required_term: "",
+      version: 1,
+    },
+  ],
+  entries: [own, other, foreign],
+  members: [],
+  compensation: [
+    {
+      roster_id: "r-own",
+      edition_id: "e1",
+      agreed: 998877,
+      estimate: null,
+      total: null,
+      paid: null,
+      barter: "PRIVATE-BARTER",
+      merch: "PRIVATE-MERCH",
+      version: 1,
+    },
+  ],
+};
+const data: OperationsData = {
+  canRegistration: false,
+  grants: [],
+  zones: [
+    {
+      ...newZone("e1", "z1"),
+      name: "Main zone",
+      map_x: 0,
+      map_y: 50,
+      contact_name: "Work leader",
+      contact_phone: "+420 111 222 333",
+      instructions: "Work directions",
+    },
+    { ...newZone("e1", "z2"), name: "Unplaced zone" },
+    { ...newZone("e2", "zf"), name: "FOREIGN-ZONE", map_x: 50, map_y: 50 },
+  ],
+  tasks: [
+    {
+      ...newTask("e1", "t-own"),
+      title: "Own task",
+      assignee_roster_id: "r-own",
+      zone_id: "z1",
+      starts_at: "2027-06-18 07:30:00",
+    },
+    {
+      ...newTask("e1", "t-other"),
+      title: "Other task",
+      assignee_roster_id: "r-other",
+      starts_at: "2027-06-19 08:00:00",
+    },
+    {
+      ...newTask("e2", "tf"),
+      title: "FOREIGN-TASK",
+      assignee_roster_id: "r-own",
+    },
+  ],
+  registrations: [
+    {
+      ...newRegistration("e1", "reg"),
+      full_name: "PRIVATE-RIDER",
+      email: "PRIVATE-RIDER-EMAIL",
+      phone: "PRIVATE-RIDER-PHONE",
+      notes: "PRIVATE-RIDER-NOTES",
+    },
+  ],
+};
+function render(view: OperationView, extra: Record<string, unknown> = {}) {
+  return renderToStaticMarkup(
+    React.createElement(OperationsViews, {
+      edition,
+      crew,
+      userId: "u1",
+      data,
+      view,
+      search: "",
+      status: "all",
+      includeArchived: false,
+      onOpen: () => {},
+      renderDetail: (kind, id) =>
+        React.createElement("div", { "data-detail": id }, "inline-" + kind),
+      ...extra,
+    }),
+  );
+}
+test("all operation views isolate editions even with a stale wider data snapshot", () => {
+  for (const view of [
+    "tasks",
+    "timeline",
+    "zones",
+    "registrations",
+    "service",
+  ] as OperationView[])
+    assert.doesNotMatch(render(view), /FOREIGN-/);
+});
+test("member task and timeline views expose only explicitly linked own tasks", () => {
+  for (const view of ["tasks", "timeline"] as OperationView[]) {
+    const html = render(view, { crew: { ...crew, role: "member" } });
+    assert.match(html, /Own task/);
+    assert.doesNotMatch(html, /Other task|Other Crew/);
+  }
+});
+test("unknown crew role reveals no operational content", () => {
+  for (const view of [
+    "tasks",
+    "zones",
+    "registrations",
+    "service",
+  ] as OperationView[])
+    assert.doesNotMatch(
+      render(view, { crew: { ...crew, role: null } }),
+      /Own task|Main zone|PRIVATE-RIDER|Registration desk/,
+    );
+});
+test("registration permission denies both the list and its detail callback", () => {
+  assert.doesNotMatch(
+    render("registrations"),
+    /PRIVATE-RIDER|data-detail="reg"/,
+  );
+});
+test("authorized rider list keeps contact details and notes outside main rows", () => {
+  const html = render("registrations", {
+    data: { ...data, canRegistration: true },
+  });
+  assert.match(html, /PRIVATE-RIDER/);
+  assert.doesNotMatch(
+    html,
+    /PRIVATE-RIDER-EMAIL|PRIVATE-RIDER-PHONE|PRIVATE-RIDER-NOTES/,
+  );
+  assert.match(html, /data-detail="reg"/);
+});
+test("registration payment does not treat confirmation or an unknown amount as paid", () => {
+  const registrations = [
+    {
+      ...newRegistration("e1", "r-unknown"),
+      full_name: "Unknown fee",
+      status: "confirmed" as const,
+    },
+    {
+      ...newRegistration("e1", "r-free"),
+      full_name: "Free fee",
+      fee_due: 0,
+      fee_paid: 0,
+    },
+    {
+      ...newRegistration("e1", "r-partial"),
+      full_name: "Partial fee",
+      fee_due: 10000,
+      fee_paid: 1000,
+    },
+  ];
+  const html = render("registrations", {
+    data: { ...data, canRegistration: true, registrations },
+  });
+  assert.match(html, /Úhrada k ověření/);
+  assert.match(html, /Bez poplatku/);
+  assert.match(html, /Částečně uhrazeno/);
+});
+test("zone plan includes valid zero coordinates and labels missing map positions", () => {
+  const html = render("zones");
+  assert.match(html, /Orientační plán zón/);
+  assert.match(html, /bez mapového podkladu/);
+  assert.match(html, /viewBox="0 0 100 100"/);
+  assert.match(html, /cx="0"/);
+  assert.match(html, /Unplaced zone/);
+  assert.match(html, /tabindex="0"/);
+});
+test("zone work contact never falls back to personal crew contact", () => {
+  const html = render("zones");
+  assert.match(html, /Work leader/);
+  assert.match(html, /tel:\+420111222333/);
+  assert.doesNotMatch(html, /PRIVATE-CREW/);
+});
+test("service contains own work, times, instructions and explicit work contact only", () => {
+  const html = render("service", { crew: { ...crew, role: "member" } });
+  assert.match(html, /Registration desk/);
+  assert.match(html, /07–12/);
+  assert.match(html, /08–18/);
+  assert.match(html, /Own task/);
+  assert.match(html, /Work directions/);
+  assert.doesNotMatch(html, /Other task|PRIVATE-|998877|Dorazil jsem|>Hotovo</);
+});
+test("service without linked assignment does not infer identity from contact or name", () => {
+  const html = render("service", { userId: "unlinked" });
+  assert.doesNotMatch(html, /Own task|Registration desk|07–12/);
+});
+test("timeline preserves local Prague times and groups daily work chronologically", () => {
+  const html = render("timeline");
+  assert.match(html, /Europe\/Prague/);
+  assert.match(html, /07:30/);
+  assert.ok(html.indexOf("Own task") < html.indexOf("Other task"));
+});
+test("filtered task detail callbacks stay directly under visible rows only", () => {
+  const html = render("tasks", { search: "Own task" });
+  assert.match(html, /data-detail="t-own"/);
+  assert.doesNotMatch(html, /data-detail="t-other"|Other task/);
+  assert.ok(html.indexOf("Own task") < html.indexOf('data-detail="t-own"'));
+});
+test("archived rows require explicit editor filter, ordinary crew stays active-only", () => {
+  const archived = {
+    ...newTask("e1", "archived"),
+    title: "ARCHIVED-TASK",
+    assignee_roster_id: "r-own",
+    archived: true,
+  };
+  const props = { data: { ...data, tasks: [archived] }, includeArchived: true };
+  assert.match(render("tasks", props), /ARCHIVED-TASK/);
+  assert.doesNotMatch(
+    render("tasks", { ...props, crew: { ...crew, role: "member" } }),
+    /ARCHIVED-TASK/,
+  );
+});
+test("zone colors are whitelisted and stored text is escaped", () => {
+  const zones = [
+    {
+      ...newZone("e1", "z"),
+      name: "<script>synthetic</script>",
+      color: "unsafe css",
+      map_x: 40,
+      map_y: 60,
+    },
+  ];
+  const html = render("zones", { data: { ...data, zones } });
+  assert.doesNotMatch(html, /<script>|unsafe css/);
+  assert.match(html, /&lt;script&gt;/);
+});
+test("an unknown role cannot reuse a stale positive registration permission", () => {
+  assert.doesNotMatch(
+    render("registrations", {
+      crew: { ...crew, role: null },
+      data: { ...data, canRegistration: true },
+    }),
+    /PRIVATE-RIDER|data-detail="reg"/,
+  );
+});
+test("collapsed operation rows do not render empty detail panels", () => {
+  for (const view of [
+    "tasks",
+    "timeline",
+    "zones",
+    "registrations",
+    "service",
+  ] as OperationView[]) {
+    const html = render(view, {
+      data: { ...data, canRegistration: true },
+      renderDetail: () => null,
+    });
+    assert.doesNotMatch(html, /class="ops-detail"/);
+  }
+});

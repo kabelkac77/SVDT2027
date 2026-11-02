@@ -70,7 +70,10 @@ export function useOperationsWorkspace({
 
   const canEdit =
     (crew.role === "admin" || crew.role === "coordinator") && !edition.archived;
-  const canRegister = ["admin", "coordinator", "member"].includes(crew.role ?? "") && !edition.archived && Boolean(data?.canRegistration);
+  const canRegister =
+    ["admin", "coordinator", "member"].includes(crew.role ?? "") &&
+    !edition.archived &&
+    Boolean(data?.canRegistration);
 
   function confirmDiscard(): boolean {
     if (savingRef.current) return false;
@@ -145,6 +148,7 @@ export function useOperationsWorkspace({
   function changeView(next: OperationView) {
     if (!closeDraft()) return;
     setView(next);
+    setFilters((current) => ({ ...current, search: "", status: "all" }));
   }
 
   function changeFilters(next: Partial<OperationsFilters>) {
@@ -154,40 +158,54 @@ export function useOperationsWorkspace({
 
   function open(kind: "zone" | "task" | "registration", id: string) {
     if (!closeDraft()) return;
-    if (!data || !["admin", "coordinator", "member"].includes(crew.role ?? "")) return;
+    if (!data || !["admin", "coordinator", "member"].includes(crew.role ?? ""))
+      return;
     if (kind === "zone") {
-      const value = data.zones.find((z) => z.id === id && z.edition_id === edition.id);
+      const value = data.zones.find(
+        (z) => z.id === id && z.edition_id === edition.id,
+      );
       if (!value) return;
-      setSelection({ kind: "zone", value: {...value} });
+      setSelection({ kind: "zone", value: { ...value } });
       return;
     }
     if (kind === "task") {
-      const value = data.tasks.find((t) => t.id === id && t.edition_id === edition.id);
+      const value = data.tasks.find(
+        (t) => t.id === id && t.edition_id === edition.id,
+      );
       if (!value) return;
       const manager = crew.role === "admin" || crew.role === "coordinator";
       if (!manager) {
         const own = new Set(
           ownAssignments(crew.entries, edition.id, userId)
             .map((e) => e.id)
-            .filter((entryId): entryId is string => typeof entryId === "string"),
+            .filter(
+              (entryId): entryId is string => typeof entryId === "string",
+            ),
         );
         if (!value.assignee_roster_id || !own.has(value.assignee_roster_id))
           return;
       }
-      setSelection({ kind: "task", value: {...value} });
+      setSelection({ kind: "task", value: { ...value } });
       return;
     }
     if (!data.canRegistration) return;
-    const value = data.registrations.find((r) => r.id === id && r.edition_id === edition.id);
+    const value = data.registrations.find(
+      (r) => r.id === id && r.edition_id === edition.id,
+    );
     if (!value) return;
-    setSelection({ kind: "registration", value: {...value} });
+    setSelection({ kind: "registration", value: { ...value } });
   }
 
   function create(kind: "zone" | "task" | "registration") {
     if (!closeDraft()) return;
     if (!data) return;
     let id: string;
-    try { id = crypto.randomUUID(); } catch (err) { setError(operationsMessage(err)); return; }
+    try {
+      id = crypto.randomUUID();
+    } catch (err) {
+      setError(operationsMessage(err));
+      return;
+    }
     if (kind === "registration") {
       if (!canRegister) return;
       setSelection({
@@ -221,14 +239,13 @@ export function useOperationsWorkspace({
     const existing = data.grants.find(
       (g) => g.edition_id === edition.id && g.user_id === targetUserId,
     );
-    const value: RegistrationGrant =
-      existing ?? {
-        edition_id: edition.id,
-        user_id: targetUserId,
-        can_registration: false,
-        version: 0,
-      };
-    setSelection({ kind: "registration_grant", value: {...value} });
+    const value: RegistrationGrant = existing ?? {
+      edition_id: edition.id,
+      user_id: targetUserId,
+      can_registration: false,
+      version: 0,
+    };
+    setSelection({ kind: "registration_grant", value: { ...value } });
   }
 
   function change(
@@ -296,7 +313,12 @@ export function useOperationsWorkspace({
     }
     let requestId = requestIdsRef.current.get(fingerprint);
     if (!requestId) {
-      try { requestId = crypto.randomUUID(); } catch (err) { setError(operationsMessage(err)); return; }
+      try {
+        requestId = crypto.randomUUID();
+      } catch (err) {
+        setError(operationsMessage(err));
+        return;
+      }
       requestIdsRef.current.set(fingerprint, requestId);
     }
 

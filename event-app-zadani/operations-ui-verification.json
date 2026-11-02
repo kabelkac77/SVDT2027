@@ -1,0 +1,43 @@
+{
+  "verified_on": "2026-11-02",
+  "scope": "integrated_operations_v1_code",
+  "node": "24.19",
+  "tests_total": 147,
+  "operations_tests": {
+    "database": 7,
+    "model": 12,
+    "backend": 5,
+    "forms_ssr": 8,
+    "views_ssr": 16,
+    "state_unit_boundary": 11,
+    "panel_ssr_integration": 7
+  },
+  "typecheck": "passed",
+  "production_build": "passed",
+  "clean_npm_ci_ignore_scripts": "passed",
+  "browser_e2e": false,
+  "actual_service_schema_applied": false,
+  "actual_accounts_or_import_changed": false,
+  "actual_user_data_used_in_tests_or_model": false,
+  "full_remote_backup_active": false,
+  "sha256": {
+    "event-app/src/components/use-operations-workspace.ts": "b21ffb5ae8f2870caa1ec2f3d1fcfe86f628ee03f7b487eb523b4890e3923a35",
+    "event-app/src/lib/operations-backend.ts": "1cf92d037bb12eb6c9b7ac8114c6b7c6c2ebba6d40cd0be83daf6ad5baf45572",
+    "event-app/src/lib/operations-model.ts": "d4984730d632dab35ade467420a2caf1737637e421400d3ae3bc9e69769e3281",
+    "event-app/src/components/operations-forms.tsx": "82444033758e4ea9b5090f35af192805fb242a43cc6e94b445aea0a33c371aa5",
+    "event-app/src/components/operations-panel.tsx": "d13bc10c57d347089b40f088d73b04a179b658794f2865d814b9bfbe97a0d49d",
+    "event-app/src/components/operations-views.tsx": "a2477b37d72117b55c0bcd345ee781fc4d1a3e31b9ba304a0c9519f3f8de5b1c",
+    "event-app/tests/operations-backend.test.ts": "8ef9b96c01919e52da68ee8d212041b35237128631ab3de66d9cc7b525687807",
+    "event-app/tests/operations-database.test.ts": "b41cef46daaa0f66801277d460f5e53c271abcbeedcbc1e47185d73c184c9261",
+    "event-app/tests/operations-forms.test.ts": "9558841e96281fd866a43f268ac5bb31d42be7a589751bf8a45eb9d8e85f5c0d",
+    "event-app/tests/operations-model.test.ts": "150c28ad8be32677c41fc9b7d744b844876ccb6da6bd67dc77df23ed3cc59c8e",
+    "event-app/tests/operations-panel.test.ts": "b8f796cb3d777bafa270afecc51e4892a2d714c843986bc3e421b0bacb718a4b",
+    "event-app/tests/operations-views.test.ts": "432b9cd61eecbce5438983472a224547d7f80ae596fe011060f2ec6e68c96e5c",
+    "event-app/tests/operations-workspace.test.ts": "c65cc84676d9f4ce762646ddee7b93f1ec727e53d6ab3f8c2870e590dc7fca1c",
+    "event-app/src/components/crew-workspace.tsx": "0db3bd7e0cc37cfe6a8b200066e6f5d342ce8c6dde166005d941a287bff09101",
+    "event-app/src/app/crew.css": "59802d058f4a269761ae111c9cc6cd7e876525415d79ea0ab7db8792f1be0dd3",
+    "event-app/supabase/migrations/202611020002_operations.sql": "8b73cac12d98faf8f4d3a97be3cebe7d9bfd3c62b93a8ede03f043428edf7d46",
+    "event-app/package.json": "192b41fc9f6dea38d8bbf787a55460bb8257dbbfb6993150af31d1f776c4728f",
+    "event-app/package-lock.json": "4496ab310824a03310e157e191ec3fd32383a1e5ebc7cbdf3e69dba6191b0484"
+  }
+}

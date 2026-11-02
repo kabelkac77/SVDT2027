@@ -37,7 +37,8 @@ type Choice = { id: string; label: string };
 function crewOptions(crew: CrewData, editionId: string): Choice[] {
   return crew.entries
     .filter(
-      (e) => typeof e.id === "string" && e.edition_id === editionId && !e.archived,
+      (e) =>
+        typeof e.id === "string" && e.edition_id === editionId && !e.archived,
     )
     .map((e) => ({ id: e.id as string, label: e.name.trim() || "Bez jména" }));
 }
@@ -48,7 +49,11 @@ function zoneOptions(zones: Zone[], editionId: string): Choice[] {
     .map((z) => ({ id: z.id, label: z.name.trim() || "Bez názvu" }));
 }
 
-function withHidden(options: Choice[], currentId: string | null, hiddenLabel: string): Choice[] {
+function withHidden(
+  options: Choice[],
+  currentId: string | null,
+  hiddenLabel: string,
+): Choice[] {
   if (!currentId) return options;
   if (options.some((o) => o.id === currentId)) return options;
   return [...options, { id: currentId, label: hiddenLabel }];
@@ -60,7 +65,11 @@ function parseCoord(value: string): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function FormActions(props: { disabled: boolean; readOnly: boolean; onCancel: () => void }) {
+function FormActions(props: {
+  disabled: boolean;
+  readOnly: boolean;
+  onCancel: () => void;
+}) {
   const { disabled, readOnly, onCancel } = props;
   return (
     <div>
@@ -87,7 +96,12 @@ function ZoneForm(props: {
 }) {
   const { draft, crew, onChange, onSave, onCancel, disabled, readOnly } = props;
   const leaderOptions = useMemo(
-    () => withHidden(crewOptions(crew, draft.edition_id), draft.leader_roster_id, "Přiřazený vedoucí"),
+    () =>
+      withHidden(
+        crewOptions(crew, draft.edition_id),
+        draft.leader_roster_id,
+        "Přiřazený vedoucí",
+      ),
     [crew, draft.edition_id, draft.leader_roster_id],
   );
 
@@ -143,7 +157,9 @@ function ZoneForm(props: {
           <select
             name="leader_roster_id"
             value={draft.leader_roster_id ?? ""}
-            onChange={(e) => patch({ leader_roster_id: e.target.value || null })}
+            onChange={(e) =>
+              patch({ leader_roster_id: e.target.value || null })
+            }
           >
             <option value="">Nepřiřazeno</option>
             {leaderOptions.map((o) => (
@@ -174,8 +190,8 @@ function ZoneForm(props: {
           />
         </label>
         <p>
-          Tento kontakt uvidí celá crew. Nekopíruj sem soukromé telefonní číslo, zadej pracovní
-          spojení na oblast.
+          Tento kontakt uvidí celá crew. Nekopíruj sem soukromé telefonní číslo,
+          zadej pracovní spojení na oblast.
         </p>
         <label>
           Pozice v plánu (%) – X
@@ -202,7 +218,8 @@ function ZoneForm(props: {
           />
         </label>
         <p>
-          Souřadnice jen umístí značku v plánku akce v procentech, nejde o skutečnou geolokaci.
+          Souřadnice jen umístí značku v plánku akce v procentech, nejde o
+          skutečnou geolokaci.
         </p>
         <label>
           <input
@@ -214,7 +231,11 @@ function ZoneForm(props: {
           Archivováno
         </label>
       </fieldset>
-      <FormActions disabled={disabled} readOnly={readOnly} onCancel={onCancel} />
+      <FormActions
+        disabled={disabled}
+        readOnly={readOnly}
+        onCancel={onCancel}
+      />
     </form>
   );
 }
@@ -229,7 +250,8 @@ function TaskForm(props: {
   disabled: boolean;
   readOnly: boolean;
 }) {
-  const { draft, crew, zones, onChange, onSave, onCancel, disabled, readOnly } = props;
+  const { draft, crew, zones, onChange, onSave, onCancel, disabled, readOnly } =
+    props;
   const assigneeOptions = useMemo(
     () =>
       withHidden(
@@ -240,7 +262,12 @@ function TaskForm(props: {
     [crew, draft.edition_id, draft.assignee_roster_id],
   );
   const zoneChoices = useMemo(
-    () => withHidden(zoneOptions(zones, draft.edition_id), draft.zone_id, "Přiřazená oblast"),
+    () =>
+      withHidden(
+        zoneOptions(zones, draft.edition_id),
+        draft.zone_id,
+        "Přiřazená oblast",
+      ),
     [zones, draft.edition_id, draft.zone_id],
   );
 
@@ -296,14 +323,17 @@ function TaskForm(props: {
           </select>
         </label>
         <p>
-          Stav „Hotovo“ nastavuje osoba s úpravou úkolů, běžná crew jej vidí jen ke čtení.
+          Stav „Hotovo“ nastavuje osoba s úpravou úkolů, běžná crew jej vidí jen
+          ke čtení.
         </p>
         <label>
           Odpovědná osoba
           <select
             name="assignee_roster_id"
             value={draft.assignee_roster_id ?? ""}
-            onChange={(e) => patch({ assignee_roster_id: e.target.value || null })}
+            onChange={(e) =>
+              patch({ assignee_roster_id: e.target.value || null })
+            }
           >
             <option value="">Nepřiřazeno</option>
             {assigneeOptions.map((o) => (
@@ -358,7 +388,10 @@ function TaskForm(props: {
             onChange={(e) => patchDateTime("due_at", e.target.value)}
           />
         </label>
-        <p>Časy se zadávají v místním čase akce (Europe/Prague), bez převodu na UTC.</p>
+        <p>
+          Časy se zadávají v místním čase akce (Europe/Prague), bez převodu na
+          UTC.
+        </p>
         <label>
           <input
             type="checkbox"
@@ -369,7 +402,11 @@ function TaskForm(props: {
           Archivováno
         </label>
       </fieldset>
-      <FormActions disabled={disabled} readOnly={readOnly} onCancel={onCancel} />
+      <FormActions
+        disabled={disabled}
+        readOnly={readOnly}
+        onCancel={onCancel}
+      />
     </form>
   );
 }
@@ -383,8 +420,12 @@ function RegistrationForm(props: {
   readOnly: boolean;
 }) {
   const { draft, onChange, onSave, onCancel, disabled, readOnly } = props;
-  const [feeDueText, setFeeDueText] = useState(() => crewMoneyInput(draft.fee_due));
-  const [feePaidText, setFeePaidText] = useState(() => crewMoneyInput(draft.fee_paid));
+  const [feeDueText, setFeeDueText] = useState(() =>
+    crewMoneyInput(draft.fee_due),
+  );
+  const [feePaidText, setFeePaidText] = useState(() =>
+    crewMoneyInput(draft.fee_paid),
+  );
   const [error, setError] = useState("");
 
   function patch(changes: Partial<Registration>) {
@@ -486,7 +527,9 @@ function RegistrationForm(props: {
           <select
             name="status"
             value={draft.status}
-            onChange={(e) => patch({ status: e.target.value as RegistrationStatus })}
+            onChange={(e) =>
+              patch({ status: e.target.value as RegistrationStatus })
+            }
           >
             {Object.entries(registrationLabels).map(([value, label]) => (
               <option key={value} value={value}>
@@ -518,8 +561,9 @@ function RegistrationForm(props: {
           />
         </label>
         <p>
-          Úhradu zadávej ručně podle skutečně přijaté platby. Potvrzená registrace neznamená
-          zaplacení, částka 0 Kč je jiný údaj než nevyplněná (neznámá) částka.
+          Úhradu zadávej ručně podle skutečně přijaté platby. Potvrzená
+          registrace neznamená zaplacení, částka 0 Kč je jiný údaj než
+          nevyplněná (neznámá) částka.
         </p>
         <label>
           Poznámka
@@ -541,7 +585,11 @@ function RegistrationForm(props: {
         </label>
       </fieldset>
       {error && <p role="alert">{error}</p>}
-      <FormActions disabled={disabled} readOnly={readOnly} onCancel={onCancel} />
+      <FormActions
+        disabled={disabled}
+        readOnly={readOnly}
+        onCancel={onCancel}
+      />
     </form>
   );
 }
@@ -557,7 +605,17 @@ export function OperationsEditor(props: {
   disabled: boolean;
   readOnly: boolean;
 }) {
-  const { kind, draft, crew, zones, onChange, onSave, onCancel, disabled, readOnly } = props;
+  const {
+    kind,
+    draft,
+    crew,
+    zones,
+    onChange,
+    onSave,
+    onCancel,
+    disabled,
+    readOnly,
+  } = props;
 
   if (kind === "zone") {
     return (

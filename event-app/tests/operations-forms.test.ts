@@ -1,18 +1,146 @@
-import {test} from 'node:test';
-import assert from 'node:assert/strict';
-import React from 'react';
-import {renderToStaticMarkup} from 'react-dom/server';
-import {OperationsEditor,OperationDraft} from '../src/components/operations-forms';
-import {newZone,newTask,newRegistration,Zone} from '../src/lib/operations-model';
-import {CrewData,emptyCrewEntry} from '../src/lib/crew-model';
-const crew:CrewData={role:'admin',canFinance:false,categories:[],entries:[{...emptyCrewEntry('e1'),id:'own',name:'Visible crew',edition_id:'e1'},{...emptyCrewEntry('e2'),id:'foreign',name:'Forbidden other edition',edition_id:'e2'},{...emptyCrewEntry('e1'),id:'archived',edition_id:'e1',name:'Archived crew',archived:true}],members:[],compensation:[]};
-const zones:Zone[]=[{...newZone('e1','z1'),name:'Visible zone'},{...newZone('e2','z2'),name:'Forbidden zone'},{...newZone('e1','za'),name:'Archived zone',archived:true}];
-function render(kind:'zone'|'task'|'registration',draft:OperationDraft,extra:object={}){return renderToStaticMarkup(React.createElement(OperationsEditor,{kind,draft,crew,zones,onChange:()=>{},onSave:()=>{},onCancel:()=>{},disabled:false,readOnly:false,...extra}));}
-test('operational forms preserve literal event times and seconds without a timezone conversion',()=>{const html=render('task',{...newTask('e1','t1'),title:'Synthetic task',starts_at:'2027-06-18 07:30:15',ends_at:'2027-06-18 08:45:00'});assert.match(html,/2027-06-18T07:30:15/);assert.match(html,/2027-06-18T08:45/);assert.match(html,/Europe\/Prague/);assert.match(html,/step="1"/);});
-test('task assignment and zone dropdowns exclude other editions and archived options',()=>{const html=render('task',newTask('e1','t1'));assert.match(html,/Visible crew/);assert.match(html,/Visible zone/);assert.doesNotMatch(html,/Forbidden|Archived crew|Archived zone/);});
-test('unseen saved foreign-key links remain represented instead of silently clearing',()=>{const html=render('task',{...newTask('e1','t1'),assignee_roster_id:'not-visible',zone_id:'not-visible-zone'});assert.match(html,/value="not-visible" selected/);assert.match(html,/value="not-visible-zone" selected/);});
-test('readonly operations never render save and disable their editable fields',()=>{for(const [kind,draft] of [['zone',newZone('e1','z')],['task',newTask('e1','t')],['registration',newRegistration('e1','r')]] as const){const html=render(kind,draft,{readOnly:true});assert.match(html,/<fieldset[^>]* disabled/);assert.doesNotMatch(html,/>Uložit</);}});
-test('disabled saving state blocks form inputs',()=>{assert.match(render('task',newTask('e1','t'),{disabled:true}),/<fieldset[^>]* disabled/);});
-test('zone publishes only an explicitly entered work contact and keeps known zero coordinates',()=>{const html=render('zone',{...newZone('e1','z'),map_x:0,map_y:0,contact_name:'Public work contact',contact_phone:'+420 111 222 333'});assert.match(html,/Public work contact/);assert.match(html,/\+420 111 222 333/);assert.match(html,/min="0"/);assert.match(html,/max="100"/);assert.match(html,/value="0"/);assert.doesNotMatch(html,/Forbidden other edition/);});
-test('registration amount inputs preserve unknown separately from explicit zero',()=>{const html=render('registration',{...newRegistration('e1','r'),fee_due:null,fee_paid:0});assert.match(html,/value=""/);assert.match(html,/value="0,00"/);assert.match(html,/registrac/i);});
-test('stored text in operational forms is escaped and cannot create script elements',()=>{const html=render('zone',{...newZone('e1','z'),name:'<script>synthetic</script>',instructions:'<img src=x onerror=alert(1)>'});assert.doesNotMatch(html,/<script>|<img /);assert.match(html,/&lt;script&gt;/);});
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import {
+  OperationsEditor,
+  OperationDraft,
+} from "../src/components/operations-forms";
+import {
+  newZone,
+  newTask,
+  newRegistration,
+  Zone,
+} from "../src/lib/operations-model";
+import { CrewData, emptyCrewEntry } from "../src/lib/crew-model";
+const crew: CrewData = {
+  role: "admin",
+  canFinance: false,
+  categories: [],
+  entries: [
+    {
+      ...emptyCrewEntry("e1"),
+      id: "own",
+      name: "Visible crew",
+      edition_id: "e1",
+    },
+    {
+      ...emptyCrewEntry("e2"),
+      id: "foreign",
+      name: "Forbidden other edition",
+      edition_id: "e2",
+    },
+    {
+      ...emptyCrewEntry("e1"),
+      id: "archived",
+      edition_id: "e1",
+      name: "Archived crew",
+      archived: true,
+    },
+  ],
+  members: [],
+  compensation: [],
+};
+const zones: Zone[] = [
+  { ...newZone("e1", "z1"), name: "Visible zone" },
+  { ...newZone("e2", "z2"), name: "Forbidden zone" },
+  { ...newZone("e1", "za"), name: "Archived zone", archived: true },
+];
+function render(
+  kind: "zone" | "task" | "registration",
+  draft: OperationDraft,
+  extra: object = {},
+) {
+  return renderToStaticMarkup(
+    React.createElement(OperationsEditor, {
+      kind,
+      draft,
+      crew,
+      zones,
+      onChange: () => {},
+      onSave: () => {},
+      onCancel: () => {},
+      disabled: false,
+      readOnly: false,
+      ...extra,
+    }),
+  );
+}
+test("operational forms preserve literal event times and seconds without a timezone conversion", () => {
+  const html = render("task", {
+    ...newTask("e1", "t1"),
+    title: "Synthetic task",
+    starts_at: "2027-06-18 07:30:15",
+    ends_at: "2027-06-18 08:45:00",
+  });
+  assert.match(html, /2027-06-18T07:30:15/);
+  assert.match(html, /2027-06-18T08:45/);
+  assert.match(html, /Europe\/Prague/);
+  assert.match(html, /step="1"/);
+});
+test("task assignment and zone dropdowns exclude other editions and archived options", () => {
+  const html = render("task", newTask("e1", "t1"));
+  assert.match(html, /Visible crew/);
+  assert.match(html, /Visible zone/);
+  assert.doesNotMatch(html, /Forbidden|Archived crew|Archived zone/);
+});
+test("unseen saved foreign-key links remain represented instead of silently clearing", () => {
+  const html = render("task", {
+    ...newTask("e1", "t1"),
+    assignee_roster_id: "not-visible",
+    zone_id: "not-visible-zone",
+  });
+  assert.match(html, /value="not-visible" selected/);
+  assert.match(html, /value="not-visible-zone" selected/);
+});
+test("readonly operations never render save and disable their editable fields", () => {
+  for (const [kind, draft] of [
+    ["zone", newZone("e1", "z")],
+    ["task", newTask("e1", "t")],
+    ["registration", newRegistration("e1", "r")],
+  ] as const) {
+    const html = render(kind, draft, { readOnly: true });
+    assert.match(html, /<fieldset[^>]* disabled/);
+    assert.doesNotMatch(html, />Uložit</);
+  }
+});
+test("disabled saving state blocks form inputs", () => {
+  assert.match(
+    render("task", newTask("e1", "t"), { disabled: true }),
+    /<fieldset[^>]* disabled/,
+  );
+});
+test("zone publishes only an explicitly entered work contact and keeps known zero coordinates", () => {
+  const html = render("zone", {
+    ...newZone("e1", "z"),
+    map_x: 0,
+    map_y: 0,
+    contact_name: "Public work contact",
+    contact_phone: "+420 111 222 333",
+  });
+  assert.match(html, /Public work contact/);
+  assert.match(html, /\+420 111 222 333/);
+  assert.match(html, /min="0"/);
+  assert.match(html, /max="100"/);
+  assert.match(html, /value="0"/);
+  assert.doesNotMatch(html, /Forbidden other edition/);
+});
+test("registration amount inputs preserve unknown separately from explicit zero", () => {
+  const html = render("registration", {
+    ...newRegistration("e1", "r"),
+    fee_due: null,
+    fee_paid: 0,
+  });
+  assert.match(html, /value=""/);
+  assert.match(html, /value="0,00"/);
+  assert.match(html, /registrac/i);
+});
+test("stored text in operational forms is escaped and cannot create script elements", () => {
+  const html = render("zone", {
+    ...newZone("e1", "z"),
+    name: "<script>synthetic</script>",
+    instructions: "<img src=x onerror=alert(1)>",
+  });
+  assert.doesNotMatch(html, /<script>|<img /);
+  assert.match(html, /&lt;script&gt;/);
+});

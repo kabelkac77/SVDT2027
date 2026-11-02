@@ -26,3 +26,13 @@ Neuzavírat mlčením. Uživatel chce samostatnou implementaci a společný prů
 - Kdo potvrzuje příchod a dokončení úkolu, eskalace problémů. Samoobslužné potvrzování do té doby nepřidávat jako schválený proces.
 - Desktop/mobil, klávesnice, otevření detailů, úzký displej a ochrana draftu v prohlížeči. Místní browser byl během implementace vypnutý; bez jeho dostupnosti nelze tvrdit novou vizuální/E2E akceptaci.
 - WhatsApp/Twilio zůstávají výslovně odložené. Žádná nová automatická zpráva nebo placená služba.
+
+## Další vývoj po prvním provozním průchodu
+
+- Skutečné databázové migrace a víceúčtový provoz po doplnění správného projektu a oprávnění. Žádné výchozí individuální granty nejsou provedené.
+- Řízený import celé místní crew s náhledem všech zdrojových sloupců a nejasných identit; zůstává samostatným celkem.
+- Kolektory úplných záloh, konzistence DB/Storage, vzdálené ověření, plánovač a skutečná obnova podle29b.
+- Specifická role vedoucího zóny s přístupem jen ke svému týmu; současná V1 má správce/koordinátora/člena, koordinátor provozně celý ročník. Neudělovat tuto širší roli automaticky každému vedoucímu zóny.
+- Společné Moje práce napříč partnery, rozpočtem, registracemi a přípravou; souhrn crew není plný rozpočet.
+- Průběžná synchronizace, PWA a offline práce jsou další rozsah. Současné Obnovit načítá uložený snímek.
+- Interaktivní desktop/mobil/klávesnice a skutečné chybové průchody navigace a souběhu: lokální browser je vypnutý, SSR/build nejsou důkaz této akceptace.
