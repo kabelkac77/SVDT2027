@@ -215,6 +215,10 @@ export function crewMessage(error: unknown): string {
     return "Ročník je archivovaný. Změny nelze uložit.";
   if (text.includes("CREW_ACCESS_DENIED"))
     return "K této změně nemáš oprávnění ke sdílené crew. Obnov data nebo kontaktuj správce.";
+  if (text.includes("CREW_ACCOUNT_AMBIGUOUS"))
+    return "Stejný e-mail odpovídá více účtům. Správce musí upřesnit konkrétní účet.";
+  if (text.includes("CREW_CONFIG_MISSING"))
+    return "Sdílená evidence čeká na dokončení nastavení správcem.";
   if (text.includes("CREW_ACCOUNT_NOT_FOUND"))
     return "Pro zadaný e-mail neexistuje účet. Osoba se musí nejprve přihlásit.";
   if (text.includes("CREW_LAST_ADMIN"))

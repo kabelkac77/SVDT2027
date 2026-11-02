@@ -29,3 +29,5 @@ Stav: IN PROGRESS. Konkrétní účty, hosting, skutečná migrace/import a živ
 Správa přístupů je výjimkou ze zamčení archivu: správce může i po archivaci odebrat/znovu upravit členství, aniž změní historickou crew nebo odměny. Ověřeno samostatným databázovým scénářem.
 
 UI předání #27 (dva soubory) a #30 (celá stránka) překročila limit900s bez aplikovaného návrhu. Formuláře #28 byly zúžením úspěšně dodané a hostem opravené/testované. Další krok proto dělí auth obal od pracovního workspace; žádný slepý stejný retry nebo alternativní účet/model.
+
+E-mail pro nové členství musí odpovídat právě jednomu Auth účtu; více shod je explicitní chyba bez udělení práv. Samotné odebrání finančního grantu zachovává koordinaci, ale znepřístupní i dřívější cached finanční odpovědi (testováno).

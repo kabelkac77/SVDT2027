@@ -81,7 +81,7 @@ create policy crew_audit_read on public.crew_audit for select to authenticated u
 create function public.crew_write(e uuid,k text,p jsonb,request_id uuid) returns jsonb language plpgsql security definer set search_path='' as $$
 declare
  uid uuid:=auth.uid(); rid uuid; v integer; previous jsonb; result jsonb; fp text; cached public.crew_requests;
- allowed text[]; strings text[]; key text; target uuid; pid uuid; role_value text; enabled_value boolean; finance_value boolean;
+ account_matches bigint; allowed text[]; strings text[]; key text; target uuid; pid uuid; role_value text; enabled_value boolean; finance_value boolean;
 begin
  if k not in ('category','roster','compensation','member') or k is null then raise exception 'CREW_INVALID_KIND' using errcode='22023'; end if;
  perform public.require_crew_writer(e,k);
@@ -111,8 +111,9 @@ begin
  end loop;
  if k='member' then
   if nullif(p->>'email','') is not null then
-   select id into target from auth.users where lower(email)=lower(btrim(p->>'email'));
-   if not found then raise exception 'CREW_ACCOUNT_NOT_FOUND' using errcode='22023'; end if;
+   select count(*),min(id::text)::uuid into account_matches,target from auth.users where lower(email)=lower(btrim(p->>'email'));
+   if account_matches=0 then raise exception 'CREW_ACCOUNT_NOT_FOUND' using errcode='22023'; end if;
+   if account_matches<>1 then raise exception 'CREW_ACCOUNT_AMBIGUOUS' using errcode='22023'; end if;
   else target:=nullif(p->>'user_id','')::uuid; end if;
   if target is null then raise exception 'CREW_ACCOUNT_NOT_FOUND' using errcode='22023'; end if;
   if p ? 'user_id' and nullif(p->>'user_id','')::uuid is distinct from target then raise exception 'CREW_INVALID_INPUT' using errcode='22023'; end if;
