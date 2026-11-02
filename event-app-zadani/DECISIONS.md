@@ -1,5 +1,9 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## Potvrzené pokračování — 2026-11-02
+
+CONFIRMED: uživatel zadal dokončit souhrny kategorií a navazující personální přehled, potom sdílení crew s účty a oprávněními, automatické úplné zálohy mimo počítač a následně úkoly/harmonogram, registrace závodníků, zóny/mapu a provozní mobilní pohled. Jde o skutečnou implementaci po ověřitelných celcích, ne pouhý návrh. Konkrétní totožnost účtů, rozsahy přístupů, cílové obsazení, pravidla registrací a provozní volby bez podkladů zůstávají k pozdějšímu potvrzení; nevyžadovat je jako podmínku nezávislé práce. Stávající skutečná evidence a historie se zachovávají. Podrobný sled a podmínky dokončení v [27](27-NAVAZUJICI-IMPLEMENTACE.md).
+
 ## 2026-10-29 — PÁ a SO přímo v hlavním personálním řádku
 
 **CONFIRMED:** uživatel výslovně zadal sloupce PÁ (od–do) a SO (od–do). Přehled a editace zůstávají v jedné tabulce s detailem pod řádkem, časy se ukládají samostatně pro 2027. Historie ani účast se z nich automaticky neodvozují. Jednoduchý textový rozsah a kompatibilita starších otevřených oken jsou technické provedení podle [26](26-CREW-PATEK-SOBOTA.md). Dříve připravený přehled stavů kategorií [25](25-CREW-STAVY-KATEGORII.md) zůstává v backlogu; uživatelská kontrola je dál odložená.

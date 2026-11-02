@@ -1,5 +1,9 @@
 # MASTER BACKLOG
 
+## Potvrzené pokračování — 2026-11-02
+
+CONFIRMED: uživatel zadal dokončit souhrny kategorií a navazující personální přehled, potom sdílení crew s účty a oprávněními, automatické úplné zálohy mimo počítač a následně úkoly/harmonogram, registrace závodníků, zóny/mapu a provozní mobilní pohled. Jde o skutečnou implementaci po ověřitelných celcích, ne pouhý návrh. Konkrétní totožnost účtů, rozsahy přístupů, cílové obsazení, pravidla registrací a provozní volby bez podkladů zůstávají k pozdějšímu potvrzení; nevyžadovat je jako podmínku nezávislé práce. Stávající skutečná evidence a historie se zachovávají. Podrobný sled a podmínky dokončení v [27](27-NAVAZUJICI-IMPLEMENTACE.md).
+
 ## Aktuální priorita uživatele — 2026-10-29
 
 - [x] Přidat editovatelné a trvale ukládané sloupce PÁ (od–do), SO (od–do). [Zadání 26](26-CREW-PATEK-SOBOTA.md).
