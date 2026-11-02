@@ -117,3 +117,48 @@ class NativeClockTests(unittest.TestCase):
         self.assertEqual(h.next_native_clock_reset('12:10am (Europe/Prague)',self.stamp('2026-12-31T23:30:00+01:00')),self.stamp('2027-01-01T00:10:00+01:00'))
 
 if __name__=='__main__':unittest.main()
+
+class PrivateProposalTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name)
+        self.anchor=patch.object(h,'ANCHOR',self.root);self.anchor.start()
+        self.receipt={'issue':1,'head':'a'*40,'allowed_writes':['event-app/tools/a.py']}
+    def tearDown(self):self.anchor.stop();self.temp.cleanup()
+    def raw(self,**changes):
+        data={'status':'completed','summary':'Synthetic','questions':[], 'files':[{'path':'event-app/tools/a.py','content':'pass\n'}]};data.update(changes)
+        return json.dumps({'subtype':'success','structured_output':data})
+    def folder(self):return self.root/'.local/svdt-claude-handoff/proposals'
+    def test_private_artifact_is_complete_and_has_private_permissions(self):
+        ident=h.save_private_proposal(self.raw(),self.receipt);path=self.folder()/ident
+        data=json.loads(path.read_text());self.assertEqual(data['proposal']['files'][0]['content'],'pass\n')
+        self.assertEqual(path.stat().st_mode&0o777,0o600);self.assertEqual(self.folder().stat().st_mode&0o777,0o700)
+        self.assertFalse((self.root/'event-app').exists())
+    def test_inconsistent_reply_is_preserved_but_still_cannot_apply(self):
+        raw=self.raw(questions=['Synthetic unresolved context']);ident=h.save_private_proposal(raw,self.receipt)
+        with self.assertRaises(h.Rejected):h.parse_reply(raw,self.receipt['allowed_writes'])
+        self.assertEqual(json.loads((self.folder()/ident).read_text())['proposal']['questions'],['Synthetic unresolved context'])
+        self.assertFalse((self.root/'event-app').exists())
+    def test_symlinked_private_parent_is_rejected(self):
+        with tempfile.TemporaryDirectory() as outside:
+            (self.root/'.local').symlink_to(outside,target_is_directory=True)
+            with self.assertRaises(h.Rejected):h.save_private_proposal(self.raw(),self.receipt)
+            self.assertEqual(list(Path(outside).iterdir()),[])
+    def test_publicly_readable_proposal_folder_is_rejected(self):
+        self.folder().mkdir(parents=True);self.folder().chmod(0o755)
+        with self.assertRaises(h.Rejected):h.save_private_proposal(self.raw(),self.receipt)
+        self.assertEqual(list(self.folder().iterdir()),[])
+    def test_distinct_artifacts_never_overwrite_each_other(self):
+        first=h.save_private_proposal(self.raw(summary='First'),self.receipt)
+        second=h.save_private_proposal(self.raw(summary='Second'),self.receipt)
+        self.assertNotEqual(first,second);self.assertEqual(len(list(self.folder().glob('*.json'))),2)
+    def test_missing_structured_output_does_not_store_raw_provider_metadata(self):
+        self.assertIsNone(h.save_private_proposal(json.dumps({'is_error':True,'result':'Synthetic provider failure'}),self.receipt))
+        self.assertFalse((self.root/'.local').exists())
+    def test_oversized_or_invalid_json_creates_no_artifact(self):
+        for raw in ['x'*(2*h.MAX_BYTES+1),'{"a":1,"a":2}']:
+            with self.assertRaises((h.Rejected,ValueError)):h.save_private_proposal(raw,self.receipt)
+        self.assertFalse((self.root/'.local').exists())
+    def test_prompt_separates_deferred_notes_from_blocking_questions(self):
+        prompt=h.build_prompt(self.root,{},[],[],[])
+        self.assertIn('status completed and questions=[]',prompt)
+        self.assertIn('nonblocking future/manual notes only in summary',prompt)

@@ -33,3 +33,5 @@ UI předání #27 (dva soubory) a #30 (celá stránka) překročila limit900s be
 E-mail pro nové členství musí odpovídat právě jednomu Auth účtu; více shod je explicitní chyba bez udělení práv. Samotné odebrání finančního grantu zachovává koordinaci, ale znepřístupní i dřívější cached finanční odpovědi (testováno).
 
 Samostatný workspace #32 také překročil900s bez výstupu; přihlašovací obal #31 dodaný. Další skutečná změna rozsahu: čistý tabulkový pohled oddělený od asynchronního controlleru (28g). Nejde o opakování stejného promptu.
+
+Čistý tabulkový krok #33 vrátil INCONSISTENT_RESPONSE; žádné soubory se neaplikovaly. Před dalším konkrétním běhen opravený kontrakt a soukromé uchování návrhu v hostitelském runneru, nikoli oslabená validace.
