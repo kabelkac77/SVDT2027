@@ -341,6 +341,37 @@ def usage_guard():
     module.reset_time=native_reset
     return module
 
+def native_failure_details(returncode, raw, stderr):
+    """Classify a failed native invocation without exposing provider/account content."""
+    raw = raw if isinstance(raw,str) else ''
+    stderr = stderr if isinstance(stderr,str) else ''
+    message = ''
+    if len(raw.encode(errors='replace')) <= 2*MAX_BYTES:
+        try:
+            outer=json.loads(raw)
+            if isinstance(outer,dict) and outer.get('is_error') is True:
+                result=outer.get('result')
+                if isinstance(result,str):message=result[:32768]
+        except (ValueError,RecursionError):pass
+    text=(message+'\n'+stderr[:32768]).lower()
+    category='NATIVE_PROCESS_FAILED'
+    rules=[
+        ('AUTHENTICATION',r'not logged in|authentication required|authentication_error|invalid api key|oauth token.*(?:expired|invalid)'),
+        ('RATE_LIMIT',r'rate_limit_error|rate limit|usage limit|hit your limit'),
+        ('PROVIDER_UNAVAILABLE',r'overloaded_error|api_error|server is overloaded|service unavailable|http (?:502|503)'),
+        ('NETWORK',r'econnreset|enotfound|etimedout|econnrefused|fetch failed|connection error'),
+        ('CLI_ARGUMENT',r'unknown option|unrecognized option|unexpected argument'),
+        ('CONTEXT_LIMIT',r'prompt is too long|context length exceeded'),
+    ]
+    for name,pattern in rules:
+        if re.search(pattern,text):category=name;break
+    return {'exit_code':returncode if isinstance(returncode,int) and not isinstance(returncode,bool) and -255<=returncode<=255 else None,
+            'failure_category':category,
+            'stdout_bytes':len(raw.encode(errors='replace')),'stderr_bytes':len(stderr.encode(errors='replace')),
+            'stdout_sha256':hashlib.sha256(raw.encode(errors='replace')).hexdigest(),
+            'stderr_sha256':hashlib.sha256(stderr.encode(errors='replace')).hexdigest()}
+
+
 def run(args):
     root=Path(args.worktree).resolve()
     if not re.fullmatch('[0-9a-f]{40}',args.expected_head):
@@ -372,7 +403,7 @@ def run(args):
                 p=subprocess.Popen(cli,cwd=root,env=native_env(),stdin=subprocess.PIPE,stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE,text=True,start_new_session=True)
                 try:
-                    raw,_=p.communicate(prompt,timeout=args.timeout)
+                    raw,native_stderr=p.communicate(prompt,timeout=args.timeout)
                 except subprocess.TimeoutExpired as exc:
                     os.killpg(p.pid,signal.SIGTERM)
                     try:p.communicate(timeout=3)
@@ -380,7 +411,9 @@ def run(args):
                         os.killpg(p.pid,signal.SIGKILL);p.communicate()
                     raise Rejected('CLAUDE_TIMEOUT_NO_RETRY') from exc
                 if p.returncode:
-                    raise Rejected('CLAUDE_FAILED_NO_RETRY')
+                    failure=Rejected('CLAUDE_FAILED_NO_RETRY')
+                    failure.native_failure=native_failure_details(p.returncode,raw,native_stderr)
+                    raise failure
         except guard.UsageError as exc:
             raise Rejected(str(exc)) from exc
         proposal_id=save_private_proposal(raw,receipt)
@@ -413,6 +446,8 @@ def main():
         report={'status':'blocked','category':str(exc) if isinstance(exc,Rejected) else 'HOST_IO_OR_RESPONSE_FAILED'}
         ident=getattr(exc,'proposal_id',None)
         if isinstance(ident,str) and re.fullmatch(r'[0-9a-f]{32}\.json',ident):report['proposal_id']=ident
+        detail=getattr(exc,'native_failure',None)
+        if isinstance(detail,dict):report['native_failure']=detail
         print(json.dumps(report));return 1
     return 0
 

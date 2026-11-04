@@ -162,3 +162,27 @@ class PrivateProposalTests(unittest.TestCase):
         prompt=h.build_prompt(self.root,{},[],[],[])
         self.assertIn('status completed and questions=[]',prompt)
         self.assertIn('nonblocking future/manual notes only in summary',prompt)
+
+class NativeFailureDiagnosticsTests(unittest.TestCase):
+    def test_error_result_and_stderr_are_classified_without_being_exposed(self):
+        for text,expected in [('authentication_error PRIVATE','AUTHENTICATION'),('rate_limit_error PRIVATE','RATE_LIMIT'),('service unavailable PRIVATE','PROVIDER_UNAVAILABLE'),('ECONNRESET PRIVATE','NETWORK'),('unknown option PRIVATE','CLI_ARGUMENT'),('prompt is too long PRIVATE','CONTEXT_LIMIT')]:
+            with self.subTest(expected=expected):
+                value=h.native_failure_details(1,json.dumps({'is_error':True,'result':text}),'')
+                self.assertEqual(value['failure_category'],expected);self.assertEqual(value['exit_code'],1)
+                self.assertNotIn('PRIVATE',json.dumps(value));self.assertEqual(len(value['stdout_sha256']),64)
+    def test_successful_source_text_is_not_misread_as_a_provider_error(self):
+        value=h.native_failure_details(1,json.dumps({'structured_output':{'summary':'rate limit in a synthetic task'}}),'')
+        self.assertEqual(value['failure_category'],'NATIVE_PROCESS_FAILED')
+    def test_plain_invalid_json_and_unknown_errors_have_safe_fallback(self):
+        value=h.native_failure_details(-9,'private non JSON','private stderr')
+        self.assertEqual(value['exit_code'],-9);self.assertEqual(value['failure_category'],'NATIVE_PROCESS_FAILED')
+        self.assertNotIn('private',json.dumps(value))
+    def test_stderr_classification_does_not_copy_paths_or_credentials(self):
+        value=h.native_failure_details(1,'','fetch failed /private/synthetic secret-token')
+        self.assertEqual(value['failure_category'],'NETWORK');self.assertNotIn('secret-token',json.dumps(value))
+    def test_non_error_provider_metadata_is_never_returned(self):
+        value=h.native_failure_details(1,json.dumps({'email':'synthetic@example.invalid','result':'authentication_error'}),'')
+        self.assertEqual(value['failure_category'],'NATIVE_PROCESS_FAILED');self.assertNotIn('synthetic@example.invalid',json.dumps(value))
+    def test_oversized_error_is_not_parsed_as_unbounded_json(self):
+        value=h.native_failure_details(True,'x'*(2*h.MAX_BYTES+1),'')
+        self.assertIsNone(value['exit_code']);self.assertEqual(value['failure_category'],'NATIVE_PROCESS_FAILED')

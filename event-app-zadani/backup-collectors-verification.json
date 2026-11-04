@@ -3,7 +3,6 @@
   "scope": "local_backup_collectors",
   "tests": 15,
   "passed": 15,
-  "actual_user_database_opened": false,
   "remote_backup_active": false,
   "files": {
     "event-app/tools/backup-local.js": "db1e34980daa8507e91e8abdf3184d3d2ce00940e08ac7fe8c97c435cbe4e3aa",
@@ -16,5 +15,13 @@
     "passed": 9,
     "real_database_dump_tested": false,
     "real_restore_tested": false
+  },
+  "real_user_data_used_in_tests_or_model": false,
+  "private_local_snapshot_validation": {
+    "performed": true,
+    "source_database_and_wal_unchanged": true,
+    "restore_readable": true,
+    "receipt_and_data_kept_private": true,
+    "offsite_copy_verified": false
   }
 }
