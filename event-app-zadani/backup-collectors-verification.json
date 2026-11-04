@@ -1,5 +1,5 @@
 {
-  "verified_on": "2026-11-02",
+  "verified_on": "2026-11-04",
   "scope": "local_backup_collectors",
   "tests": 15,
   "passed": 15,
@@ -8,7 +8,13 @@
     "event-app/tools/backup-local.js": "db1e34980daa8507e91e8abdf3184d3d2ce00940e08ac7fe8c97c435cbe4e3aa",
     "event-app/tests/backup-local.test.mjs": "ce75b5e1558c0189c4661aa343e48a19c953ce7b06bf5d4aa40d066f41c29e68",
     "event-app/tools/backup-postgres.js": "92aecd3f9fdd104a905c7a81486521ff2c791a678e4f1f5eeda0045164a16d89",
-    "event-app/tests/backup-postgres.test.mjs": "c851f7b431f4359d9f9b8c215a019dc88aec6acdff580d48fa75f1938006c4b1"
+    "event-app/tests/backup-postgres.test.mjs": "c851f7b431f4359d9f9b8c215a019dc88aec6acdff580d48fa75f1938006c4b1",
+    "event-app/tools/backup-runner.js": "9d5313e4a1926f8cc91e3e9c0b149c28cdb4eca1fafd22b1e513b835b7238caa",
+    "event-app/tests/backup-runner.test.mjs": "454193fa4c8498e27fb28e2d0ce282058fc35b358d0914371a5ba72c5b887ecb",
+    "event-app/supabase/preflight-readonly.sql": "33e728df4faea25e77650fc6c7a517c3204cf583896b6feb81f8ba7d47173048",
+    "event-app/tests/shared-preflight.test.ts": "7fb2a8140a2b176f33101421126266e56278065b2efe6d04dafbf19e8fce9347",
+    "event-app/tools/claude_handoff.py": "ad08810ed763563f77cac26cc0800233dd01f514e82427efd193c0968cb608e3",
+    "event-app/tests/claude_handoff_test.py": "1671ff5c6aa4b9c1442ffa0522e645c02455638acde7271c009a17106fe8d3c7"
   },
   "postgres": {
     "tests": 9,
@@ -23,5 +29,14 @@
     "restore_readable": true,
     "receipt_and_data_kept_private": true,
     "offsite_copy_verified": false
-  }
+  },
+  "runner": {
+    "tests": 17,
+    "passed": 17,
+    "remote_adapter_tested": "synthetic_only",
+    "real_remote_readback_verified": false,
+    "scheduler_active": false
+  },
+  "host_diagnostic_tests": 110,
+  "shared_preflight_tests": 3
 }

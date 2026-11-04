@@ -1,7 +1,122 @@
-import {test} from 'node:test';import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {PGlite} from '@electric-sql/pglite';
-const script=await readFile(new URL('../supabase/preflight-readonly.sql',import.meta.url),'utf8');
-function resultSets(result:any[]){return result.map(r=>r.rows).filter(rows=>rows?.length);}
-async function setup(){const db=new PGlite();await db.exec(`create schema auth;create table auth.users(id uuid primary key,email text);create role anon nologin;create role authenticated nologin;create role service_role nologin bypassrls;grant usage on schema public,auth to authenticated;create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;`);for(const file of ['202609280001_partners.sql','202609290001_partner_history.sql','202611020001_crew.sql','202611020002_operations.sql'])await db.exec(await readFile(new URL('../supabase/migrations/'+file,import.meta.url),'utf8'));await db.exec(`insert into events(id,name) values('10000000-0000-0000-0000-000000000001','PRIVATE-SYNTHETIC-EVENT');insert into auth.users values('00000000-0000-0000-0000-000000000001','PRIVATE-SYNTHETIC-EMAIL');`);return db;}
-test('catalog preflight reports absent objects on an empty database without assuming an applied migration',async()=>{const db=new PGlite();try{const rows=resultSets(await db.exec(script));assert.equal(rows[0][0].transaction_read_only,'on');const tables=rows.find(r=>r.some((x:any)=>x.name==='public.crew_roster'))!;assert.equal(tables.length,24);assert.ok(tables.every((r:any)=>r.present===false));const functions=rows.find(r=>r.some((x:any)=>x.signature?.includes('crew_write')))!;assert.equal(functions.length,8);assert.ok(functions.every((r:any)=>r.present===false));}finally{await db.close()}});
-test('catalog preflight checks RLS and RPC permissions without reading or changing business rows',async()=>{const db=await setup();try{const before=await db.query('select * from events');const result=await db.exec(script);assert.doesNotMatch(JSON.stringify(result),/PRIVATE-SYNTHETIC/);const rows=resultSets(result);const tables=rows.find(r=>r.some((x:any)=>x.name==='public.crew_roster'))!;for(const name of ['public.crew_roster','public.operations_registrations']){const row=tables.find((r:any)=>r.name===name);assert.equal(row.present,true);assert.equal(row.rls_enabled,true);assert.equal(row.authenticated_direct_mutation,false);assert.equal(row.anon_table_access,false)}const rpc=rows.find(r=>r.some((x:any)=>x.signature?.includes('crew_write')))!;for(const row of rpc.filter((r:any)=>r.signature.includes('crew_write')||r.signature.includes('operations_write'))){assert.equal(row.authenticated_execute,true);assert.equal(row.anon_execute,false);assert.equal(row.public_execute,false)}assert.deepEqual((await db.query('select * from events')).rows,before.rows);assert.equal((await db.query<any>("select current_setting('transaction_read_only') value")).rows[0].value,'off');}finally{await db.close()}});
-test('read-only diagnostics also work for an unprivileged authenticated role without elevating it',async()=>{const db=await setup();try{await db.exec('set role authenticated');const result=await db.exec(script);assert.doesNotMatch(JSON.stringify(result),/PRIVATE-SYNTHETIC/);assert.equal((await db.query<any>('select current_user value')).rows[0].value,'authenticated');assert.equal((await db.query<any>('select count(*)::integer n from public.crew_roster')).rows[0].n,0);}finally{await db.close()}});
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { PGlite } from "@electric-sql/pglite";
+const script = await readFile(
+  new URL("../supabase/preflight-readonly.sql", import.meta.url),
+  "utf8",
+);
+function resultSets(result: any[]) {
+  return result.map((r) => r.rows).filter((rows) => rows?.length);
+}
+async function setup() {
+  const db = new PGlite();
+  await db.exec(
+    `create schema auth;create table auth.users(id uuid primary key,email text);create role anon nologin;create role authenticated nologin;create role service_role nologin bypassrls;grant usage on schema public,auth to authenticated;create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;`,
+  );
+  for (const file of [
+    "202609280001_partners.sql",
+    "202609290001_partner_history.sql",
+    "202611020001_crew.sql",
+    "202611020002_operations.sql",
+  ])
+    await db.exec(
+      await readFile(
+        new URL("../supabase/migrations/" + file, import.meta.url),
+        "utf8",
+      ),
+    );
+  await db.exec(
+    `insert into events(id,name) values('10000000-0000-0000-0000-000000000001','PRIVATE-SYNTHETIC-EVENT');insert into auth.users values('00000000-0000-0000-0000-000000000001','PRIVATE-SYNTHETIC-EMAIL');`,
+  );
+  return db;
+}
+test("catalog preflight reports absent objects on an empty database without assuming an applied migration", async () => {
+  const db = new PGlite();
+  try {
+    const rows = resultSets(await db.exec(script));
+    assert.equal(rows[0][0].transaction_read_only, "on");
+    const tables = rows.find((r) =>
+      r.some((x: any) => x.name === "public.crew_roster"),
+    )!;
+    assert.equal(tables.length, 24);
+    assert.ok(tables.every((r: any) => r.present === false));
+    const functions = rows.find((r) =>
+      r.some((x: any) => x.signature?.includes("crew_write")),
+    )!;
+    assert.equal(functions.length, 8);
+    assert.ok(functions.every((r: any) => r.present === false));
+  } finally {
+    await db.close();
+  }
+});
+test("catalog preflight checks RLS and RPC permissions without reading or changing business rows", async () => {
+  const db = await setup();
+  try {
+    const before = await db.query("select * from events");
+    const result = await db.exec(script);
+    assert.doesNotMatch(JSON.stringify(result), /PRIVATE-SYNTHETIC/);
+    const rows = resultSets(result);
+    const tables = rows.find((r) =>
+      r.some((x: any) => x.name === "public.crew_roster"),
+    )!;
+    for (const name of [
+      "public.crew_roster",
+      "public.operations_registrations",
+    ]) {
+      const row = tables.find((r: any) => r.name === name);
+      assert.equal(row.present, true);
+      assert.equal(row.rls_enabled, true);
+      assert.equal(row.authenticated_direct_mutation, false);
+      assert.equal(row.anon_table_access, false);
+    }
+    const rpc = rows.find((r) =>
+      r.some((x: any) => x.signature?.includes("crew_write")),
+    )!;
+    for (const row of rpc.filter(
+      (r: any) =>
+        r.signature.includes("crew_write") ||
+        r.signature.includes("operations_write"),
+    )) {
+      assert.equal(row.authenticated_execute, true);
+      assert.equal(row.anon_execute, false);
+      assert.equal(row.public_execute, false);
+    }
+    assert.deepEqual(
+      (await db.query("select * from events")).rows,
+      before.rows,
+    );
+    assert.equal(
+      (
+        await db.query<any>(
+          "select current_setting('transaction_read_only') value",
+        )
+      ).rows[0].value,
+      "off",
+    );
+  } finally {
+    await db.close();
+  }
+});
+test("read-only diagnostics also work for an unprivileged authenticated role without elevating it", async () => {
+  const db = await setup();
+  try {
+    await db.exec("set role authenticated");
+    const result = await db.exec(script);
+    assert.doesNotMatch(JSON.stringify(result), /PRIVATE-SYNTHETIC/);
+    assert.equal(
+      (await db.query<any>("select current_user value")).rows[0].value,
+      "authenticated",
+    );
+    assert.equal(
+      (
+        await db.query<any>(
+          "select count(*)::integer n from public.crew_roster",
+        )
+      ).rows[0].n,
+      0,
+    );
+  } finally {
+    await db.close();
+  }
+});

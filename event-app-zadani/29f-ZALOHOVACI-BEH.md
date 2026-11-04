@@ -15,3 +15,7 @@ lockPath absolutní v existujícím skutečném parentdir bez koncového symlink
 Po úplném sběru createBackup(files,sources,key), vlastní readBackup před uploadem ověří finálníbalíček a vrácené počty počítat podleověřenéhomanifestu. Vygenerovat id crypto.randomUUID(), hashSHA256 šifrovanéhobufferu. Upload putExclusive(id,copyofbundle), poté nezávislé read(id); vrácené bytes musíbyt Buffer/Uint8Array, mít stejnou délku/sha256 a projítreadBackup s původnímklíčem. Až pakúspěšnýreturn. Upravováníindexu 'last success'/retence nebo hlášení úspěchu předreadback není dovoleno. Přiupload/readbackchybě ponechatpředchozívzdálenékopie, nicnemazat (novýneověřenýobjektjepropozdějšíaudit). Kroky nemají vlastníslepréretry.
 
 Chyby jen Error('BACKUP_JOB_NOT_READY'|'BACKUP_JOB_LOCKED'|'BACKUP_JOB_FAILED'), žádné raw child/provider/file/crypto chyby. Crypto klíč lokálníkopiivfinallyfill0, původnícallerklíčneměnit. Sběr/APIcallbackyjsou důvěryhodnýadapteród; syntetickétestyreadbacknejsoudůkazživéhoserveru, plánovačeneboskutčnéobnovy. Běh nezaručujepracipřivypnutémMacu. Completed questions=[], poznámky summary.
+
+## Stav2026-11-04
+
+Implementováno a nezávisle opraveno;17/17 testů skutečné kryptografie s řízenými zdroji a syntetickým remote adapterem. Ověřeno úplné pokrytí zdrojů, release před uploadem, čtení stažené šifrované kopie, zámky/souběh, chybové cesty a zachování vlastních kopií bajtů. Tyto testy nejsou důkaz skutečného cloudového úložiště nebo aktivního plánovače. Statické/neočekávané chyby vracejí jen tři určené kódy.
