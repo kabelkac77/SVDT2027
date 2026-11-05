@@ -1,5 +1,19 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-05 — importer připravený v kódu, skutečný převod zakázaný
+
+- [x] Implementovat a synteticky ověřit transakční V1 podle37/38. Předchozí nedokončený bod níže je tímto splněný pouze pro kód/testy.
+- [ ] Až později ověřit dostupný správný projekt a stav všech6 migrací; nedělat automatické DDL/granty podle přítomnosti tabulek.
+- [ ] Projít úplné privátní mapování všech kategorií/řádků: explicitní create/keep, zachované identity a verze. Stav/finance roku2027 nepotvrzovat z historie2026.
+- [ ] Určit konkrétního provozního operátora a způsob vystavení/odvolání neměnného schválení; funkce stage/revoke nejsou klientům povolené. Nastavit správného aktéra a ověřit minimální infrastrukturní přístup bez obcházení RLS.
+- [ ] Skutečně ověřit úplnou vzdálenou zálohu a izolovanou obnovu DB/Auth/Storage včetně nových4 tabulek. Backup receipt hash je reference, ne samostatný důkaz obnovy.
+- [ ] Potvrdit domluvené okno a limity hostingu/RPC/payloadů. Import vyžaduje read committed a dočasně blokuje zápisy pěti tabulek i u jiných ročníků. Ověřit víceklientový PostgreSQL souběh, odebrání role, timeout/nejistý výsledek a přesný retry téhož requestu.
+- [ ] Po novém cílovém snapshotu/otisku připravit soukromý plán0600, ověřit hashe a aktuální verze, ručně schválit s omezenou platností, předat až po samostatném výslovném povolení skutečného importu. Změněný cíl vyžaduje nový plán/schválení.
+- [ ] Po případném povoleném převodu znovu provést úplné čtecí porovnání, počty, provenance a dvouúčtovou/browser akceptaci; teprve potom řídit přechod z místní evidence.
+
+Nic z otevřených bodů není schválené mlčením. Žádný skutečný import, schválení, migrace nebo grant nyní neproběhl; pracovní SQLite/historie zůstávají beze změny.
+
+
 ## 2026-11-05 — příprava původu a rozdílového náhledu
 
 - [x] Neveřejný model35 v nové schema-only migraci: přesný source_text/hash, historie a audit, neměnné vazby, ročníky/RLS a ověřený autor;19 syntetických DB scénářů. Nebyl aplikovaný na skutečný projekt.

@@ -1,5 +1,16 @@
 # Spolupráce při vývoji a denní zálohy
 
+## 2026-11-05 — transakční počáteční importer crew (kód, bez aktivace)
+
+Implementováno a synteticky ověřeno podle [37](37-CREW-TRANSAKCNI-IMPORT.md): úplný počáteční převod kategorií, rosteru a oddělených odměn v jediné transakci s přesným zdrojovým balíčkem a vazbami. V1 umí pouze create nebo přesné keep, žádné přepisování, automatické slučování lidí/účtů nebo nové granty. Operátorské schválení váže skutečného správce, ročník, přesný plán/zdroj/cílový otisk a referenci zálohy; platnost, odvolání a jednorázové použití se ověřují na serveru. Stejný úspěšný požadavek se bezpečně opakuje, změněný obsah nebo cíl se odmítne. Při chybě se vrátí všechny změny včetně provenance/auditu.
+
+Čistý builder38 připraví plán jen z úplného explicitního mapování a serverového cílového přehledu; zůstává applyReady:false a nevolá schválení ani import. Přidaná šestá migrace starší soubory nemění; nový preflight kontroluje30 tabulek a25 funkcí, všechny migrace mají autoApply:false. Interní validátory, schvalování/odvolání a cache nemají klientská zápisová oprávnění.
+
+Ověření:264 aplikačních testů včetně16 nových importních scénářů,162 Python kontrol,37 původních Node kontrol, TypeScript a produkční build prošly. Zkouška460 smyšlených řádků/9 kategorií ověřila úplné vazby a zdroj; PGlite nepokrývá živý víceklientový PostgreSQL. [Evidence](crew-import-verification.json). Browser/E2E akceptace nyní neproběhla.
+
+Skutečný import, živé DDL, schválení, granty, deploy ani merge nebyly spuštěné. Pracovní SQLite a historie2026/2025 se nemění. Přístupy, mapování, provozní operátor, úplná záloha/obnova a výslovná aktivace zůstávají na později v [31](31-AKTIVACE-A-RUCNI-KONTROLY.md); nyní bez otázek. Další samostatná práce: soukromé čtecí rozhraní historie, předimportní kontrolní protokol a negativní víceklientové testy v odděleném PostgreSQL. Aktualizační importer je případný další rozsah, nikoli automaticky povolený overwrite.
+
+
 ## 2026-11-05 — neveřejný zdrojový model a porovnání převodu crew
 
 IMPLEMENTED / synteticky ověřeno: nová additive migrace35 zachovává přesný původní source_text a SHA256, historii/sloupce/audit/requests i zdrojové vazby. Balíčky a vazby čte pouze správce správného ročníku; koordinátor/finance/člen k nim nemá přístup. Jsou chráněné proti UPDATE/DELETE/TRUNCATE, přímé klientské zápisy nejsou povolené a žádné nové write RPC nevzniklo. Trigger ověřuje aktivní ročník/skutečného autora a vazby pracovního řádku2027 na původní historii2026. Tato vrstva je archiv původu, nikoli dokončený transakční importer.

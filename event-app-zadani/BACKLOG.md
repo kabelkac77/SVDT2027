@@ -1,5 +1,17 @@
 # MASTER BACKLOG
 
+## 2026-11-05 — transakční importer crew
+
+- [x] Nová schema-only migrace37: create/keep, úplnost zdroje, oddělené odměny, atomické provenance/vazby/audit a idempotence.
+- [x] Operátorské schválení vázané na správce/plán/zdroj/cíl, expirace, odvolání a jedno úspěšné použití; klient si jej nemůže sám vystavit.
+- [x] Čistý builder38 bez zápisu nebo generování cílových identit, applyReady:false i s připraveným plánem.
+- [x]264 app /162 Python /37 legacy kontrol, TypeScript a build;16 importních DB scénářů včetně460 syntetických řádků a rollbacku druhého řádku. Evidence crew-import-verification.json.
+- [ ] Dále samostatně: soukromé čtení původní historie v aplikaci a kontrolní protokol před převodem, bez živé aktivace.
+- [ ] Dále samostatně podle dostupnosti izolovaného PostgreSQL: skutečné víceklientové testy blokací, ztráty role a opakování. PGlite není důkaz souběhu.
+- [ ] Později s uživatelem podle31: projekt/přístupy, schválené mapování, operátor, úplná záloha/obnova, domluvené okno a výslovný aktivační pokyn. Skutečný import je nyní výslovně zakázaný.
+- [ ] Aktualizační synchronizace/overwrite mimo V1: případně navrhnout zvlášť, nic nepřepisovat automaticky.
+
+
 ## 2026-11-05 — neveřejný zdrojový model a porovnání převodu crew
 
 - [x] Neveřejné zdrojové balíčky/vazby a chráněný čtecí export cíle v kódu, bez produkční aktivace.

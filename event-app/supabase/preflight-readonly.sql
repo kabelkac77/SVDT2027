@@ -23,6 +23,10 @@ WITH expected(name,scope) AS (VALUES
  ('public.crew_requests','application'),
  ('public.crew_transfer_packages','application'),
  ('public.crew_transfer_links','application'),
+ ('public.crew_import_approvals','application'),
+ ('public.crew_import_revocations','application'),
+ ('public.crew_import_requests','application'),
+ ('public.crew_import_source_rows','application'),
  ('public.operations_grants','application'),
  ('public.operations_zones','application'),
  ('public.operations_tasks','application'),
@@ -57,7 +61,20 @@ WITH expected(signature) AS (VALUES
  ('public.crew_transfer_source_row(text,text,text)'),
  ('public.crew_transfer_capture()'),
  ('public.crew_transfer_immutable()'),
- ('public.crew_transfer_target_snapshot(uuid)')
+ ('public.crew_transfer_target_snapshot(uuid)'),
+ ('public.crew_import_immutable()'),
+ ('public.crew_import_json_unique(json,integer)'),
+ ('public.crew_import_json(text)'),
+ ('public.crew_import_rows(jsonb,text)'),
+ ('public.crew_import_source(text)'),
+ ('public.crew_import_uuid(text)'),
+ ('public.crew_import_plan(uuid,text)'),
+ ('public.crew_import_actor(uuid,boolean)'),
+ ('public.crew_import_target_fingerprint(uuid)'),
+ ('public.crew_import_target_preview(uuid)'),
+ ('public.crew_import_stage_approval(uuid,text,text,timestamptz)'),
+ ('public.crew_import_revoke(uuid,uuid)'),
+ ('public.crew_import_apply(uuid,uuid,uuid,text,text)')
 ), procedures AS (
  SELECT signature,to_regprocedure(signature) AS object_id FROM expected
 ), roles AS (
