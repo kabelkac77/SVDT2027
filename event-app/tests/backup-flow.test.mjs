@@ -16,6 +16,7 @@ import {
   collectCrewSnapshot,
 } from "../tools/backup-local.js";
 import { collectPostgres } from "../tools/backup-postgres.js";
+import { collectStorage } from "../tools/backup-storage.js";
 import { runBackup } from "../tools/backup-runner.js";
 import { readBackup, restoreBackupExclusive } from "../tools/backup-bundle.js";
 const PY = realpathSync(
@@ -98,6 +99,36 @@ function setup() {
         },
       ],
     };
+  const storage = {
+    async listBuckets() {
+      return { data: [{ id: "crew", public: false }], error: null };
+    },
+    from() {
+      return {
+        async listV2() {
+          return {
+            data: {
+              objects: [
+                {
+                  id: "o1",
+                  key: "attachment.bin",
+                  name: "attachment.bin",
+                  updated_at: "fixed",
+                  metadata: { size: objectBytes.length },
+                },
+              ],
+              folders: [],
+              hasNext: false,
+            },
+            error: null,
+          };
+        },
+        async download() {
+          return { data: new Blob([objectBytes]), error: null };
+        },
+      };
+    },
+  };
   const collector = (sources, fn) => ({
     sources,
     collect: async () => ({ complete: true, files: await fn() }),
@@ -127,18 +158,7 @@ function setup() {
         requiredRelations: REL,
       }),
     ),
-    collector(["storage"], async () => [
-      {
-        source: "storage",
-        path: "storage/objects/00000001.bin",
-        bytes: objectBytes,
-      },
-      {
-        source: "storage",
-        path: "storage/inventory.json",
-        bytes: Buffer.from(JSON.stringify(inventory)),
-      },
-    ]),
+    collector(["storage"], () => collectStorage({ storage, inventory })),
   ];
   const remote = new Map(),
     key = Buffer.alloc(32, 42);
@@ -173,7 +193,7 @@ function setup() {
     clean: () => rmSync(root, { recursive: true, force: true }),
   };
 }
-test("synthetic six-source flow collects real SQLite and restores data through real encryption; PG executable, Storage collector and remote are explicit fixtures", async () => {
+test("synthetic six-source flow collects real SQLite and restores data through real encryption; PG executable, Storage SDK and remote are fixtures", async () => {
   const f = setup();
   try {
     const result = await runBackup(f.options),

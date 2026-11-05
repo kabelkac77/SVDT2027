@@ -43,6 +43,7 @@ function isSafeIdentityText(value) {
   return (
     typeof value === "string" &&
     value.length > 0 &&
+    value.length <= 1000 &&
     !hasC0OrDel(value) &&
     !hasLoneSurrogate(value)
   );
@@ -278,6 +279,7 @@ async function listBuckets(storage) {
   const bucketIds = new Set();
   let offset = 0;
   let pageCount = 0;
+  let metadataBytes = 0;
 
   while (true) {
     pageCount++;
@@ -301,6 +303,8 @@ async function listBuckets(storage) {
 
     for (const rawBucket of page) {
       const bucket = validateNetworkBucketEntry(rawBucket);
+      metadataBytes += utf8ByteLength(JSON.stringify(bucket));
+      if (metadataBytes > MAX_TOTAL_SIZE) fail();
       if (bucketIds.has(bucket.id)) fail();
       bucketIds.add(bucket.id);
       buckets.push(bucket);

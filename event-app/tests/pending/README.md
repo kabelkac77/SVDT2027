@@ -1,5 +1,5 @@
 # Připravené akceptační scénáře
 
-Tyto soubory jsou návrh testů modulů, které zatím nejsou implementované. Nejsou součástí běžného npm test a nejsou započítané do počtu prošlých testů. Ověřena je pouze syntaxe přes node --check.
+Původních11 Storage scénářů bylo přesunuto do tests/backup-storage.test.mjs a rozšířeno o regresní scénáře review. Po skutečném spuštění jsou součástí běžného npm test a CI. Další nepřipojené testy v této složce se nikdy nepočítají mezi prošlé jen na základě syntaxe.
 
-Po dodání odpovídajícího kolektoru/běhu přesunout soubor do nadřazené složky tests, přejmenovat na *.test.mjs, změnit relativní import ../../tools na ../tools a skutečně spustit. Teprve po review a průchodu testů označit funkci za implementovanou. Fake Storage SDK a remote adapter neprokazují živé oprávnění, cloudovou kopii nebo běžící plánovač.
+Fake Storage SDK a remote adapter neprokazují živé oprávnění, cloudovou kopii nebo běžící plánovač. Propojený test používá skutečné místní/PG/Storage kolektory, kryptografii a obnovu syntetické SQLite, ale samotné pg_dump/pg_restore executable, Storage SDK a vzdálený cíl jsou fiktivní.
