@@ -27,7 +27,7 @@ Použít oddělené připravené účty a skutečné user JWT, nikoli service_ro
 | Koordinátor bez finančního grantu | Provozní editace vlastního ročníku, žádné odměny/jejich audit nebo správa členství |
 | Výslovně finančně oprávněný koordinátor | Oddělené odměny ve svém ročníku, žádná automatická správa členství nebo celý rozpočet jiného modulu |
 | Crew správce | Správa crew a existujících členství podle serveru; účet se nevytváří automaticky z telefonu/jména |
-| Registrace | Samostatně přidělený grant; provozní či finanční role sama registrace neodemkne |
+| Registrace | Správce má přístup podle serverového modelu; ostatní jen po samostatném grantu. Koordinace nebo finanční grant samy registrace neodemknou |
 | Odebraná role nebo finanční grant | Nový read/write i opakování starého requestu znovu ověří právo; UI skryje dříve načtená citlivá data |
 | Archiv ročníku | Provozní a finanční data readonly, správce může odebrat přístup; historie se nepřepisuje |
 
