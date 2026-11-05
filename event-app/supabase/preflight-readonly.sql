@@ -56,7 +56,8 @@ WITH expected(signature) AS (VALUES
  ('public.operations_write(uuid,text,jsonb,uuid)'),
  ('public.crew_transfer_source_row(text,text,text)'),
  ('public.crew_transfer_capture()'),
- ('public.crew_transfer_immutable()')
+ ('public.crew_transfer_immutable()'),
+ ('public.crew_transfer_target_snapshot(uuid)')
 ), procedures AS (
  SELECT signature,to_regprocedure(signature) AS object_id FROM expected
 ), roles AS (

@@ -1,5 +1,15 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-05 — příprava původu a rozdílového náhledu
+
+- [x] Neveřejný model35 v nové schema-only migraci: přesný source_text/hash, historie a audit, neměnné vazby, ročníky/RLS a ověřený autor;19 syntetických DB scénářů. Nebyl aplikovaný na skutečný projekt.
+- [x] Čisté porovnání36 a soukromý report nad snapshotem. Bez cílového exportu/mapování nic nesrovnává jako prázdnou DB a nic nemění.
+- [ ] Později získat úplný oprávněný cílový export včetně odměn a provenance/vazeb; veřejný nebo RLS omezený přehled není úplný. Potvrdit přesný projekt, ročník a skutečný migrační stav před použitím5migrací.
+- [ ] Později projít mapování jednotlivých kategorií/řádků, osob/skupin a účtových oprávnění. Žádné automatické slučování nebo cílové UUID nebyly vytvořené.
+- [ ] Implementovat a synteticky ověřit transakční idempotentní importer nad schváleným plánem a verzemi cíle; potom samostatný aktivační pokyn. Nyní neexistuje nové write RPC nebo produkční import.
+- [ ] Před aktivací ověřit skutečnou úplnou zálohu/obnovu včetně nových tabulek, živé víceúčtové zákazy a prohlížeč podle34. Retenční/správcovský zásah do neměnných zdrojů musí být výslovně řízený, nikoli běžná editace crew.
+
+
 ## 2026-11-05 — posun příloh a převodu
 
 - [x] Storage inventář a kolektor hotové,32 vlastních scénářů plus propojená obnova. Nespouštěný stav z předchozího zápisu níže je historický.

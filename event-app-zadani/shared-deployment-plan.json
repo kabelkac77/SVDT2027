@@ -41,7 +41,7 @@
     },
     {
       "name": "202611050001_crew_transfer.sql",
-      "sha256": "aea05d72f2633465dd486d4c8df1ff8222e9ce4649ce3f3a5a634faa21d3b176",
+      "sha256": "3f34d5f5e7bb755843109b64bdb75eec678633b4a5a2ada39e569c90ee715a71",
       "dependsOn": [
         "202609280001_partners.sql",
         "202609290001_partner_history.sql",

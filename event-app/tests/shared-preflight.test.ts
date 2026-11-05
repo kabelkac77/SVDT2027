@@ -45,7 +45,7 @@ test("catalog preflight reports absent objects on an empty database without assu
     const functions = rows.find((r) =>
       r.some((x: any) => x.signature?.includes("crew_write")),
     )!;
-    assert.equal(functions.length, 11);
+    assert.equal(functions.length, 12);
     assert.ok(functions.every((r: any) => r.present === false));
   } finally {
     await db.close();
@@ -85,13 +85,21 @@ test("catalog preflight checks RLS and RPC permissions without reading or changi
       assert.equal(row.anon_execute, false);
       assert.equal(row.public_execute, false);
     }
-    for (const row of rpc.filter((r: any) =>
-      r.signature.includes("crew_transfer_"),
+    for (const row of rpc.filter(
+      (r: any) =>
+        r.signature.includes("crew_transfer_") &&
+        !r.signature.includes("target_snapshot"),
     )) {
       assert.equal(row.authenticated_execute, false);
       assert.equal(row.anon_execute, false);
       assert.equal(row.public_execute, false);
     }
+    const targetRpc = rpc.find((r: any) =>
+      r.signature.includes("crew_transfer_target_snapshot"),
+    );
+    assert.equal(targetRpc.authenticated_execute, true);
+    assert.equal(targetRpc.anon_execute, false);
+    assert.equal(targetRpc.public_execute, false);
     assert.deepEqual(
       (await db.query("select * from events")).rows,
       before.rows,

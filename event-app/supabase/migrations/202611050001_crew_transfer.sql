@@ -31,6 +31,11 @@ RETURNS jsonb LANGUAGE plpgsql IMMUTABLE SET search_path='' AS $$
 DECLARE doc jsonb; part jsonb; chosen jsonb; row_value jsonb; col jsonb; col_name text;
  names text[]:=ARRAY[]::text[]; id_index integer; result jsonb; tables_count integer:=0; rows_count integer:=0; i integer;
 BEGIN
+ -- json retains duplicate object keys; reject ambiguous table descriptors before the jsonb lookup.
+ FOR part IN SELECT raw.value::jsonb FROM json_array_elements(source_text::json) raw(value)
+ WHERE json_typeof(raw.value)<>'object' OR EXISTS(SELECT 1 FROM json_each(raw.value) GROUP BY key HAVING count(*)>1) LOOP
+  RAISE EXCEPTION 'CREW_TRANSFER_INVALID_SOURCE' USING ERRCODE='22023';
+ END LOOP;
  doc:=source_text::jsonb;
  IF jsonb_typeof(doc)<>'array' THEN RAISE EXCEPTION 'CREW_TRANSFER_INVALID_SOURCE' USING ERRCODE='22023'; END IF;
  FOR part IN SELECT value FROM jsonb_array_elements(doc) LOOP
@@ -113,4 +118,34 @@ CREATE TRIGGER crew_transfer_links_no_truncate BEFORE TRUNCATE ON public.crew_tr
 REVOKE ALL ON public.crew_transfer_packages,public.crew_transfer_links FROM public,anon,authenticated;
 GRANT SELECT ON public.crew_transfer_packages,public.crew_transfer_links TO authenticated;
 REVOKE ALL ON FUNCTION public.crew_transfer_source_row(text,text,text),public.crew_transfer_capture(),public.crew_transfer_immutable() FROM public,anon,authenticated;
+-- Read-only complete target export; every subquery uses the same statement snapshot.
+CREATE FUNCTION public.crew_transfer_target_snapshot(e uuid) RETURNS jsonb
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path='' AS $$
+DECLARE result jsonb;
+BEGIN
+ IF auth.uid() IS NULL OR coalesce(public.crew_role(e),'')<>'admin'
+ THEN RAISE EXCEPTION 'CREW_TRANSFER_ACCESS_DENIED' USING ERRCODE='42501'; END IF;
+ WITH bounds AS (
+  SELECT (SELECT count(*) FROM public.crew_categories WHERE edition_id=e) AS categories,
+         (SELECT count(*) FROM public.crew_roster WHERE edition_id=e) AS entries,
+         (SELECT count(*) FROM public.crew_compensation WHERE edition_id=e) AS compensation,
+         (SELECT count(*) FROM public.crew_transfer_packages WHERE edition_id=e) AS packages,
+         (SELECT count(*) FROM public.crew_transfer_links WHERE edition_id=e) AS links
+ )
+ SELECT CASE WHEN greatest(b.categories,b.entries,b.compensation,b.packages,b.links)>10000 THEN NULL ELSE
+  jsonb_build_object('complete',true,'canReadCompensation',true,'provenanceReady',true,'capturedAt',statement_timestamp(),
+   'edition',jsonb_build_object('id',d.id,'year',d.year,'archived',d.archived),
+   'categories',coalesce((SELECT jsonb_agg(to_jsonb(c) ORDER BY c.id) FROM public.crew_categories c WHERE c.edition_id=e),'[]'::jsonb),
+   'entries',coalesce((SELECT jsonb_agg(to_jsonb(r) ORDER BY r.id) FROM public.crew_roster r WHERE r.edition_id=e),'[]'::jsonb),
+   'compensation',coalesce((SELECT jsonb_agg(to_jsonb(c) ORDER BY c.roster_id) FROM public.crew_compensation c WHERE c.edition_id=e),'[]'::jsonb),
+   'sourcePackages',coalesce((SELECT jsonb_agg(jsonb_build_object('id',p.id,'edition_id',p.edition_id,'source_sha256',p.source_sha256) ORDER BY p.id) FROM public.crew_transfer_packages p WHERE p.edition_id=e),'[]'::jsonb),
+   'sourceLinks',coalesce((SELECT jsonb_agg(jsonb_build_object('package_id',l.package_id,'edition_id',l.edition_id,'source_row_id',l.source_row_id,'roster_id',l.roster_id) ORDER BY l.package_id,l.source_row_id) FROM public.crew_transfer_links l WHERE l.edition_id=e),'[]'::jsonb))
+ END INTO result FROM public.editions d CROSS JOIN bounds b WHERE d.id=e AND d.year=2027;
+ IF NOT FOUND THEN RAISE EXCEPTION 'CREW_TRANSFER_EDITION_INVALID' USING ERRCODE='22023'; END IF;
+ IF result IS NULL THEN RAISE EXCEPTION 'CREW_TRANSFER_TARGET_LIMIT' USING ERRCODE='22023'; END IF;
+ RETURN result;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.crew_transfer_target_snapshot(uuid) FROM public,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.crew_transfer_target_snapshot(uuid) TO authenticated;
 COMMIT;

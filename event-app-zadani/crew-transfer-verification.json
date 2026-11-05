@@ -1,0 +1,37 @@
+{
+  "verified_on": "2026-11-05",
+  "scope": "private_crew_provenance_and_readonly_reconciliation",
+  "app_tests": 248,
+  "host_python_tests": 148,
+  "legacy_node_tests": 37,
+  "typecheck": true,
+  "production_build": true,
+  "database_scenarios": 19,
+  "reconciliation_scenarios": 17,
+  "preflight_tables": 26,
+  "preflight_functions": 12,
+  "migrations": 5,
+  "files": {
+    "event-app/supabase/migrations/202611050001_crew_transfer.sql": "3f34d5f5e7bb755843109b64bdb75eec678633b4a5a2ada39e569c90ee715a71",
+    "event-app/supabase/preflight-readonly.sql": "817eb4f263c974b608a26fecec7d6e7e0a58f1c5f7aef01efc623512559ad319",
+    "event-app/tests/crew-transfer-database.test.ts": "5be849974f7afc66edfc1e1a629265da6bdeb3fb38b7ede11126187a517689b5",
+    "event-app/tests/shared-preflight.test.ts": "031a80dd9eda2cdd1ca824af911f42d57b6be08f950fa6e3914f1d47c70630b3",
+    "event-app/tools/crew_transfer_reconcile.py": "9f88cd7920437f9c111a0ac9ced95918602feb0ad7a1bf712aabcfca6a83bc3a",
+    "event-app/tests/crew_transfer_reconcile_test.py": "edcbdd8ef423e92afdfd7e6518b15af4b2f1a70595c993c7ccb39d9c30c9ac6e",
+    "event-app-zadani/shared-deployment-plan.json": "941c4c298c798aab536b804b9f78cb54de0c147eb505634a54347eb80349a711"
+  },
+  "real_user_data_in_tests_or_model": false,
+  "private_real_snapshot_report": {
+    "performed": true,
+    "target_export_available": false,
+    "mapping_provided": false,
+    "source_unchanged": true,
+    "target_written": false,
+    "apply_ready": false
+  },
+  "live_ddl_or_grants_applied": false,
+  "live_import_performed": false,
+  "browser_acceptance": false,
+  "live_multi_account_acceptance": false,
+  "transactional_importer_implemented": false
+}
