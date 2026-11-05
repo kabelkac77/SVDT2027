@@ -18,7 +18,8 @@
     "event-app/tests/shared-preflight.test.ts": "031a80dd9eda2cdd1ca824af911f42d57b6be08f950fa6e3914f1d47c70630b3",
     "event-app/tools/crew_transfer_reconcile.py": "9f88cd7920437f9c111a0ac9ced95918602feb0ad7a1bf712aabcfca6a83bc3a",
     "event-app/tests/crew_transfer_reconcile_test.py": "edcbdd8ef423e92afdfd7e6518b15af4b2f1a70595c993c7ccb39d9c30c9ac6e",
-    "event-app-zadani/shared-deployment-plan.json": "941c4c298c798aab536b804b9f78cb54de0c147eb505634a54347eb80349a711"
+    "event-app-zadani/shared-deployment-plan.json": "941c4c298c798aab536b804b9f78cb54de0c147eb505634a54347eb80349a711",
+    "event-app/package.json": "7ca5d5e641ef46366f9afd00ad3f9e95f3235fe86f6f14eb3b6c4c25d7d8a389"
   },
   "real_user_data_in_tests_or_model": false,
   "private_real_snapshot_report": {
@@ -33,5 +34,11 @@
   "live_import_performed": false,
   "browser_acceptance": false,
   "live_multi_account_acceptance": false,
-  "transactional_importer_implemented": false
+  "transactional_importer_implemented": false,
+  "test_execution": {
+    "process_concurrency": 1,
+    "serial_local_run": 248,
+    "skipped": 0,
+    "initial_linux_ci_failure": "native V8 jit_page.has_value in existing database suite; no failing domain assertion"
+  }
 }
