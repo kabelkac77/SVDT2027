@@ -1,5 +1,14 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-05 — hranice transakčního počátečního převodu
+
+Uživatelský pokyn: pokračovat samostatně na importeru, skutečný import zatím nespouštět, přístupy/potvrzení evidovat na později bez dotazů. Implementace a syntetické testy37/38 tento zákaz nemění.
+
+Technické rozhodnutí V1: celé mapování, pouze create nebo přesné keep a samostatné odměny; žádné overwrite, slučování jmen/kontaktů, nové Person/Auth nebo granty. Přesné UTF8 plan/source hashe a serverový otisk cíle jsou navázané na neměnné operátorské schválení pro konkrétního správce/ročník. Nový import vyžaduje nearchivovaný2027, read committed a krátké uzamčené okno. Pozdní chyba vrací celou transakci. Expirace brání novému zápisu, revokace brání i replay; stále se ověřuje aktuální role a archiv.
+
+Připravený plán není souhlas ani důkaz obnovy zálohy. Neurčené cílové UUID/role se nedoplňují automaticky. Konkrétní provozní operátor, mapování, backup/restore protokol, limity RPC a víceklientová/browser akceptace zůstávají otevřené podle31. Starší zápisy níže popisují předchozí fáze; nová write RPC existuje pouze v připraveném kódu, nikoli aktivované produkci.
+
+
 ## 2026-11-05 — původ zdrojů a předimportní porovnání
 
 Technická implementace35 uchovává přesné původní zdrojové bytes jako UTF8 source_text s SHA256, všechny původní tabulky/historii/extra data a neměnné vazby. Původ čte jen správce ročníku; finanční grant koordinátora jej neodemyká. Přímé klientské mutace a interní funkce nejsou povolené. Metadata/audit mají skutečného autora bez duplikování raw osobních údajů do auditu. Již existující migrace zůstaly beze změny.

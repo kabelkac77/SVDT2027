@@ -20,6 +20,7 @@ async function setup() {
     "202611020001_crew.sql",
     "202611020002_operations.sql",
     "202611050001_crew_transfer.sql",
+    "202611050002_crew_import.sql",
   ])
     await db.exec(
       await readFile(
@@ -40,12 +41,12 @@ test("catalog preflight reports absent objects on an empty database without assu
     const tables = rows.find((r) =>
       r.some((x: any) => x.name === "public.crew_roster"),
     )!;
-    assert.equal(tables.length, 26);
+    assert.equal(tables.length, 30);
     assert.ok(tables.every((r: any) => r.present === false));
     const functions = rows.find((r) =>
       r.some((x: any) => x.signature?.includes("crew_write")),
     )!;
-    assert.equal(functions.length, 12);
+    assert.equal(functions.length, 25);
     assert.ok(functions.every((r: any) => r.present === false));
   } finally {
     await db.close();
@@ -66,6 +67,10 @@ test("catalog preflight checks RLS and RPC permissions without reading or changi
       "public.operations_registrations",
       "public.crew_transfer_packages",
       "public.crew_transfer_links",
+      "public.crew_import_approvals",
+      "public.crew_import_revocations",
+      "public.crew_import_requests",
+      "public.crew_import_source_rows",
     ]) {
       const row = tables.find((r: any) => r.name === name);
       assert.equal(row.present, true);
@@ -91,6 +96,17 @@ test("catalog preflight checks RLS and RPC permissions without reading or changi
         !r.signature.includes("target_snapshot"),
     )) {
       assert.equal(row.authenticated_execute, false);
+      assert.equal(row.anon_execute, false);
+      assert.equal(row.public_execute, false);
+    }
+    for (const row of rpc.filter((r: any) =>
+      r.signature.includes("crew_import_"),
+    )) {
+      assert.equal(row.present, true);
+      assert.equal(
+        row.authenticated_execute,
+        /crew_import_(target_preview|apply)\(/.test(row.signature),
+      );
       assert.equal(row.anon_execute, false);
       assert.equal(row.public_execute, false);
     }

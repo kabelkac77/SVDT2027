@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-05",
+  "scope": "synthetic_only_no_live_import",
+  "app_tests": 264,
+  "host_python_tests": 162,
+  "legacy_node_tests": 37,
+  "typecheck": true,
+  "production_build": true,
+  "database_import_scenarios": 16,
+  "python_plan_scenarios": 14,
+  "scale_fixture": {
+    "rows": 460,
+    "categories": 9,
+    "synthetic_only": true
+  },
+  "preflight_tables": 30,
+  "preflight_functions": 25,
+  "migrations": 6,
+  "live_ddl_or_grants_applied": false,
+  "live_import_performed": false,
+  "live_operator_approval_created": false,
+  "real_user_data_in_tests_or_model": false,
+  "browser_acceptance": false,
+  "live_multi_account_acceptance": false,
+  "offsite_backups_activated": false,
+  "source_sqlite_changed": false,
+  "importer_scope": "initial_create_or_exact_keep_only",
+  "test_execution": {
+    "process_concurrency": 1,
+    "skipped": 0
+  },
+  "files": {
+    "event-app/supabase/migrations/202611050002_crew_import.sql": "3193d56460ada463e7a888a3c2401e99d4f924909de6776392eb2c27d9dbc47c",
+    "event-app/tools/crew_import_plan.py": "be8bb1fdb20f0c1b9e8f951cd9cc93aa4ff6c2944172eb613cfd355bba799432",
+    "event-app/tests/crew_import_plan_test.py": "cfaead957b5715e8072407918bf66f5ad30df5c31deccec03a4ce05877d3c182",
+    "event-app/tests/crew-import-database.test.ts": "99d5fd7132254689f207a08fff1267b560291717378845662c36ce2402dbe770",
+    "event-app/supabase/preflight-readonly.sql": "479c1efbc23fb04c87d6bd65252d51cffe4845aae13b3f21329642235e015bd4",
+    "event-app/tests/shared-preflight.test.ts": "511fbd4ab7230f4dc710ff34f66180e324fa42010e0d849df04f8f6818bb727f",
+    "event-app-zadani/shared-deployment-plan.json": "77a41f78c88b39dbf3878caf01a5668c03aea8617b00ae3967c5fb106e2d97d0"
+  }
+}

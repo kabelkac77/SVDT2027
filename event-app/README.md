@@ -137,3 +137,10 @@ Schema-only `supabase/migrations/202611050001_crew_transfer.sql` přidává priv
 Pro úplný cílový podklad je připravené chráněné čtecí RPC `crew_transfer_target_snapshot(e)` ve stejné migraci. Povolí jen správce správného ročníku2027, vrací jedno konzistentní čtení včetně odměn a pouze metadat provenance, bez source_text. Jeho zpřístupnění v reálném projektu vyžaduje pozdější aktivaci migrace; chyba nebo chybějící RPC není úspěšný prázdný export. Syntetický integrační scénář propojuje tento SQL výstup s Python porovnáním, ne s živou službou.
 
 Testovací procesy běží přes npm test s --test-concurrency=1: po rozšíření databázových scénářů první Linux CI narazilo na nativní V8 JIT alokaci během souběhu WASM/PGlite procesů. Počet testů ani jejich ověřované souběžné scénáře uvnitř testů se tím nemění; testy se nevynechávají.
+
+
+### Počáteční transakční import crew — bez živé aktivace
+
+Specifikace37/38 a `crew-import-verification.json` popisují připravenou šestou migraci. V1 vytváří nebo přesně ponechává celé mapování, oddělené odměny a původ zdroje v jediné transakci; nenabízí UPDATE/overwrite nebo slučování osob. Neměnné operátorské schválení váže aktéra, ročník, přesné hashe a referenci protokolu zálohy. Stage/revoke nejsou spustitelné klientským účtem; apply není nyní zapojené do UI/CLI. Schválení, DDL, granty nebo skutečný import jsou samostatné budoucí řízené kroky podle31, nyní výslovně zakázané.
+
+Čistá Python funkce `build_import_plan` v tools/crew_import_plan.py nemá FS/network/DB vedlejší účinky. Bez kompletního explicitního mapování a chráněného cílového exportu žádný plán nevytvoří. Ani s plánem nevrací applyReady:true nebo neuděluje souhlas. Soukromé výsledky a skutečné podklady zůstávají mimo Git/model/logy. Testy používají jen syntetické fixture; PGlite nenahrazuje víceklientový PostgreSQL nebo cloudovou obnovu. Nové helpery ověřují běžné Python unittesty a crew-import-database.test.ts v sériové sadě npm test.

@@ -29,3 +29,13 @@ V jediné transakci vzniknou kategorie, roster/odměny, původní balíček, vš
 ## Akceptace
 
 Synteticky ověřit celý nový import, keep a smíšený create/keep, samostatné odměnyNULL/0/barter/merch, přesný původní zdroj a úplné vazby, historii a pořadí/sloupce beze změny, idempotentní opakování, reuse requestu s jiným obsahem, znovupoužití schválení, expiraci/revokaci, ztrátu role/archiv/cizí ročník, podvržený actor a přímé mutace schválení/requestů, změněný otisk/verze/UUID kolizi, neplatné/duplicitní JSON klíče a zdrojové vazby, vynechaný zdrojový řádek, žádné účty/Person/granty, pozdní selhání druhého řádku s rollbackem všeho a následný read snapshot+reconciliation. Skutečný víceklientový PostgreSQL souběh a limity hostingu/RPC zůstávají živá akceptace; PGlite je nenahrazuje.
+
+## Implementovaný stav a meze ověření
+
+Nová migrace202611050002 přidává4 privátní tabulky: approvals/revocations/requests a immutable cache source row/history IDs. Cache se plní až po jednorázové validaci úplného source_text ve stejné transakci. Existující capture trigger se v nové migraci rozšiřuje o tuto privátní cestu; původní parser/ověření zůstává fallback pro jiné záchyty. Tím se zdroj neparsuje znovu u každé importní vazby. Přímé klientské čtení/zápis cache ani volání validátorů není povolené. Původních5 souborů migrací je beze změny.
+
+Stage/revoke/apply vyžadují read committed; starý opakovatelný transakční snapshot se odmítne. JSON validace odmítá duplicitní klíče, nesprávné tabulky/šířky/typy, neplatné roky/reference, scalar/blob značky a nekonečná čísla, hloubku nad64. Chybové kódy neobsahují raw payloady. Zdrojové extra buňky zůstávají ve zdrojovém balíčku, nevytvářejí nové aplikační sloupce.
+
+16 DB scénářů skutečně prošlo v PGlite včetně rollbacku druhého řádku, změn otisků/obsahu, revokace/expirace/replay, přímých zákazů, exact keep se zachováním existujícího Person/účtu/verzí/požadavků kategorie a zkoušky460 smyšlených lidí/9 kategorií. Integrační test použil čistý Python builder se skutečným serverovým fingerprintem ze syntetického DB snapshotu.14 samostatných Python scénářů ověřuje generování i blokování plánu. Úplné počty a hashe [evidence](crew-import-verification.json).
+
+Nové RPC není nyní zapojené do UI ani do spouštěcího CLI. Skutečný PostgreSQL ve více připojeních, hostované limity a nejistý síťový výsledek zůstávají akceptace na později; nic v této sadě neslibuje aktivní vzdálené zálohy nebo živé sdílení.
