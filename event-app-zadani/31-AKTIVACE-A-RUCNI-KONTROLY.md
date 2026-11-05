@@ -2,6 +2,18 @@
 
 Neuzavírat mlčením. Uživatel chce samostatnou implementaci a společný průchod později. Tento dokument odděluje konkrétní potřebné vstupy od dalších nezávislých vývojových úkolů. Neobsahuje secrets nebo osobní kontakty.
 
+## Stav přípravy 2026-11-05
+
+- [x] Místní zdroje/vstupy a SQLite snapshot/export, PostgreSQL custom dump, šifrovaný koordinátor a syntetické vzdálené ověření jsou v kódu.
+- [x] Soukromě ověřená místní obnova skutečné crew bez změny pracovní SQLite/WAL; není to vzdálená úplná záloha.
+- [x] READ ONLY katalogový preflight, tři syntetické DB scénáře a inventář čtyř migrací; postup32.
+- [ ] Doplnit Storage kolektor podle29e; nativní návrh při posledním běhu nevznikl. Připravené testy zůstávají nespouštěné.
+- [ ] Potvrdit úplný soukromý inventář vstupů, včetně dostupné kopie původního personálního sešitu; na dříve uvedené cestě nebyl dostupný. Neprocházet automaticky celý disk.
+- [ ] Samostatné exporty skutečných PostgreSQL provozních tabulek pro čitelnost a zvláštní obnovovací plán globálních rolí/služeb. SQLite JSON/CSV není export celé Supabase služby; XLSX zatím není dodané.
+- [ ] Vzdálené připojení/executor, omezené časové a velikostní limity, plánovač, hlídání zmeškaného běhu, retence a skutečná obnova. Neaktivovat jen na základě zelených fixture testů.
+
+Nativní Claude Pro byl ověřený jako přihlášený v oprávněném kontextu. Poslední vývojová chyba není doložený důvod pro nové přihlášení; automatické produkční zálohy nebudou mít závislost na Claude účtu. Vše níže nadále čeká na pozdější aktivaci/potvrzení.
+
 ## Sdílený provoz
 
 - Ověřit správnou adresu a dostupnost existujícího Supabase projektu. Diagnostika 2026-11-02: uložená projektová adresa má očekávaný formát, její DNS vrací ENOTFOUND, veřejná doména služby se překládá; žádný skutečný záznam se nečetl ani neměnil. Nevyvozovat z toho zánik projektu.

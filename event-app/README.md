@@ -95,3 +95,31 @@ První provozní V1 sdílí Auth a výběr ročníku s crew. Úkoly a harmonogra
 `npm test` nyní zahrnuje i MJS testy šifrovaného zálohovacího balíčku. Provozní testy používají pouze syntetická data, PGlite/HTTP/SSR a jednotkovou hranici hooku; nepokrývají skutečný prohlížeč nebo živé OAuth. Esbuild byl již součástí testovacího stromu tsx, jeho stejná verze je nyní přímá dev závislost pro izolované stavové/SSR testy. Čisté npm ci s ignore-scripts prošlo.
 
 Skutečná místní evidence se do sdílené DB sama neimportuje. Nepotvrzené kapacity/čísla závodníků, mapový podklad, příchody/hotovo členů, realtime/offline, účty a aktivace jsou v zadání31. Knihovna záloh neznamená aktivní úplné automatické vzdálené zálohy; ty čekají na kolektory, přístupy, vzdálené ověření a obnovu29b.
+
+## Zálohovací knihovny a předprovozní kontrola
+
+`tools/backup-local.js`, `backup-postgres.js` a `backup-runner.js` jsou serverové ESM knihovny. Neimportovat je do klienta. Nemají automaticky nastavený cíl, přístupy, CLI ani plánovač. Produkční zálohování nepotřebuje Claude účet; Claude je pouze vývojový postup.
+
+`runBackup({collectors,key,destination,lockPath,consistency})` vyžaduje všech šest zdrojů: `sources`, `crew`, `inputs`, `postgres`, `storage`, `exports`. Každý zdroj má právě jednoho vlastníka. Jeden kolektor smí dodat `crew` i `exports` ze stejného SQLite snímku:
+
+```js
+const crewCollector = {
+  sources: ["crew", "exports"],
+  async collect() {
+    const files = await collectCrewSnapshot({ database, pythonExecutable, parent });
+    return { complete: true, files };
+  },
+};
+```
+
+Kolektor spouštět až uvnitř `collect()`, nikoli předem vytvořeným Promise. Runner nejprve získá exkluzivní zámek a zavolá `consistency.acquire()`. Ta musí skutečně zajistit dohodnuté konzistentní okno bez zápisů, vrátit funkci uvolnění a pokrýt také zdroje/vstupy; pouhá prázdná funkce není důkaz konzistence. Soubory a jejich bajty se zachytí před uvolněním okna. Cizí existující zámek se nemaže; jeho vyšetření je zásah operátora.
+
+Zdroje a soukromé vstupy mají explicitní schválený inventář cest, žádné rekurzivní hledání na disku. Chybějící původní podklad nesmí být označený za úspěšně zálohovaný. PostgreSQL `requiredRelations` musí odpovídat ověřenému skutečně nasazenému schématu; nepředpokládat, že pending migrace už jsou na serveru. Použít kompatibilní absolutní `pg_dump`/`pg_restore`, soukromé service/pass soubory a oddělený oprávněný přístup. Dump obsahuje databázové ACL, ale ne globální serverové role; jejich bezpečný obnovovací plán je zvlášť.
+
+Storage kolektor podle29e zatím není implementovaný; jeho připravené testy nejsou započítané mezi prošlé. Potřebuje serverový privilegovaný SDK klient a nezávislý úplný inventář objektů (např. z oprávněného DB snapshotu v témže konzistentním okně). Nesmí použít veřejný aplikační Supabase singleton ani odvodit `complete:true` z téhož potenciálně omezeného RLS listu. Collector porovnává stav před i po stažení. Podporuje aktuální standardní objekty; archivované/verzované historie a jiné typy bucketů zastaví běh.
+
+Klíč je 32 bajtů ze samostatného úložiště tajemství se záložní úschovou mimo tento počítač. `destination` má `kind:"remote"`, `putExclusive(id,encryptedBytes)` bez přepsání a `read(id)` s novým skutečným čtením vzdáleného objektu. Adapter nesmí vracet uploadovaný Buffer z místní cache; musí ověřit identitu cíle, práva a omezit velikost/čas HTTP operací. Runner porovná bajty, checksum a ověří dešifrování; žádný automatický delete/retence není implementovaný. Syntetický adapter neprokazuje dostupný cloud.
+
+Omezení V1: nejvýše 10 000 souborů / 128 MiB nekomprimovaných bajtů dohromady. Při překročení běh selže a nevytvoří tichou částečnou zálohu. Úspěšný readback balíčku není test obnovené PostgreSQL/Auth/Storage služby. Naplánování, hlídání zmeškaného běhu, retence, skutečná vzdálená kopie a izolovaná obnova jsou aktivační práce podle [31](../event-app-zadani/31-AKTIVACE-A-RUCNI-KONTROLY.md).
+
+Před sdílenou aktivací je připravený `supabase/preflight-readonly.sql` a [migrační inventář](../event-app-zadani/shared-deployment-plan.json). Postup [32](../event-app-zadani/32-PREDPROVOZNI-KONTROLA.md) nevykonává DDL, granty ani import automaticky. Testy nástrojů běží v `npm test`; PostgreSQL a Storage/remote používají fiktivní adaptéry. Skutečná místní obnova SQLite byla ověřená zvlášť soukromě, osobní data nepatří do testů/modelu/CI.

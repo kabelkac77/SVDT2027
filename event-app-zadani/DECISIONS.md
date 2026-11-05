@@ -1,5 +1,12 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-05 — zálohy a sdílená aktivace
+
+Technické provedení: úplný výsledek vyžaduje všech šest zdrojů, skutečné konzistentní okno, oddělený klíč a nezávislé zpětné čtení nové šifrované vzdálené kopie. Nedostupná služba nebo chybějící vstup není prázdná úspěšná záloha. Katalogový preflight pouze čte systémové informace; nesmí automaticky aplikovat migrace nebo granty. Detaily [29b](29b-ZALOHY-KOLEKTORY.md), [32](32-PREDPROVOZNI-KONTROLA.md).
+
+Uživatelský pokyn pokračovat samostatně trvá. Přístupy, skutečná aktivace, retenční volby, rozsahy účtů a importní mapování zůstávají k pozdějšímu projití v31; nejsou schválené mlčením. Vývojová chyba nativního Claude neopravňuje přepnout účet/model nebo obejít kapacitní guard. Storage modul nebyl při neúspěšném běhu aplikovaný a jeho připravené testy se nepočítají jako prošlé.
+
+
 ## 2026-11-02 — první provozní moduly v aplikaci
 
 IMPLEMENTED / synteticky ověřeno: úkoly a denní harmonogram v místním čase akce, zóny s explicitním pracovním kontaktem a orientačním plánem, ruční registrace závodníků se samostatným oprávněním a mobilní Moje služba. Editory otevíráme přímo pod řádkem. Auth a ročník sdílejí stávající crew; člen vidí vlastní přiřazení/úkoly, správce řídí přístup Registrace. Rozepsané údaje chrání navigace a ukládání používá plný fingerprint se stabilní identitou požadavku při opakování po chybě. Historický ročník je provozně readonly, přístup lze odebrat i v archivu.
