@@ -9,12 +9,12 @@
     "event-app/tests/backup-postgres.test.mjs": "c851f7b431f4359d9f9b8c215a019dc88aec6acdff580d48fa75f1938006c4b1",
     "event-app/tools/backup-runner.js": "9d5313e4a1926f8cc91e3e9c0b149c28cdb4eca1fafd22b1e513b835b7238caa",
     "event-app/tests/backup-runner.test.mjs": "454193fa4c8498e27fb28e2d0ce282058fc35b358d0914371a5ba72c5b887ecb",
-    "event-app/supabase/preflight-readonly.sql": "33e728df4faea25e77650fc6c7a517c3204cf583896b6feb81f8ba7d47173048",
-    "event-app/tests/shared-preflight.test.ts": "7fb2a8140a2b176f33101421126266e56278065b2efe6d04dafbf19e8fce9347",
+    "event-app/supabase/preflight-readonly.sql": "817eb4f263c974b608a26fecec7d6e7e0a58f1c5f7aef01efc623512559ad319",
+    "event-app/tests/shared-preflight.test.ts": "031a80dd9eda2cdd1ca824af911f42d57b6be08f950fa6e3914f1d47c70630b3",
     "event-app/tools/claude_handoff.py": "2b976fafaafb26ff99ad9660ea2b40098fbb25af9d231035e9e9f1f28256f774",
     "event-app/tests/claude_handoff_test.py": "eccb6086a7091a264fa2b6d38d2a2f268ede8491cb0f8c9d9899ed4944ae060d",
     "event-app/tests/backup-flow.test.mjs": "191f4912695b2845cd451e2a8cf55f8829dce6918cb66b3317692e512bd23907",
-    "event-app-zadani/shared-deployment-plan.json": "1d2a745fbb176a9da57119fd65571931dfe99794d8818730e4b8b90d3f37a2a1",
+    "event-app-zadani/shared-deployment-plan.json": "941c4c298c798aab536b804b9f78cb54de0c147eb505634a54347eb80349a711",
     "event-app/tests/deployment-plan.test.mjs": "45bd26a432a0c016b76dbfcdc48049d09423a277435908d14c66afcdf691fa75",
     "event-app/tools/backup-storage-inventory.js": "2b4546da5140a5cd13de9a2d892d452601a3d9adb0946ee873586e8706bbbfa9",
     "event-app/tools/backup-storage.js": "58ef5cbfe41542fadeabfc3ba42aaef5f14baa61d30193486e2e97996645f86e",
@@ -47,8 +47,8 @@
   },
   "shared_preflight_tests": 3,
   "app_tests": {
-    "passed": 229,
-    "total": 229,
+    "passed": 248,
+    "total": 248,
     "typecheck": true,
     "production_build": true
   },
@@ -78,7 +78,7 @@
     "tests": 15,
     "passed": 15
   },
-  "host_tests": 131,
+  "host_tests": 148,
   "crew_import_preview": {
     "implemented": true,
     "mode": "preview_only",
@@ -88,5 +88,6 @@
     "source_unchanged": true,
     "private_provenance_schema_pending": true,
     "synthetic_tests": 15
-  }
+  },
+  "shared_readiness_verification": "crew-transfer-verification.json"
 }

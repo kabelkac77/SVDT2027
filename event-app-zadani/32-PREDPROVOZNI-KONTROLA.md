@@ -25,3 +25,7 @@ Diagnostika aktuální místní konfigurace: veřejný HTTPS klient existuje, pr
 ## Konkrétní akceptace a přechod
 
 Matice rolí, negativní víceúčtové scénáře, souběh, OAuth/ochrana draftu, jediný autoritativní zdroj zápisu a postup při poruše jsou v [34](34-SDILENY-PROVOZ-AKCEPTACE.md). Aktuální soukromý náhled převodu podle33 je příprava; provenance model, mapování/cílové UUID a skutečný import zůstávají otevřené. Žádná živá akceptace nebo grant tímto zápisem neproběhly.
+
+## Rozšíření2026-11-05 — zdroje převodu
+
+Aktuální katalogový preflight očekává26tabulek a12funkcí;3interní transferfunkce musí mít execute zakázané pro public/anon/authenticated. Inventář má5migrací se SHA256 a autoApply:false. Nová35 se na skutečný projekt neaplikovala. Před snapshotem/převodem ověřit skutečný stav: dosud nenasazené tabulky nesmějí být mylně požadované v předmigračním dumpu. Po skutečné aktivaci musí být v úplném dumpu a obnovené s oprávněními/vazbami. Porovnání36 je readonly příprava nad explicitním kompletním exportem, nikoli API pro import.

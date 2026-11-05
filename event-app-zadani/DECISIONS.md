@@ -1,5 +1,12 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-05 — původ zdrojů a předimportní porovnání
+
+Technická implementace35 uchovává přesné původní zdrojové bytes jako UTF8 source_text s SHA256, všechny původní tabulky/historii/extra data a neměnné vazby. Původ čte jen správce ročníku; finanční grant koordinátora jej neodemyká. Přímé klientské mutace a interní funkce nejsou povolené. Metadata/audit mají skutečného autora bez duplikování raw osobních údajů do auditu. Již existující migrace zůstaly beze změny.
+
+Porovnání36 nikdy automaticky nevybírá identity nebo cílové UUID, nepovažuje chybějící export za prázdnou DB a nevydává shodu za oprávnění importovat. Zůstává reconciliation_only/applyReady:false i při úplné shodě. Zachování původu v kódu nenahrazuje skutečnou aktivaci schématu, potvrzené mapování, zálohu/obnovu nebo transakční importer. Tyto brány se na pokyn uživatele zapisují do31 na později, bez průběžných dotazů.
+
+
 ## 2026-11-05 — přílohy a bezpečný náhled převodu crew
 
 Implementovaný Storage celek29g/h nahrazuje předchozí stav nedodaného kolektoru. Přijetí autority neznamená živé privilegium; síťový inventář sám nikdy netvrdí úplnost. Verzované/archivní zdroje V1 odmítá a klíče uchovává přesně pomocí číslovaných fyzických exportů. Review i testy včetně původních11 scénářů skutečně proběhly; syntetické SDK/remote nejsou cloudová akceptace.

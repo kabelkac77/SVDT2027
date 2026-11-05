@@ -21,6 +21,8 @@ WITH expected(name,scope) AS (VALUES
  ('public.crew_compensation','application'),
  ('public.crew_audit','application'),
  ('public.crew_requests','application'),
+ ('public.crew_transfer_packages','application'),
+ ('public.crew_transfer_links','application'),
  ('public.operations_grants','application'),
  ('public.operations_zones','application'),
  ('public.operations_tasks','application'),
@@ -51,7 +53,11 @@ WITH expected(signature) AS (VALUES
  ('public.crew_member_directory(uuid)'),
  ('public.crew_write(uuid,text,jsonb,uuid)'),
  ('public.operations_registration_access(uuid)'),
- ('public.operations_write(uuid,text,jsonb,uuid)')
+ ('public.operations_write(uuid,text,jsonb,uuid)'),
+ ('public.crew_transfer_source_row(text,text,text)'),
+ ('public.crew_transfer_capture()'),
+ ('public.crew_transfer_immutable()'),
+ ('public.crew_transfer_target_snapshot(uuid)')
 ), procedures AS (
  SELECT signature,to_regprocedure(signature) AS object_id FROM expected
 ), roles AS (

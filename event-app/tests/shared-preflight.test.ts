@@ -19,6 +19,7 @@ async function setup() {
     "202609290001_partner_history.sql",
     "202611020001_crew.sql",
     "202611020002_operations.sql",
+    "202611050001_crew_transfer.sql",
   ])
     await db.exec(
       await readFile(
@@ -39,12 +40,12 @@ test("catalog preflight reports absent objects on an empty database without assu
     const tables = rows.find((r) =>
       r.some((x: any) => x.name === "public.crew_roster"),
     )!;
-    assert.equal(tables.length, 24);
+    assert.equal(tables.length, 26);
     assert.ok(tables.every((r: any) => r.present === false));
     const functions = rows.find((r) =>
       r.some((x: any) => x.signature?.includes("crew_write")),
     )!;
-    assert.equal(functions.length, 8);
+    assert.equal(functions.length, 12);
     assert.ok(functions.every((r: any) => r.present === false));
   } finally {
     await db.close();
@@ -63,6 +64,8 @@ test("catalog preflight checks RLS and RPC permissions without reading or changi
     for (const name of [
       "public.crew_roster",
       "public.operations_registrations",
+      "public.crew_transfer_packages",
+      "public.crew_transfer_links",
     ]) {
       const row = tables.find((r: any) => r.name === name);
       assert.equal(row.present, true);
@@ -82,6 +85,21 @@ test("catalog preflight checks RLS and RPC permissions without reading or changi
       assert.equal(row.anon_execute, false);
       assert.equal(row.public_execute, false);
     }
+    for (const row of rpc.filter(
+      (r: any) =>
+        r.signature.includes("crew_transfer_") &&
+        !r.signature.includes("target_snapshot"),
+    )) {
+      assert.equal(row.authenticated_execute, false);
+      assert.equal(row.anon_execute, false);
+      assert.equal(row.public_execute, false);
+    }
+    const targetRpc = rpc.find((r: any) =>
+      r.signature.includes("crew_transfer_target_snapshot"),
+    );
+    assert.equal(targetRpc.authenticated_execute, true);
+    assert.equal(targetRpc.anon_execute, false);
+    assert.equal(targetRpc.public_execute, false);
     assert.deepEqual(
       (await db.query("select * from events")).rows,
       before.rows,
