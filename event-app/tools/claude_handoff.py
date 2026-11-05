@@ -346,15 +346,27 @@ def native_failure_details(returncode, raw, stderr):
     raw = raw if isinstance(raw,str) else ''
     stderr = stderr if isinstance(stderr,str) else ''
     message = ''
+    subtype = None
+    structured_proposal = False
+    known_errors = {'error_max_structured_output_retries':'STRUCTURED_OUTPUT_RETRIES',
+                    'error_max_turns':'TURN_LIMIT','error_max_budget_usd':'BUDGET_LIMIT',
+                    'error_during_execution':'NATIVE_PROCESS_FAILED'}
     if len(raw.encode(errors='replace')) <= 2*MAX_BYTES:
         try:
             outer=json.loads(raw)
-            if isinstance(outer,dict) and outer.get('is_error') is True:
-                result=outer.get('result')
-                if isinstance(result,str):message=result[:32768]
+            if isinstance(outer,dict):
+                candidate=outer.get('subtype')
+                if isinstance(candidate,str) and candidate in known_errors:subtype=candidate
+                structured_proposal=isinstance(outer.get('structured_output'),dict)
+                if outer.get('is_error') is True or subtype is not None:
+                    result=outer.get('result')
+                    if isinstance(result,str):message=result[:32768]
+                    errors=outer.get('errors')
+                    if isinstance(errors,list):
+                        message+='\n'+'\n'.join(e[:4096] for e in errors[:8] if isinstance(e,str))
         except (ValueError,RecursionError):pass
     text=(message+'\n'+stderr[:32768]).lower()
-    category='NATIVE_PROCESS_FAILED'
+    category=known_errors.get(subtype,'NATIVE_PROCESS_FAILED')
     rules=[
         ('AUTHENTICATION',r'not logged in|authentication required|authentication_error|invalid api key|oauth token.*(?:expired|invalid)'),
         ('RATE_LIMIT',r'rate_limit_error|rate limit|usage limit|hit your limit'),
@@ -366,7 +378,8 @@ def native_failure_details(returncode, raw, stderr):
     for name,pattern in rules:
         if re.search(pattern,text):category=name;break
     return {'exit_code':returncode if isinstance(returncode,int) and not isinstance(returncode,bool) and -255<=returncode<=255 else None,
-            'failure_category':category,
+            'failure_category':category, 'native_error_subtype':subtype,
+            'structured_proposal_present':structured_proposal,
             'stdout_bytes':len(raw.encode(errors='replace')),'stderr_bytes':len(stderr.encode(errors='replace')),
             'stdout_sha256':hashlib.sha256(raw.encode(errors='replace')).hexdigest(),
             'stderr_sha256':hashlib.sha256(stderr.encode(errors='replace')).hexdigest()}
@@ -413,6 +426,8 @@ def run(args):
                 if p.returncode:
                     failure=Rejected('CLAUDE_FAILED_NO_RETRY')
                     failure.native_failure=native_failure_details(p.returncode,raw,native_stderr)
+                    try:failure.proposal_id=save_private_proposal(raw,receipt)
+                    except (Rejected,ValueError,TypeError,RecursionError):pass
                     raise failure
         except guard.UsageError as exc:
             raise Rejected(str(exc)) from exc
