@@ -1,8 +1,6 @@
 {
   "verified_on": "2026-11-05",
-  "scope": "backup_collectors_runner_and_shared_preflight",
-  "tests": 15,
-  "passed": 15,
+  "scope": "backup_collectors_and_shared_import_readiness",
   "remote_backup_active": false,
   "files": {
     "event-app/tools/backup-local.js": "db1e34980daa8507e91e8abdf3184d3d2ce00940e08ac7fe8c97c435cbe4e3aa",
@@ -13,11 +11,18 @@
     "event-app/tests/backup-runner.test.mjs": "454193fa4c8498e27fb28e2d0ce282058fc35b358d0914371a5ba72c5b887ecb",
     "event-app/supabase/preflight-readonly.sql": "33e728df4faea25e77650fc6c7a517c3204cf583896b6feb81f8ba7d47173048",
     "event-app/tests/shared-preflight.test.ts": "7fb2a8140a2b176f33101421126266e56278065b2efe6d04dafbf19e8fce9347",
-    "event-app/tools/claude_handoff.py": "ad08810ed763563f77cac26cc0800233dd01f514e82427efd193c0968cb608e3",
-    "event-app/tests/claude_handoff_test.py": "1671ff5c6aa4b9c1442ffa0522e645c02455638acde7271c009a17106fe8d3c7",
-    "event-app/tests/backup-flow.test.mjs": "1e4d54f1567b531eb470c9339e600d4419fb6dd316fc46d03eca1a81337a66ec",
+    "event-app/tools/claude_handoff.py": "2b976fafaafb26ff99ad9660ea2b40098fbb25af9d231035e9e9f1f28256f774",
+    "event-app/tests/claude_handoff_test.py": "eccb6086a7091a264fa2b6d38d2a2f268ede8491cb0f8c9d9899ed4944ae060d",
+    "event-app/tests/backup-flow.test.mjs": "191f4912695b2845cd451e2a8cf55f8829dce6918cb66b3317692e512bd23907",
     "event-app-zadani/shared-deployment-plan.json": "1d2a745fbb176a9da57119fd65571931dfe99794d8818730e4b8b90d3f37a2a1",
-    "event-app/tests/deployment-plan.test.mjs": "45bd26a432a0c016b76dbfcdc48049d09423a277435908d14c66afcdf691fa75"
+    "event-app/tests/deployment-plan.test.mjs": "45bd26a432a0c016b76dbfcdc48049d09423a277435908d14c66afcdf691fa75",
+    "event-app/tools/backup-storage-inventory.js": "2b4546da5140a5cd13de9a2d892d452601a3d9adb0946ee873586e8706bbbfa9",
+    "event-app/tools/backup-storage.js": "58ef5cbfe41542fadeabfc3ba42aaef5f14baa61d30193486e2e97996645f86e",
+    "event-app/tests/backup-storage-inventory.test.mjs": "aabe41ec5593fda465fedd32d043526c1108f966a6b7c4f4be871273dfd95dd1",
+    "event-app/tests/backup-storage.test.mjs": "a3e59df845995a07e8c5ea1077297c7d5fb1b8d10441b860f62716ed440ff46b",
+    "event-app/tools/crew_import_preview.py": "fecf4a71524988bbafb8a630ed09073e693be5157112d71eac1aef80498a09b3",
+    "event-app/tests/crew_import_preview_test.py": "d3013e5637529567c13c0b39cf060289452e8e5566e4681b76b24208c24b3e38",
+    "event-app/tests/backup-storage-sdk.test.mjs": "8fd2245839348c1f1814f1d14e0e0c0df7575ac67da4f1fb3a39ea2bcb8b75cd"
   },
   "postgres": {
     "tests": 9,
@@ -40,31 +45,48 @@
     "real_remote_readback_verified": false,
     "scheduler_active": false
   },
-  "host_diagnostic_tests": 110,
   "shared_preflight_tests": 3,
   "app_tests": {
-    "passed": 194,
-    "total": 194,
+    "passed": 229,
+    "total": 229,
     "typecheck": true,
     "production_build": true
   },
   "legacy_node_tests": 37,
   "storage": {
-    "implemented": false,
-    "prepared_acceptance_cases": 11,
-    "executed": false,
-    "native_attempt": "CLAUDE_FAILED_NO_RETRY",
-    "native_failure_category": "NATIVE_PROCESS_FAILED",
-    "automatic_retry": false
+    "implemented": true,
+    "inventory_tests": 13,
+    "collector_tests": 19,
+    "passed": 32,
+    "original_acceptance_executed": 11,
+    "sdk": "synthetic",
+    "real_service_privileges_verified": false,
+    "installed_sdk_transport_tests": 3
   },
   "integration": {
     "tests": 2,
     "passed": 2,
     "sqlite_crypto_and_restore": "real_synthetic_data",
     "postgres_executable": "fixture",
-    "storage_collector": "fixture_not_implementation",
+    "storage_collector": "actual_module",
     "remote": "memory_fixture",
-    "live_cloud_proof": false
+    "live_cloud_proof": false,
+    "storage_sdk": "fixture"
   },
-  "deployment_plan_integrity_tests": 1
+  "deployment_plan_integrity_tests": 1,
+  "local": {
+    "tests": 15,
+    "passed": 15
+  },
+  "host_tests": 131,
+  "crew_import_preview": {
+    "implemented": true,
+    "mode": "preview_only",
+    "applyReady": false,
+    "actual_private_snapshot_preview": true,
+    "target_written": false,
+    "source_unchanged": true,
+    "private_provenance_schema_pending": true,
+    "synthetic_tests": 15
+  }
 }

@@ -1,5 +1,12 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-05 — přílohy a bezpečný náhled převodu crew
+
+Implementovaný Storage celek29g/h nahrazuje předchozí stav nedodaného kolektoru. Přijetí autority neznamená živé privilegium; síťový inventář sám nikdy netvrdí úplnost. Verzované/archivní zdroje V1 odmítá a klíče uchovává přesně pomocí číslovaných fyzických exportů. Review i testy včetně původních11 scénářů skutečně proběhly; syntetické SDK/remote nejsou cloudová akceptace.
+
+Technická příprava převodu33 zachovává původní tabulky/sloupce/historii/audit a soukromé odměny, nikdy automaticky neslučuje lidi/účty a vrací preview_only, applyReady:false. Před importem je třeba samostatný neveřejný provenance/historický model s RLS; současný crew_roster jej plně nenahrazuje. Všechna uživatelská rozhodnutí, přístupy, mapování a aktivace zůstávají otevřené v31. Žádný skutečný cílový zápis/grant/deploy se neprovedl.
+
+
 ## 2026-11-05 — zálohy a sdílená aktivace
 
 Technické provedení: úplný výsledek vyžaduje všech šest zdrojů, skutečné konzistentní okno, oddělený klíč a nezávislé zpětné čtení nové šifrované vzdálené kopie. Nedostupná služba nebo chybějící vstup není prázdná úspěšná záloha. Katalogový preflight pouze čte systémové informace; nesmí automaticky aplikovat migrace nebo granty. Detaily [29b](29b-ZALOHY-KOLEKTORY.md), [32](32-PREDPROVOZNI-KONTROLA.md).

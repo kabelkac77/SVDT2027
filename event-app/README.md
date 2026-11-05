@@ -98,7 +98,7 @@ Skutečná místní evidence se do sdílené DB sama neimportuje. Nepotvrzené k
 
 ## Zálohovací knihovny a předprovozní kontrola
 
-`tools/backup-local.js`, `backup-postgres.js` a `backup-runner.js` jsou serverové ESM knihovny. Neimportovat je do klienta. Nemají automaticky nastavený cíl, přístupy, CLI ani plánovač. Produkční zálohování nepotřebuje Claude účet; Claude je pouze vývojový postup.
+`tools/backup-local.js`, `backup-postgres.js`, `backup-storage-inventory.js`, `backup-storage.js` a `backup-runner.js` jsou serverové ESM knihovny. Neimportovat je do klienta. Nemají automaticky nastavený cíl, přístupy, CLI ani plánovač. Produkční zálohování nepotřebuje Claude účet; Claude je pouze vývojový postup.
 
 `runBackup({collectors,key,destination,lockPath,consistency})` vyžaduje všech šest zdrojů: `sources`, `crew`, `inputs`, `postgres`, `storage`, `exports`. Každý zdroj má právě jednoho vlastníka. Jeden kolektor smí dodat `crew` i `exports` ze stejného SQLite snímku:
 
@@ -116,10 +116,14 @@ Kolektor spouštět až uvnitř `collect()`, nikoli předem vytvořeným Promise
 
 Zdroje a soukromé vstupy mají explicitní schválený inventář cest, žádné rekurzivní hledání na disku. Chybějící původní podklad nesmí být označený za úspěšně zálohovaný. PostgreSQL `requiredRelations` musí odpovídat ověřenému skutečně nasazenému schématu; nepředpokládat, že pending migrace už jsou na serveru. Použít kompatibilní absolutní `pg_dump`/`pg_restore`, soukromé service/pass soubory a oddělený oprávněný přístup. Dump obsahuje databázové ACL, ale ne globální serverové role; jejich bezpečný obnovovací plán je zvlášť.
 
-Storage kolektor podle29e zatím není implementovaný; jeho připravené testy nejsou započítané mezi prošlé. Potřebuje serverový privilegovaný SDK klient a nezávislý úplný inventář objektů (např. z oprávněného DB snapshotu v témže konzistentním okně). Nesmí použít veřejný aplikační Supabase singleton ani odvodit `complete:true` z téhož potenciálně omezeného RLS listu. Collector porovnává stav před i po stažení. Podporuje aktuální standardní objekty; archivované/verzované historie a jiné typy bucketů zastaví běh.
+Storage kolektor podle29e/g/h je implementovaný a testy jsou součástí npm test. Potřebuje serverový privilegovaný SDK klient a nezávislý úplný inventář objektů (např. z oprávněného DB snapshotu v témže konzistentním okně). Nesmí použít veřejný aplikační Supabase singleton ani odvodit `complete:true` z téhož potenciálně omezeného RLS listu. Collector porovnává stav před i po stažení. Podporuje aktuální standardní objekty; archivované/verzované historie a jiné typy bucketů zastaví běh.
 
 Klíč je 32 bajtů ze samostatného úložiště tajemství se záložní úschovou mimo tento počítač. `destination` má `kind:"remote"`, `putExclusive(id,encryptedBytes)` bez přepsání a `read(id)` s novým skutečným čtením vzdáleného objektu. Adapter nesmí vracet uploadovaný Buffer z místní cache; musí ověřit identitu cíle, práva a omezit velikost/čas HTTP operací. Runner porovná bajty, checksum a ověří dešifrování; žádný automatický delete/retence není implementovaný. Syntetický adapter neprokazuje dostupný cloud.
 
 Omezení V1: nejvýše 10 000 souborů / 128 MiB nekomprimovaných bajtů dohromady. Při překročení běh selže a nevytvoří tichou částečnou zálohu. Úspěšný readback balíčku není test obnovené PostgreSQL/Auth/Storage služby. Naplánování, hlídání zmeškaného běhu, retence, skutečná vzdálená kopie a izolovaná obnova jsou aktivační práce podle [31](../event-app-zadani/31-AKTIVACE-A-RUCNI-KONTROLY.md).
 
 Před sdílenou aktivací je připravený `supabase/preflight-readonly.sql` a [migrační inventář](../event-app-zadani/shared-deployment-plan.json). Postup [32](../event-app-zadani/32-PREDPROVOZNI-KONTROLA.md) nevykonává DDL, granty ani import automaticky. Testy nástrojů běží v `npm test`; PostgreSQL a Storage/remote používají fiktivní adaptéry. Skutečná místní obnova SQLite byla ověřená zvlášť soukromě, osobní data nepatří do testů/modelu/CI.
+
+## Soukromý náhled převodu crew
+
+`tools/crew_import_preview.py` nabízí čistou funkci `build_preview(tables_bytes)` pro přesné bytes exports/crew-tables.json z konzistentního místního snapshotu. Bez síťových/DB/FS operací nebo automatického importu. Náhled zachovává celé původní tabulky a odděluje roster/odměny/unmapped pole; výstup obsahuje skutečné osobní a finanční údaje a musí zůstat soukromě0600 mimo Git/model/CI/public/stdout. Vždy vrací preview_only / applyReady:false. Vlastní náhled zůstává ke společnému mapování později. [Kontrakt a podmínky převodu33](../event-app-zadani/33-CREW-PREVOD-A-NAHLED.md). Žádná cílová migrace, role nebo import se tím neaktivuje.

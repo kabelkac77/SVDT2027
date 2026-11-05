@@ -21,3 +21,7 @@ Správný projekt/přístup operátora, konkrétní účty a rozsahy, provozní 
 Katalogový skript prošel3 PGlite scénáři: chybějící schema, celá syntetická aplikace a neprivilegovaná authenticated role. Nezobrazil soukromé sentinelové řádky a nezměnil data ani roli. Očekává24 tabulek a8 RPC signatur; přítomnost není důkaz aplikované migrace. Inventář4 migračních souborů je v shared-deployment-plan.json a obsahuje SHA256 a zakázané autoApply.
 
 Diagnostika aktuální místní konfigurace: veřejný HTTPS klient existuje, projektová DNS adresa se stále nepřekládá; pg_dump/pg_restore nejsou v runtime PATH. Na skutečném serveru se nic nespouštělo. Nativní Claude Pro je přihlášený, ověřeno ve stejném oprávněném kontextu jako runner; výsledek auth status z omezeného sandboxu byl zavádějící a není důvodem vyžadovat od uživatele nové přihlášení.
+
+## Konkrétní akceptace a přechod
+
+Matice rolí, negativní víceúčtové scénáře, souběh, OAuth/ochrana draftu, jediný autoritativní zdroj zápisu a postup při poruše jsou v [34](34-SDILENY-PROVOZ-AKCEPTACE.md). Aktuální soukromý náhled převodu podle33 je příprava; provenance model, mapování/cílové UUID a skutečný import zůstávají otevřené. Žádná živá akceptace nebo grant tímto zápisem neproběhly.

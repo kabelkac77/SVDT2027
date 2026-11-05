@@ -1,5 +1,16 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-05 — posun příloh a převodu
+
+- [x] Storage inventář a kolektor hotové,32 vlastních scénářů plus propojená obnova. Nespouštěný stav z předchozího zápisu níže je historický.
+- [x] Soukromý náhled převodu crew vytvořený nad kopiemi dnešního snapshotu, všechny tabulky zachované, zdrojové bajty beze změny, žádný cílový zápis.
+- [ ] Před importem doplnit samostatný neveřejný provenance/historický model s RLS/auditem. Zachovat statusNote/contactOriginal/raw, historii2025/2026, zdrojové vazby, místní audit/requests a extra tabulky; nepřimíchat odměny do provozních notes.
+- [ ] Později projít konkrétní návrh mapování řádků a osob/skupin, cílové edition/account UUID a rozsahy rolí. Soukromý náhled není jejich schválení a zůstává applyReady:false.
+- [ ] Konkrétní živá matice rolí a přechod podle [34](34-SDILENY-PROVOZ-AKCEPTACE.md), včetně zákazu automatického návratu do staré SQLite po zahájení sdílených zápisů.
+- [ ] Provozní vytvoření nezávislé úplné Storage autority v konzistentním okně: ověřit skutečné serverové schéma, potřebná práva a přesnost časových identit, nikoli vytvořit complete:true z téhož klientského RLS listu.
+- [ ] Skutečné přístupy k DB/Storage, vzdálený provider/executor, oddělený klíč, plánovač/monitoring/retence a izolovaná obnova celé služby stále čekají. Produkční aktivace není součástí tohoto ověřeného kódu.
+
+
 Neuzavírat mlčením. Uživatel chce samostatnou implementaci a společný průchod později. Tento dokument odděluje konkrétní potřebné vstupy od dalších nezávislých vývojových úkolů. Neobsahuje secrets nebo osobní kontakty.
 
 ## Stav přípravy 2026-11-05

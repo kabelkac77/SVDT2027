@@ -1,5 +1,16 @@
 # MASTER BACKLOG
 
+## 2026-11-05 — dokončený kolektor příloh a příprava převodu crew
+
+IMPLEMENTED / ověřeno synteticky: Storage kolektor29e/g/h porovnává oddělenou úplnou autoritu se stránkovaným inventářem, stahuje a kontroluje všechny bajty/SHA a opakuje inventář po stažení. Zachovává aktuální verzi objektu, původní klíče a nastavení bucketů; nepodporované verzované/archivované historie odmítá. Nalezené chyby metadat/limitů/vlastnictví bajtů opravené hostem. Všech11 původně připravených Storage scénářů bylo přesunuto do běžných testů a rozšířeno; integrovaný průchod nyní používá skutečný Storage kolektor. SDK, pg_dump executable a vzdálený cíl jsou stále syntetické adaptéry, ne důkaz cloudové obnovy.
+
+Pro sdílenou crew je implementovaný a synteticky ověřený soukromý náhled převodu podle [33](33-CREW-PREVOD-A-NAHLED.md): zachování všech tabulek, původních sloupců, historie/auditu, NULL/0 a oddělených odměn. Nejasné osoby/skupiny a účty se automaticky neslučují. Současné sdílené schéma ještě nemá neveřejný provenance/historický model pro všechny zdrojové údaje; jeho doplnění a akceptace zůstávají podmínkou ostrého importu. Náhled není import nebo grant.
+
+Ověření: 229 aplikačních testů, TypeScript a produkční build, 131 hostitelských Python a37 původních Node kontrol prošlo. Soukromý náhled byl uložený nad dnešním ověřeným SQLite snímkem; source bytes beze změny a žádný cílový zápis. Přesné hashe a hranice v [evidenci](backup-collectors-verification.json).
+
+Úplné automatické vzdálené zálohy a živý sdílený provoz stále nejsou aktivované. Chybí potvrzený dostupný projekt a serverové přístupy, skutečný provider/executor a oddělený klíč, scheduler/monitoring/retence a ověřená obnova DB/Auth/Storage; rovněž cílové UUID/role, mapování a browser průchod. Uživatel chce pokračovat bez otázek; vše potřebné k pozdějšímu projití je v [31](31-AKTIVACE-A-RUCNI-KONTROLY.md), postup aktivace v [32](32-PREDPROVOZNI-KONTROLA.md).
+
+
 ## 2026-11-05 — kolektory záloh a příprava sdíleného provozu
 
 Implementováno: explicitní sběr obecných zdrojů/vstupů, konzistentní SQLite snímek a úplné JSON/CSV exporty, PostgreSQL custom dump s kontrolou obsahu, koordinátor šesti zdrojů s exkluzivním zámkem, šifrováním a povinným zpětným čtením vzdálené kopie. Konkrétní připojení vzdáleného cíle a plánovač nejsou aktivované. Kolektor Storage a propojené ověření mají stav v [evidenci](backup-collectors-verification.json); nepočítat připravené, nespouštěné testy jako úspěšné.
@@ -43,7 +54,8 @@ IMPLEMENTED / synteticky ověřeno: knihovna `backup-bundle.js`, šest povinnýc
 - [ ] Desktop/mobil a přístupnost v prohlížeči; nyní ověřeno SSR, nikoli skutečný browser.
 - [x] Šifrovaný formát a bezpečná souborová obnova;15 testů.
 - [x] Místní a PostgreSQL kolektory, šifrovaný koordinátor a syntetické ověření zpětného čtení.
-- [ ] Storage kolektor, skutečný vzdálený adapter, plánovač a izolovaná obnova DB/Auth/příloh.
+- [x] Storage inventář/kolektor a propojené syntetické ověření;32 vlastních scénářů.
+- [ ] Skutečný vzdálený adapter, plánovač/monitoring/retence a izolovaná obnova DB/Auth/příloh.
 - [x] První provozní rozhraní, adaptéry a modely integrované do /crew;147 testů celé aplikace, TypeScript/build. Skutečný provoz není tím nasazený.
 
 Vše potřebné k pozdějšímu ručnímu potvrzení v [31](31-AKTIVACE-A-RUCNI-KONTROLY.md).
