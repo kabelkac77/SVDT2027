@@ -1,6 +1,6 @@
 # Úplné zálohy — navazující kolektory a aktivace
 
-Tento dokument je příprava další implementace. Knihovna29a je hotová a ověřená; zde popsané kolektory ani plánovač zatím nejsou implementované. Aktivace závisí také na přístupech v31. Nepovažovat chybějící přístup za prázdnou úspěšnou databázi.
+Stav 2026-11-05: knihovna29a, místní kolektor29c, PostgreSQL kolektor29d a koordinátor29f jsou implementované a synteticky ověřené. Storage29e/g/h je nyní také implementovaný a ověřený, původních11 scénářů skutečně proběhlo a32 vlastních scénářů pokrývá inventář/stahování. Předchozí nativní chybu vyřešilo rozdělení návrhu na menší kroky bez změny účtu/modelu/guardu. Konkrétní vzdálený adapter, plánovač a živá aktivace nejsou dokončené. Aktivace závisí také na přístupech v31. Nepovažovat chybějící přístup za prázdnou úspěšnou databázi.
 
 ## Sběr a konzistence
 

@@ -162,3 +162,65 @@ class PrivateProposalTests(unittest.TestCase):
         prompt=h.build_prompt(self.root,{},[],[],[])
         self.assertIn('status completed and questions=[]',prompt)
         self.assertIn('nonblocking future/manual notes only in summary',prompt)
+
+class NativeFailureDiagnosticsTests(unittest.TestCase):
+    def test_error_result_and_stderr_are_classified_without_being_exposed(self):
+        for text,expected in [('authentication_error PRIVATE','AUTHENTICATION'),('rate_limit_error PRIVATE','RATE_LIMIT'),('service unavailable PRIVATE','PROVIDER_UNAVAILABLE'),('ECONNRESET PRIVATE','NETWORK'),('unknown option PRIVATE','CLI_ARGUMENT'),('prompt is too long PRIVATE','CONTEXT_LIMIT')]:
+            with self.subTest(expected=expected):
+                value=h.native_failure_details(1,json.dumps({'is_error':True,'result':text}),'')
+                self.assertEqual(value['failure_category'],expected);self.assertEqual(value['exit_code'],1)
+                self.assertNotIn('PRIVATE',json.dumps(value));self.assertEqual(len(value['stdout_sha256']),64)
+    def test_successful_source_text_is_not_misread_as_a_provider_error(self):
+        value=h.native_failure_details(1,json.dumps({'structured_output':{'summary':'rate limit in a synthetic task'}}),'')
+        self.assertEqual(value['failure_category'],'NATIVE_PROCESS_FAILED')
+    def test_plain_invalid_json_and_unknown_errors_have_safe_fallback(self):
+        value=h.native_failure_details(-9,'private non JSON','private stderr')
+        self.assertEqual(value['exit_code'],-9);self.assertEqual(value['failure_category'],'NATIVE_PROCESS_FAILED')
+        self.assertNotIn('private',json.dumps(value))
+    def test_stderr_classification_does_not_copy_paths_or_credentials(self):
+        value=h.native_failure_details(1,'','fetch failed /private/synthetic secret-token')
+        self.assertEqual(value['failure_category'],'NETWORK');self.assertNotIn('secret-token',json.dumps(value))
+    def test_non_error_provider_metadata_is_never_returned(self):
+        value=h.native_failure_details(1,json.dumps({'email':'synthetic@example.invalid','result':'authentication_error'}),'')
+        self.assertEqual(value['failure_category'],'NATIVE_PROCESS_FAILED');self.assertNotIn('synthetic@example.invalid',json.dumps(value))
+    def test_oversized_error_is_not_parsed_as_unbounded_json(self):
+        value=h.native_failure_details(True,'x'*(2*h.MAX_BYTES+1),'')
+        self.assertIsNone(value['exit_code']);self.assertEqual(value['failure_category'],'NATIVE_PROCESS_FAILED')
+
+
+class NativeStructuredFailureTests(unittest.TestCase):
+    def test_documented_error_subtypes_are_safe_and_specific(self):
+        for subtype,expected in [('error_max_structured_output_retries','STRUCTURED_OUTPUT_RETRIES'),('error_max_turns','TURN_LIMIT'),('error_max_budget_usd','BUDGET_LIMIT')]:
+            value=h.native_failure_details(1,json.dumps({'subtype':subtype,'is_error':True,'errors':[],'account':'PRIVATE'}),'')
+            self.assertEqual(value['failure_category'],expected)
+            self.assertEqual(value['native_error_subtype'],subtype)
+            self.assertFalse(value['structured_proposal_present'])
+            self.assertNotIn('PRIVATE',json.dumps(value))
+    def test_errors_array_classifies_bounded_provider_errors_without_copying_them(self):
+        value=h.native_failure_details(1,json.dumps({'subtype':'error_during_execution','errors':['service unavailable PRIVATE']}),'')
+        self.assertEqual(value['failure_category'],'PROVIDER_UNAVAILABLE');self.assertNotIn('PRIVATE',json.dumps(value))
+    def test_unknown_subtype_and_nested_errors_cannot_escape_to_diagnostics(self):
+        value=h.native_failure_details(1,json.dumps({'subtype':'PRIVATE','is_error':True,'errors':[{'secret':'PRIVATE'},42,None]}),'')
+        self.assertIsNone(value['native_error_subtype']);self.assertNotIn('PRIVATE',json.dumps(value))
+    def test_source_text_in_success_errors_array_is_not_misread(self):
+        value=h.native_failure_details(1,json.dumps({'subtype':'success','errors':['authentication_error'],'structured_output':{'summary':'PRIVATE'}}),'')
+        self.assertEqual(value['failure_category'],'NATIVE_PROCESS_FAILED');self.assertTrue(value['structured_proposal_present']);self.assertNotIn('PRIVATE',json.dumps(value))
+    def test_only_the_bounded_initial_error_entries_are_classified(self):
+        value=h.native_failure_details(1,json.dumps({'is_error':True,'errors':['x'*4096]*8+['authentication_error']}),'')
+        self.assertEqual(value['failure_category'],'NATIVE_PROCESS_FAILED')
+
+class FailedNativeProposalTests(unittest.TestCase):
+    def test_failed_process_can_only_preserve_a_private_proposal_never_apply(self):
+        class UsageError(Exception):pass
+        @h.contextlib.contextmanager
+        def permitted():yield
+        guard=SimpleNamespace(session=permitted,UsageError=UsageError)
+        args=SimpleNamespace(worktree='/private/tmp/synthetic-svdt',expected_head='a'*40,allow=['event-app/tools/a.py'],context=[],context_ddl=[],issue=1,review=None,dry_run=False,timeout=30)
+        auth=SimpleNamespace(stdout=json.dumps({'loggedIn':True,'authMethod':'claude.ai','subscriptionType':'pro'}))
+        raw=json.dumps({'is_error':True,'subtype':'error_during_execution','structured_output':{'status':'completed'}})
+        process=SimpleNamespace(returncode=1,communicate=lambda *a,**k:(raw,''))
+        for storage_error in [None,h.Rejected('PRIVATE_PROPOSAL_WRITE_FAILED')]:
+            with self.subTest(storage_error=storage_error),patch.object(h,'verify_tree'),patch.object(h,'github_task',return_value={}),patch.object(h,'build_prompt',return_value='synthetic'),patch.object(h,'command',return_value='codex/test'),patch.object(h,'usage_guard',return_value=guard),patch.object(h.subprocess,'run',return_value=auth),patch.object(h.subprocess,'Popen',return_value=process),patch.object(h,'save_private_proposal',return_value='a'*32+'.json',side_effect=storage_error) as save,patch.object(h,'apply_files') as apply:
+                with self.assertRaises(h.Rejected) as caught:h.run(args)
+                self.assertEqual(str(caught.exception),'CLAUDE_FAILED_NO_RETRY');apply.assert_not_called();save.assert_called_once()
+                self.assertEqual(caught.exception.native_failure['native_error_subtype'],'error_during_execution')
