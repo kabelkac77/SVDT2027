@@ -25,3 +25,20 @@ matchingRows počet statusmatches, differingRows počet statusdiffers (jiné pro
 Vždy blockers EXPLICIT_ACTIVATION_REQUIRED,IDENTITY_AND_ACCOUNT_REVIEW_REQUIRED,VERIFIED_BACKUP_AND_RESTORE_REQUIRED. Dále TARGET_EXPORT_REQUIRED pokud targetNone, MAPPING_REVIEW_REQUIRED pokud chybí mapping nebo některé vazby, TARGET_ARCHIVED pokud target.archived, PRIVATE_PROVENANCE_SCHEMA_REQUIRED pokud targetNone nebo provenanceReadyFalse, TARGET_DIFFERENCES_PRESENT pokud jakýkoli namapovaný řádek/kategorie neodpovídá (včetně missing). Seřadit/deduplikovat stabilníkódy. Kategorie/řádky se stejným jménem nikdy neslučovat. Bez polí s PII ve výsledku, bez autoWrite/API návrhů.
 
 Syntetické testy hosta: nedostupný target není prázdný; stejné jméno zůstane dvěmařádky; explicitní vazby, chybějící kategorie/comp aNULLvs0; odmítnutí neúplnéfinančnírole, cizího ročníku/duplicit/ref chyb, archiv; již uložený sourcehash/vazba nekryjí následnou změnu targetu; výstup bez skutečných hodnot; vstupy beze změny a žádné sítě/zápisy. Hotový statuscompleted questions=[], neblokující poznámky pouze summary.
+
+
+## Přesné rozhraní existujícího build_preview — odpovědi hosta
+
+První návrh vrátil blocked bez souborů kvůli chybějícímu přesnému rozhraní helperu; žádné rozhodnutí uživatele není potřeba. Níže je doslovný tvar klíčů současné implementace, pouze obecné typy bez skutečných hodnot.
+
+build_preview(tables_bytes) vrací dict:
+- version:1, mode:'preview_only', applyReady:False, sourceSha256:64lowerhex.
+- categories:list[dict] s sourceCategoryId:str, name:str, color:str, sortOrder:int, sourceVersion:int, requiredCount:None, requiredTerm:''.
+- entries:plochý list[dict] s sourceRowId:str, sourceCategoryId:str, sourceId:str|None, sourceVersion:int, updatedAt:str, roster:dict, compensation:dict, unmapped:dict.
+- preservedTables:list původních tabulek, warnings:list stabilníchkódů, blockers:list stabilníchkódů.
+
+entries nejsou zanořené v kategoriích. sourceRowId je unikátní přesná hodnota lokálního working.id, klíč mapping.entries. sourceCategoryId je přesná hodnota lokálního category_id/categories.id, klíč mapping.categories. sourceSha256 je vždy spočítaný z přesných vstupních bytes. sourcePackageSeen je až výstup reconcile, vpreviewnení.
+
+entry.roster přesně: kind:'unresolved',person_id:None,linked_user_id:None,name:str,position:str,owner_label:str,email:str,phone:str,status:str,term:str,friday:str,saturday:str,notes:str,archived:bool. entry.compensation přesně estimate/agreed/total/paid (None|int haléře),barter:str,merch:str. Texty jsou validované původním helperem a nemají být znovu ořezané. Nečíst skutečná data ani source files při importu modulu.
+
+build_preview na neplatném vstupu vyhodí ValueError('CREW_IMPORT_PREVIEW_FAILED'). reconcile_preview MUSÍ všechny jeho chyby i vlastní validační chyby zabalit do ValueError('CREW_RECONCILE_FAILED') bez raw zpráv/contextu (raise ... from None). Tato specifikace rozhraní stačí; celý soubor helperu ani server nepotřebujete. Nepište tests/README ani jiné soubory. completed questions=[], budoucí neblokující poznámky summary.

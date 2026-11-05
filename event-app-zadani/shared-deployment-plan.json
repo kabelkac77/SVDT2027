@@ -38,6 +38,17 @@
         "202611020001_crew.sql"
       ],
       "autoApply": false
+    },
+    {
+      "name": "202611050001_crew_transfer.sql",
+      "sha256": "aea05d72f2633465dd486d4c8df1ff8222e9ce4649ce3f3a5a634faa21d3b176",
+      "dependsOn": [
+        "202609280001_partners.sql",
+        "202609290001_partner_history.sql",
+        "202611020001_crew.sql",
+        "202611020002_operations.sql"
+      ],
+      "autoApply": false
     }
   ],
   "requiredBeforeDdl": [
@@ -53,7 +64,8 @@
     "approved_private_import_mapping",
     "https_and_oauth_routes",
     "two_account_negative_access_checks",
-    "browser_acceptance"
+    "browser_acceptance",
+    "private_provenance_schema_and_mapping_review"
   ],
   "preflightScript": "event-app/supabase/preflight-readonly.sql"
 }
