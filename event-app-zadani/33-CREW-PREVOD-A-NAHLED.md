@@ -1,0 +1,29 @@
+# Řízený převod crew — místní náhled bez zápisu
+
+Další nezávislá příprava sdíleného provozu. Současná místní SQLite je pracovní zdroj až do potvrzeného převodu. Tento krok nikdy nepřipojuje Supabase, nemění SQLite, nevytváří Auth/Person, neuděluje role a nic neimportuje. Produkční přístupy a mapování jsou odložené v31. Výstup náhledu obsahuje osobní/finanční data a patří pouze do soukromého adresáře0600, nikdy Git/model/CI/public/stdout.
+
+## Odhalené rozdíly lokální a sdílené evidence
+
+Současný crew_roster přijímá základní kontakty/termíny/PÁ/SO/poznámky a crew_compensation odměny. Nemá samostatné zdrojové sloupce `statusNote`, `contactOriginal`, všechny původní Excel/raw hodnoty ani historické řádky2025/2026, starý audit/requests a provenance lokálního source_id. Ty se nesmějí zahodit, přimíchat do běžné poznámky nebo tím zpřístupnit finanční zdroj běžné crew. Před ostrým převodem je nutné doplnit samostatný neveřejný provenance/historický model, RLS/archiv/audit a odpovídající ověření. Již existující migrace se kvůli tomu neupravují. Náhled tento stav označí jako blokátor, nic tiše neztrácí.
+
+## Malý implementační rozsah
+
+Samostatný standard-library Python modul `event-app/tools/crew_import_preview.py`, export `build_preview(tables_bytes)` -> dict. V tomto kroku žádná CLI/FS/network/SQLite API. Vstup je přesná bytes kopie `exports/crew-tables.json` z konzistentního místního kolektoru29c, max128MiB. SHA256 původních bajtů připojit k výstupu. JSON číst striktně bez duplicitních klíčů/NaN/Infinity, následně stejné pravidlo pro JSON stringy content. Výjimky vždy ValueError('CREW_IMPORT_PREVIEW_FAILED'), žádné logy nebo raw údaje do chyb.
+
+Formát vstupu `[{'name':table,'columns':[...],'rows':[[...],...]}]`. Vyžadovat tabulky meta/history/categories/working/audit/requests, jejich původní povinné sloupce podle crew_workspace.py; nepřepisovat vstupní hodnoty. Unikátní názvy tabulek/sloupců, přesné počty buněk v každém řádku, scalars null/string/int/finitefloat a známý BLOB marker zachovat, objektový datový typ pouze podle exportu29c. Maximálně10000řádků na tabulku; nesplněná mez znamená chybu bez částečného náhledu. Neznámé další tabulky/sloupce zůstanou v `preservedTables` beze změny a mají obecné upozornění, nic z nich automaticky neaplikovat.
+
+Výstup `{version:1,mode:'preview_only',applyReady:false,sourceSha256,categories,entries,preservedTables,warnings,blockers}`. `preservedTables` musí uchovat celé dekódované původní pole tabulek včetně historických content stringů, auditu, requests a extra sloupců; není to běžný týmový export. Není dovoleno je normalizovat nebo změnit původní řetězcové zobrazení. Snapshot SQLite zůstává hlavní bezeztrátový zdroj.
+
+Kategorie: validovat neprázdné textové id/name/name_key/color, sort_order nebool integer>=0, version nebool integer>=1, barva cat-0..11, unikátní id/name_key, jméno nevyprázdnit/nezkracovat, limity cílového schématu. `categories` navrhne `{sourceCategoryId,name,color,sortOrder,sourceVersion,requiredCount:null,requiredTerm:''}` bez UUID cílového ročníku. Pořadí podle sort_order/id. Neodvozovat požadované počty z minulých řádků.
+
+Pracovní řádky pouze year2027, id unikátní, category_id musí existovat, content objekt. Zachovat sourceVersion/updateAt/sourceId, sourceVersion nebool integer>=1, updated_at neprázdný text; ověřit že nenulový source_id odkazuje na přítomný historický řádek2026. Obsah musí obsahovat všechna TEXT_LIMITS pole kromě volitelných friday/saturday (ty lze pro starý záznam navrhnout prázdné), status/archived/money ve správném typu; limit textů a peněz je stejný jako lokální evidence a sdílené schéma. U confirmed ověřit term.strip() neprázdný, ale původní termín nekrátit. Žádné trim, odhad kontaktu ani přepočet starých částek. `money` má estimate/agreed/total/paid:null nebo nebool int haléře0..99999999999, barter/merch samostatně. Potvrzený řádek bez termínu je chyba, historický status se do2027 nepřenáší.
+
+Každý entry `{sourceRowId,sourceCategoryId,sourceId,sourceVersion,updatedAt,roster,compensation,unmapped}`. roster obsahuje kind:'unresolved',person_id:null,linked_user_id:null,name,position,owner_label←owner,email,phone,status,term,friday,saturday,notes,archived. Žádné cílové id/edition_id/grant. compensation přesně čtyři money haléřové hodnoty plus barter/merch. unmapped uchová statusNote/contactOriginal a všechny ostatní původní content klíče mimo mapovaná pole; kategorieId se nesmí lišit od row.category_id. Původní content je zároveň celý vpreservedTables. Nepřidávat statusNote/contactOriginal do sdílených notes.
+
+Duplicitní stejné jméno/e-mail/telefon se neslučují, entries má přesně počet working řádků. Vždy blocker `IDENTITY_MAPPING_REQUIRED` (včetně rozlišení osoby/skupiny), `PRIVATE_PROVENANCE_SCHEMA_REQUIRED`, `TARGET_PROJECT_AND_EDITION_REQUIRED`, `ACCOUNT_SCOPES_REQUIRED`, `VERIFIED_BACKUP_AND_RESTORE_REQUIRED`. warnings může přidat pouze stabilní kódy, nikoli skutečné identity. I prázdná pracovní evidence vyžaduje stejné aktivační brány.
+
+## Hostitelská akceptace a pozdější aktivace
+
+Synteticky: stejné jméno zůstane dvěma řádky; neznámé extra pole a tabulka se neztratí; statusNote/kontakt nemění notes; NULL/0 zachované; zdrojový vstup beze změny; historie2025/2026, audit a requests totožné; nesprávná vazba/kategorie/stav/částka/NaN/duplicateJSON/rowwidth failclosed; žádné sítě, zápisy, UUID/granty nebo výstup osobních údajů. Potom soukromý náhled nad kopiemi z ověřeného snapshotu, s uloženou SHA a jen souhrnnými počty ven.
+
+Před jakýmkoli importem samostatně schválit mapování řádků, přesné cílové edition/account UUID a role, doplnit provenance schéma a readonly historii, ověřit zálohu/obnovu, předložit rozdílový náhled cíle a opakování bez duplicit. Teprve další výslovný aktivační krok smí atomicky zapisovat do potvrzeného prostředí. Tato příprava není schválení těchto voleb a nepřepisuje skutečnou SQLite.
