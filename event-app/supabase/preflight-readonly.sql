@@ -74,7 +74,9 @@ WITH expected(signature) AS (VALUES
  ('public.crew_import_target_preview(uuid)'),
  ('public.crew_import_stage_approval(uuid,text,text,timestamptz)'),
  ('public.crew_import_revoke(uuid,uuid)'),
- ('public.crew_import_apply(uuid,uuid,uuid,text,text)')
+ ('public.crew_import_apply(uuid,uuid,uuid,text,text)'),
+ ('public.crew_transfer_history_index(uuid,uuid)'),
+ ('public.crew_transfer_history_row(uuid,uuid,uuid)')
 ), procedures AS (
  SELECT signature,to_regprocedure(signature) AS object_id FROM expected
 ), roles AS (

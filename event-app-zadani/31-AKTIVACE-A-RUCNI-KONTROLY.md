@@ -1,5 +1,14 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-12 — čtecí historie a odložené kontroly
+
+- [x] Čtecí DB rozhraní40 v kódu,6 PGlite scénářů, bez živého DDL. Inventář nyní7 migrací; předchozí počty níže jsou historické.
+- [ ] Při pozdější aktivaci ověřit skutečný admin správného2027, odebrání role, zákaz finančního koordinátora/člena/viewera a cizího ročníku. Archiv pouze readonly.
+- [ ] Po zapojení UI projít výběr zdroje a bezpečné vykreslení původních sloupců/historie jako textu. Bez přenosu do dema/public/localStorage/logů. UI zatím není implementované.
+- [ ] Implementovat a spustit kontrolní protokol39; nativní timeout není hotová implementace ani schválení. Při porovnání používat přesné schválené identity z plánu, ne zdrojové defaultní unresolved.
+- [ ] Autorita exportů/readbacku, skutečná záloha/obnova, živý souběh a samotný import/aktivace zůstávají na samostatné pozdější potvrzení. Nyní bez otázek a bez skutečného importu.
+
+
 ## 2026-11-05 — importer připravený v kódu, skutečný převod zakázaný
 
 - [x] Implementovat a synteticky ověřit transakční V1 podle37/38. Předchozí nedokončený bod níže je tímto splněný pouze pro kód/testy.

@@ -61,6 +61,19 @@
         "202611050001_crew_transfer.sql"
       ],
       "autoApply": false
+    },
+    {
+      "name": "202611120001_crew_history.sql",
+      "sha256": "f6fa021e20d3eb63e3498666befc895981d32df5e83f51c2b9fa357567a91238",
+      "dependsOn": [
+        "202609280001_partners.sql",
+        "202609290001_partner_history.sql",
+        "202611020001_crew.sql",
+        "202611020002_operations.sql",
+        "202611050001_crew_transfer.sql",
+        "202611050002_crew_import.sql"
+      ],
+      "autoApply": false
     }
   ],
   "requiredBeforeDdl": [

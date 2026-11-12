@@ -1,5 +1,16 @@
 # Spolupráce při vývoji a denní zálohy
 
+## 2026-11-12 — čtecí rozhraní původu a historie crew
+
+Implementovaný backend40 nabízí správci konkrétního ročníku2027 metadata zdrojů vybraného rosteru a explicitní čtení jedné původní pracovní řádky2027 s její navázanou historií2026. Zachová původní obsah, NULL/0 a případně chybějící historii. Koordinátor včetně finančního grantu, člen, viewer, cizí správce a anon nemají přístup. Archiv2027 je pro správce čitelný; role se kontroluje při každém volání. Funkce jsou STABLE a fungují v READ ONLY transakci, bez změn dat/auditu/účtů. UI zatím není zapojené.
+
+Ověřeno270 aplikačních testů včetně6 nových DB scénářů,162 Python a37 původních Node kontrol, TypeScript a čistý produkční build. Katalogový preflight nyní30 tabulek/27 funkcí, inventář7 migrací má autoApply:false; předchozích6 souborů beze změny. [Evidence](crew-history-verification.json).
+
+Kontrolní protokol39 zůstává rozpracovaný: nativní issue54 skončilo CLAUDE_TIMEOUT_NO_RETRY bez návrhu; žádné opakování nebo modelový fallback.26 nezávislých připravených scénářů je v tests/pending/crew_import_verify_test.py.pending a NEPOČÍTÁ se mezi spuštěné testy. Modul checkeru není implementovaný. Dále: jeho menší ohraničená implementace, potom soukromé inline UI historie a propojené ověření podle přesných schválených identit.
+
+Žádný skutečný import, DDL, schválení, grant, deploy nebo merge neproběhl. Pracovní SQLite/historie se neotevírala ani neměnila. Živá autorita projektu/exportů, účty/RLS, víceklientový PostgreSQL, browser, úplná vzdálená záloha/obnova a aktivace zůstávají otevřené v31. Pracovní blok byl omezený uživatelem na23 minut, nedokončené body jsou uložené pro další pokračování.
+
+
 ## 2026-11-05 — transakční počáteční importer crew (kód, bez aktivace)
 
 Implementováno a synteticky ověřeno podle [37](37-CREW-TRANSAKCNI-IMPORT.md): úplný počáteční převod kategorií, rosteru a oddělených odměn v jediné transakci s přesným zdrojovým balíčkem a vazbami. V1 umí pouze create nebo přesné keep, žádné přepisování, automatické slučování lidí/účtů nebo nové granty. Operátorské schválení váže skutečného správce, ročník, přesný plán/zdroj/cílový otisk a referenci zálohy; platnost, odvolání a jednorázové použití se ověřují na serveru. Stejný úspěšný požadavek se bezpečně opakuje, změněný obsah nebo cíl se odmítne. Při chybě se vrátí všechny změny včetně provenance/auditu.

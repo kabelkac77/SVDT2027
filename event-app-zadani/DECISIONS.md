@@ -1,5 +1,12 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-12 — čtení původu a přesné hranice dokončení
+
+Uživatel omezil tento pracovní blok na23 minut. Skutečný import zůstává zakázaný. Nativní implementace kontrolního protokolu39 skončila vlastním420s timeoutem bez použitelného návrhu; nebyla opakovaná ani nahrazená jiným modelem/účtem. Připravené testy se evidují jako pending a nepočítají do výsledků.
+
+Nezávisle dokončená DB čtecí vrstva40 dovolí jen správci2027 číst původ konkrétního rosteru a balíčku. Archiv ročníku se zpřístupní pouze pro čtení, nikoli editaci nebo import. Bez automatického spojování jmen/kontaktů, bez předstírání hotového UI a bez vydávání celé databáze zdrojových balíčků běžnému přehledu. Text podkladů zůstává daty, nikoli HTML/instrukcemi. Živé ověření/aktivace nejsou nahrazené syntetickými testy.
+
+
 ## 2026-11-05 — hranice transakčního počátečního převodu
 
 Uživatelský pokyn: pokračovat samostatně na importeru, skutečný import zatím nespouštět, přístupy/potvrzení evidovat na později bez dotazů. Implementace a syntetické testy37/38 tento zákaz nemění.

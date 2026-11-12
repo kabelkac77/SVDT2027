@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-12",
+  "scope": "read_only_history_backend_synthetic_only",
+  "app_tests": 270,
+  "host_python_tests": 162,
+  "legacy_node_tests": 37,
+  "history_database_scenarios": 6,
+  "typecheck": true,
+  "production_build": true,
+  "clean_lockfile_install": true,
+  "preflight_tables": 30,
+  "preflight_functions": 27,
+  "migrations": 7,
+  "historical_migrations_unchanged": 6,
+  "history_ui_implemented": false,
+  "post_import_checker_implemented": false,
+  "post_import_checker_tests_pending_not_run": 26,
+  "native_checker_result": "CLAUDE_TIMEOUT_NO_RETRY",
+  "native_retried": false,
+  "live_ddl_or_grants_applied": false,
+  "live_import_performed": false,
+  "working_sqlite_opened_or_written": false,
+  "browser_acceptance": false,
+  "live_multi_account_acceptance": false,
+  "full_offsite_backup_active": false,
+  "test_execution": {
+    "process_concurrency": 1,
+    "skipped": 0
+  },
+  "initial_local_verifier_issues": [
+    "shared dependency build stalled and was terminated",
+    "first clean verifier missed design-system sources; corrected isolated fixture and final build passed"
+  ],
+  "files": {
+    "event-app/supabase/migrations/202611120001_crew_history.sql": "f6fa021e20d3eb63e3498666befc895981d32df5e83f51c2b9fa357567a91238",
+    "event-app/tests/crew-history-database.test.ts": "6e5745474ce933062b82b58067a94221802d63d73a8ca016c3e319475d8b698f",
+    "event-app/supabase/preflight-readonly.sql": "b6b7f8a0b9c8c669a6bfaf4c988f1fa1f9218002a9132e265762ac986e8a8edd",
+    "event-app/tests/shared-preflight.test.ts": "8ed4f173a98018c631ce9479bac1cdbc95aa7c0cc23f105ed33589fa56d186b7",
+    "event-app-zadani/shared-deployment-plan.json": "f7ea650efaf48615d429708e58ef98c89d648316a125b88da421a19adab5815e"
+  }
+}
