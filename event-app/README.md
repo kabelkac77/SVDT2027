@@ -144,3 +144,10 @@ Testovací procesy běží přes npm test s --test-concurrency=1: po rozšířen
 Specifikace37/38 a `crew-import-verification.json` popisují připravenou šestou migraci. V1 vytváří nebo přesně ponechává celé mapování, oddělené odměny a původ zdroje v jediné transakci; nenabízí UPDATE/overwrite nebo slučování osob. Neměnné operátorské schválení váže aktéra, ročník, přesné hashe a referenci protokolu zálohy. Stage/revoke nejsou spustitelné klientským účtem; apply není nyní zapojené do UI/CLI. Schválení, DDL, granty nebo skutečný import jsou samostatné budoucí řízené kroky podle31, nyní výslovně zakázané.
 
 Čistá Python funkce `build_import_plan` v tools/crew_import_plan.py nemá FS/network/DB vedlejší účinky. Bez kompletního explicitního mapování a chráněného cílového exportu žádný plán nevytvoří. Ani s plánem nevrací applyReady:true nebo neuděluje souhlas. Soukromé výsledky a skutečné podklady zůstávají mimo Git/model/logy. Testy používají jen syntetické fixture; PGlite nenahrazuje víceklientový PostgreSQL nebo cloudovou obnovu. Nové helpery ověřují běžné Python unittesty a crew-import-database.test.ts v sériové sadě npm test.
+
+
+### Čtecí původ crew —2026-11-12
+
+Nová migrace202611120001 a specifikace40 přidávají pouze chráněné STABLE RPC crew_transfer_history_index/crew_transfer_history_row. Správce vybere roster a konkrétní balíček, archiv2027 je readonly; jiné role nemají původní osobní/finanční podklady dostupné. Funkce nic neimportují ani nezakládají účty. UI ještě není zapojené, vše čeká na samostatnou aktivaci podle31.270 aplikačních testů včetně6 nových DB scénářů a čistý build prošly; evidence crew-history-verification.json.
+
+Kontrolní modul39 nebyl nativním během dodaný (timeout, bez retry).26 draft scénářů v tests/pending/crew_import_verify_test.py.pending není spuštěných; pro budoucí ověření vyžadují dokončený modul a přesun do tests/crew_import_verify_test.py. Nevydávat je za úspěšné kontroly.

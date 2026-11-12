@@ -1,5 +1,16 @@
 # MASTER BACKLOG
 
+## 2026-11-12 — původ a historie, časově omezený pracovní blok
+
+- [x] Backend40: metadata zdrojů jednoho rosteru a explicitní původní pracovní/historický řádek; pouze správce správného ročníku, archiv readonly.
+- [x]6 syntetických DB scénářů oprávnění, scope, NULL/0, absence historie, původního textu, READ ONLY a odebrání role. Celkem270 app/162 Python/37 legacy, TypeScript/build prošly.
+- [x]7. additive migrace a katalogový preflight30 tabulek/27 funkcí, bez živé aktivace.
+- [x] Specifikace39 a26 nezávislých draft testů kontrolního protokolu uložené; NEIMPLEMENTOVÁNO/nespouštěno. Native issue54 timeout420s, bez retry/fallbacku.
+- [ ] Další: menší ohraničená implementace checkeru39 a spuštění připravených testů/propojení se syntetickým importerem. comparisonMatches nesmí znamenat autoritu nebo povolení provozu.
+- [ ] Další: soukromý inline detail historie v UI; explicitní výběr zdroje, escapovaný text, žádné hromadné payloady/cache v localStorage.
+- [ ] Později podle31: skutečný projekt/přístupy, role, mapování, úplná záloha/obnova, víceklientová/browser akceptace a samostatný aktivační pokyn. Skutečný import dál zakázaný.
+
+
 ## 2026-11-05 — transakční importer crew
 
 - [x] Nová schema-only migrace37: create/keep, úplnost zdroje, oddělené odměny, atomické provenance/vazby/audit a idempotence.

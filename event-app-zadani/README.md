@@ -27,3 +27,5 @@ Dokumentace je živá. Nová rozhodnutí se mají průběžně zapisovat sem, ab
 Tato složka obsahuje veřejnou specifikaci. Zdrojová data, podrobné rozbory a konkrétní provozní údaje jsou v soukromém [SVDT2027-soukrome](https://github.com/vojtechhrach/SVDT2027-soukrome/tree/main/event-app-podklady-soukrome). Přístup k němu se přiděluje samostatně. Hesla a klíče nejsou součástí žádného repozitáře.
 
 - [37 — transakční počáteční import](37-CREW-TRANSAKCNI-IMPORT.md) a [38 — čistý builder plánu](38-CREW-IMPORT-PLAN-BUILDER.md): implementovaný kód a syntetické ověření, bez skutečného importu. [Evidence](crew-import-verification.json).
+
+- [40 — čtecí původ a historie crew](40-CREW-CTENI-HISTORIE.md): backend synteticky ověřený, UI/aktivace otevřené. [39 — kontrolní protokol](39-CREW-KONTROLA-PREVODU.md) je rozpracovaný, nikoli implementovaný.

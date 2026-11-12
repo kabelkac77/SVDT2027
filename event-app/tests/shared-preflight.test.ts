@@ -21,6 +21,7 @@ async function setup() {
     "202611020002_operations.sql",
     "202611050001_crew_transfer.sql",
     "202611050002_crew_import.sql",
+    "202611120001_crew_history.sql",
   ])
     await db.exec(
       await readFile(
@@ -46,7 +47,7 @@ test("catalog preflight reports absent objects on an empty database without assu
     const functions = rows.find((r) =>
       r.some((x: any) => x.signature?.includes("crew_write")),
     )!;
-    assert.equal(functions.length, 25);
+    assert.equal(functions.length, 27);
     assert.ok(functions.every((r: any) => r.present === false));
   } finally {
     await db.close();
@@ -93,7 +94,8 @@ test("catalog preflight checks RLS and RPC permissions without reading or changi
     for (const row of rpc.filter(
       (r: any) =>
         r.signature.includes("crew_transfer_") &&
-        !r.signature.includes("target_snapshot"),
+        !r.signature.includes("target_snapshot") &&
+        !r.signature.includes("history_"),
     )) {
       assert.equal(row.authenticated_execute, false);
       assert.equal(row.anon_execute, false);
@@ -107,6 +109,14 @@ test("catalog preflight checks RLS and RPC permissions without reading or changi
         row.authenticated_execute,
         /crew_import_(target_preview|apply)\(/.test(row.signature),
       );
+      assert.equal(row.anon_execute, false);
+      assert.equal(row.public_execute, false);
+    }
+    for (const row of rpc.filter((r: any) =>
+      r.signature.includes("crew_transfer_history_"),
+    )) {
+      assert.equal(row.present, true);
+      assert.equal(row.authenticated_execute, true);
       assert.equal(row.anon_execute, false);
       assert.equal(row.public_execute, false);
     }
