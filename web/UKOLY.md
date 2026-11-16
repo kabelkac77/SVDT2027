@@ -1,6 +1,6 @@
 # Úkoly a zásobník — web SVDT 2027
 
-Aktualizováno 28. 9. 2026. Pracovní fronta navazující na [ZADANI.md](ZADANI.md). Postup: **základ → návrh → funkční web → kontrola a spuštění → rozšíření**.
+Aktualizováno 16. 11. 2026. Pracovní fronta navazující na [ZADANI.md](ZADANI.md). Postup: **základ → návrh → funkční web → kontrola a spuštění → rozšíření**.
 
 ## Jak tento seznam používat
 
@@ -14,12 +14,13 @@ Aktualizováno 28. 9. 2026. Pracovní fronta navazující na [ZADANI.md](ZADANI.
 
 ## Nejbližší postup
 
-1. **WEB-001:** zjistit současný hosting a možnosti testovacího prostředí. Ze screenshotů potvrzen **Active24 Smart s rozšířením**, dostupné SSL, denní zálohy, 512MB PHP limit a shell konzole. SVDT nyní používá Apache 2.4 / PHP 7.4; WordPress 6.9.9 je údaj zadavatele. Nabídka PHP 8.2–8.5 je doložená; navržený základ sandboxu je po ověření podpory WordPressu 8.5; kompatibilitu konkrétních pluginů a šablony otestujeme. Další krok: ověřit databázi, velikost samotného SVDT a samostatné nastavení náhledu; rezerva úložiště je omezená.
-2. **WEB-002:** WordPress s vlastní šablonou bez Divi je potvrzen. Doplnit technické provedení a způsob nasazování; samostatná bloková šablona bez child theme a oddělený funkční plugin jsou potvrzené v zadání.
-3. **WEB-003 a WEB-004 — připravený výstup:** [STRUKTURA_V1.md](STRUKTURA_V1.md) obsahuje návrh stránek, navigace, homepage, CZ/EN, redakčního modelu a převodu známých URL. Zapracovat připomínky; pro úplnou inventuru doplnit export WordPressu a médií.
-4. **WEB-007 — hlavní krok:** připraveno [VIZUALNI_NAVRH.md](VIZUALNI_NAVRH.md) pro Claude Design. Následuje vložení podkladů a první návrh homepage 1440/390 px s otevřeným mobilním menu. Po připomínkách pokračovat partnerstvím a stránkou jezdce. Rozpory partnerských cen/čísel řešit souběžně; v návrhu je nepředkládat jako schválené.
+1. **WEB-007 — hlavní krok:** opravit druhé kolo homepage podle [aktuálního zadání](ZADANI.md#nejbližší-návrhové-kolo): ořez fotografie „Přijdu fandit“, délku mobilních karet/mezer/patičky, nadbytečné popisky, odkaz na program, partnerský blok při vyšším počtu log a interní placeholdery.
+2. **WEB-008/WEB-009:** po opravách navrhnout Pro jezdce (včetně pracovní EN varianty), Pro diváky a Partnerství. Desktop 1440 / mobil 390 px, kontrola 360/768/1024 px; společné komponenty a jeden propojený prototyp.
+3. **WEB-010:** získat odkaz nebo zdrojový export prototypu, provést funkční kontrolu a zapracovat připomínky. Teprve potom odvodit zbývající šablony podle WEB-009 a uzavřít celé návrhové vydání.
+4. **Souběžně WEB-003 až WEB-006:** úplná inventura WordPressu/médií, finální obsah 2027, jazykové rozhodnutí, autorské kredity, partnerská čísla/ceny a potvrzená loga. Chybějící fakta nepředkládat jako schválená.
+5. **Souběžně WEB-001/WEB-002:** dokončit možnosti stagingu, databázi, velikost SVDT, zálohu/obnovu a způsob nasazení. Parametry hostingu uvedené níže jsou historické doklady ze září, nikoli nové provozní ověření.
 
-Hlavní krok je nyní WEB-007: předávací zadání vizuálního návrhu je hotové, obrazovky zbývají. WEB-004 má návrh struktury připravený k připomínkám. Související WEB-003 má pracovní inventuru známých adres, ale čeká na úplný export obsahu. WEB-001 a WEB-002 zůstávají rozpracované technické přípravy. Lokální prostředí ani nový web zatím nejsou vytvořené.
+**Doložený stav:** existují screenshoty druhého kola homepage včetně celé mobilní a desktopové stránky a koláže šířek. Vizuální kontrola proběhla 16. 11. 2026; klikatelnost, klávesnice, přesný kontrast ani reduced motion nebyly ověřené. Doklady a hranice kontroly jsou v [ZADANI.md](ZADANI.md#stav-vizuálního-návrhu--16-11-2026). Finální schválení návrhu není zaznamenáno. Implementace WordPressu a nasazení nejsou doložené.
 
 ## A. Základ a rozhodnutí — první verze
 
@@ -29,7 +30,7 @@ Hlavní krok je nyní WEB-007: předávací zadání vizuálního návrhu je hot
 | WEB-002 | Potvrdit CMS, architekturu a způsob nasazení | Probíhá | CMS a provedení potvrzené 28. 9. 2026: WordPress + samostatná bloková šablona bez Divi/child theme a funkční plugin; na nás: dopracovat prostředí a nasazení podle WEB-001 | Volba CMS je zapsaná; dokončení vyžaduje také konkrétní postup prostředí a vydání |
 | WEB-003 | Inventura stránek, adres a podkladů; rozsah V1 (W01) | Probíhá | [Pracovní inventura](STRUKTURA_V1.md) hotová 28. 9. 2026; zbývá úplný export stránek, jazyků a médií | Seznam ponechat / přepsat / archivovat / přesměrovat a konkrétní seznam stránek první verze |
 | WEB-004 | Navigace, CZ/EN a redakční obsahový model (W01) | Probíhá | [Návrh v1](STRUKTURA_V1.md) připraven 28. 9. 2026; na nás + zadavatel: připomínky a dokončení návaznosti na inventuru | Mapa stránek, jazykový postup, správa ročníku/programu/partnerů a hranice vůči interní aplikaci |
-| WEB-005 | Shromáždit a ověřit obsah 2027 | Připraveno | Zadavatel + na nás | Evidence zdrojů, chybějících údajů, práv k médiím a odpovědností; neznámé údaje označené, nikoli domyšlené |
+| WEB-005 | Shromáždit a ověřit obsah 2027 | Probíhá | 16. 11. 2026 připraveno logo a ZIP 13 webových fotografií; zadavatel + na nás: potvrzení obsahu 2027, autoři/ročníky snímků a práva | Evidence zdrojů, chybějících údajů, práv k médiím a odpovědností; neznámé údaje označené, nikoli domyšlené |
 | WEB-006 | Vyřešit obsah partnerské nabídky (W03) | Připraveno | Na nás + zadavatel | Sjednocené balíčky/ceny z Canvy, vysvětlené metriky a období, kontaktní cesta; neověřená tvrzení se nepublikují |
 
 WEB-005 a WEB-006 lze připravovat při práci na struktuře. Pro první návrhy mohou být chybějící podklady označené; před veřejným spuštěním musí být nahrazené nebo odpovídající obsah vynechaný.
@@ -42,10 +43,14 @@ WEB-005 a WEB-006 lze připravovat při práci na struktuře. Pro první návrhy
 
 | ID | Úkol / vazba | Stav | Kdo / závislost | Hotovo znamená |
 | --- | --- | --- | --- | --- |
-| WEB-007 | Navrhnout homepage pro mobil i desktop (W02) | Probíhá | [Zadání pro Claude Design](VIZUALNI_NAVRH.md) hotové 28. 9. 2026; první návrh obrazovek zbývá. Vychází z pracovní struktury WEB-004; úplná inventura WEB-003 běží souběžně | Konkrétní návrh s pořadím sekcí, CTA a mobilním ořezem fotografie; společný design systém |
-| WEB-008 | Navrhnout Chci se stát partnerem (W03) | Čeká | Na nás; WEB-006, společné prvky WEB-007 | Krátká srozumitelná nabídka s postupně dostupnými detaily a kontaktem |
-| WEB-009 | Navrhnout stránku jezdce a šablony ostatních stránek | Čeká | Na nás; WEB-004, WEB-007 | Čitelné praktické informace, program, dokumenty, archiv a navigace; bez prázdných budoucích modulů |
-| WEB-010 | Zapracovat připomínky a uzavřít návrh první verze | Čeká | Na nás + zadavatel; WEB-007 až WEB-009 | Zapsané připomínky vyřešené a odsouhlasené předlohy pro implementaci |
+| WEB-007 | Navrhnout homepage pro mobil i desktop (W02) | Probíhá | Druhé kolo screenshotů posouzeno 16. 11. 2026; opravy dle ZADANI.md, kapitola 3. Vizuální směr zachovat; finální přejímka zbývá | Konkrétní návrh s pořadím sekcí, CTA a mobilním ořezem fotografie; společný design systém |
+| WEB-008 | Navrhnout Chci se stát partnerem (W03) | Čeká | Navazující prompt připraven 16. 11. 2026; následuje po opravách WEB-007. WEB-006 určuje ověřený obsah; neznámé ceny/metriky vynechat | Krátká srozumitelná nabídka s postupně dostupnými detaily a kontaktem |
+| WEB-009 | Navrhnout Pro jezdce, Pro diváky a šablony ostatních stránek | Čeká | Zadání připraveno 16. 11. 2026; po opravách WEB-007 první dvojice stránek včetně pracovní EN jezdecké varianty. Ostatní šablony až po připomínkách k hlavním stránkám | Čitelné praktické informace, program, dokumenty, archiv a navigace; bez prázdných budoucích modulů |
+| WEB-010 | Zapracovat připomínky a uzavřít návrh první verze | Čeká | Na nás + zadavatel; WEB-007 až WEB-009, odkaz/export propojeného prototypu. Ověřit menu, odkazy, focus, klávesnici, kontrast a reduced motion | Zapsané připomínky vyřešené a odsouhlasené předlohy pro implementaci |
+
+### Dokončení navazujících šablon (součást WEB-009)
+
+Po připomínkách ke stránkám Pro jezdce / Pro diváky / Partnerství dopracovat Program, Dětský závod, Partnery, Výsledky, Fotogalerii, Kontakty, Archiv a detail ročníku; detail afterparty podle inventury. V nejbližším kole pouze přehled jejich společných komponent. Pořadí podrobně viz ZADANI.md, kapitola 3. Nové ID nejsou nutné: jde o rozpracování existujícího WEB-009, ne rozšíření V1.
 
 ## C. Funkční web v sandboxu — první verze
 
@@ -92,7 +97,11 @@ Nový nápad přidat s dalším stabilním ID, stručným přínosem a závislos
 | Složka web, zadání a rozcestník podkladů | Hotovo — 28. 9. 2026 | [README](README.md), [ZADANI](ZADANI.md), [ODKAZY](ODKAZY.md) |
 | Oddělení prvního spuštění od následných rozšíření | Hotovo — 28. 9. 2026 | ZADANI.md, kapitola 10 |
 | Pracovní návrh struktury V1 a známých URL | Hotovo — návrh 28. 9. 2026; schválení a úplná inventura zbývají | [STRUKTURA_V1.md](STRUKTURA_V1.md) |
-| Předávací zadání vizuálního návrhu pro Claude Design | Hotovo — zadání 28. 9. 2026; návrh obrazovek zbývá | [VIZUALNI_NAVRH.md](VIZUALNI_NAVRH.md) |
+| Předávací zadání vizuálního návrhu pro Claude Design | Hotovo — původní zadání 28. 9. 2026; návrh mezitím dospěl do druhého kola | [VIZUALNI_NAVRH.md](VIZUALNI_NAVRH.md) |
+| Předávací ZIP design systému, dokumentů a skutečného loga | Hotovo — 16. 11. 2026 | Předáno v chatu; ZIPy nejsou součástí Gitu |
+| Balíček 13 fotografických podkladů ze současného webu | Hotovo — 16. 11. 2026; kredity/ročníky zbývají | ZIP v chatu, hlavní svdt-hero.jpg 1440 × 960 px; ZADANI.md, kapitola 3 |
+| Vizuální kontrola druhého kola homepage | Hotovo — kontrola 16. 11. 2026; opravy a funkční přejímka zbývají | Tři screenshoty zadavatele identifikované v ZADANI.md; WEB-007 zůstává Probíhá |
+| Zadání dalšího kola pro Claude Design | Hotovo — 16. 11. 2026; realizace návrhů zbývá | ZADANI.md: opravy homepage, tři hlavní stránky, následně ostatní šablony |
 | Založení pracovní fronty a zásobníku | Hotovo — 28. 9. 2026 | Tento dokument |
 
-Dokončená příprava neznamená hotový návrh obrazovek, implementaci ani nasazení.
+Dokončená příprava a vizuální kontrola screenshotů neznamenají schválený návrh celého webu, ověřený funkční prototyp, implementaci ani nasazení.
