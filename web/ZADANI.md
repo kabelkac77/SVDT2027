@@ -67,7 +67,39 @@ Zachovat rozpoznatelný charakter, práci se závodní fotografií, tmavými plo
 
 ### Předání vizuálního návrhu
 
-Připraveno [VIZUALNI_NAVRH.md](VIZUALNI_NAVRH.md) jako konkrétní zadání pro Claude Design: zdroje, jejich priorita, pravidla značky, obrazovky, pracovní obsah a kontrola výsledku. Nejbližší krok je jeden návrh homepage pro desktop a mobil s otevřeným menu; partnerství a jezdecká stránka navážou po připomínkách. Příprava zadání je hotová; návrh v externím nástroji dosud nevznikl a není odsouhlasený. Oddělené jazykové stránky zůstávají návrhem k potvrzení.
+[VIZUALNI_NAVRH.md](VIZUALNI_NAVRH.md) uchovává původní brief pro Claude Design. Aktuální stav a navazující pokyny jsou níže; nahrazují starší údaj, že návrh obrazovek dosud nevznikl.
+
+### Stav vizuálního návrhu — 16. 11. 2026
+
+**Doloženo:** dvě kola návrhu homepage v Claude Design; druhé kolo obsahuje skutečné fotografie, čitelnější texty, upravený mobilní úvod a mobilní menu také při šířce 768 px. Výchozí směr zachovat a dále doladit, nikoli začínat nový redesign. Jde o pracovní směr pro pokračování, ne o finální přejímku všech obrazovek.
+
+Podklady ke kontrole dodal zadavatel v chatu:
+- `svdt-2027-kolo2-mobil-390-1x.png` — celá mobilní homepage;
+- `svdt-2027-kolo2-desktop-1440-1x.png` — celá desktopová homepage;
+- `svdt-2027-kolo2-porovnani-sirek.png` — úvod v šířkách 360/390/768/1024/1440 px a otevřené mobilní menu.
+
+Tyto soubory ani zdrojový export prototypu nejsou touto aktualizací nahrané do Gitu. Kontrola proběhla ze screenshotů; funkčnost menu, odkazů, klávesnice, focusu, reduced motion ani přesný kontrast nebyly tímto ověřeny. Odkaz nebo export klikatelného prototypu: **K doplnění** (čeká: zadavatel / výstup Claude Design). Implementace nového WordPress webu ani nasazení nejsou doložené.
+
+**Média:** 16. 11. 2026 připraven samostatný ZIP design systému, kompletní předávací balíček a ZIP s 13 veřejnými fotografickými podklady ze současného webu. Hlavní fotografie [svdt-hero.jpg](https://svdtpribram.cz/wp-content/uploads/svdt-hero.jpg) má 1440 × 960 px a byla vizuálně ověřena jako současný hero záběr. Lokální fotografický ZIP obsahuje zdroje a rozměry; nejde o garantované originály z fotoaparátu. Autoři a ročníky jednotlivých snímků zbývají ověřit. FTP nebylo použito. Starší tvrzení, že pro návrh chybí všechny fotografie, je tím nahrazené.
+
+### Nejbližší návrhové kolo
+
+**A — opravy homepage (WEB-007):**
+1. Opravit ořez jezdce v kartě „Přijdu fandit“ pro desktop i mobil, nebo použít vhodnější divácký záběr.
+2. Mírně zkrátit mobil pod úvodem: opakované texty návštěvnických karet, nadbytečné mezery a patičku; nezmenšovat písmo ani ovládací prvky.
+3. Odstranit redundantní označení „ATMOSFÉRA“ a technickou větu o načtení videa; video na vyžádání zachovat. Označení Aftermovie 2026 použít jen pro ověřený záznam.
+4. „Celý program“ zobrazit až s užitečným cílovým obsahem; jinak postačí stav přípravy.
+5. Prověřit partnerskou sekci s reálným počtem log; pokud chybí, připravit oddělenou označenou zátěžovou ukázku např. 40 partnerů. Ukázka nepotvrzuje partnery 2027. Respektovat smluvenou viditelnost a hierarchii.
+6. Přesunout interní poznámky a zástupné kredity do poznámek návrhu. Ve veřejné předloze chybějící blok skrýt nebo použít pravdivý stav; žádné domyšlené údaje.
+
+**B — navazující hlavní stránky (WEB-008/WEB-009):** po opravách homepage navrhnout Pro jezdce, Pro diváky a Chci se stát partnerem v jednom propojeném prototypu, každou v 1440 a 390 px; ověřit také 360/768/1024 px. Podstránky používají společné komponenty, ale praktické informace nemají vyžadovat opakování vysokého hero z homepage.
+- **Pro jezdce /hlavni-zavod/:** datum/místo, stav registrace, podmínky, kategorie, harmonogram, příjezd/prezence, výbava/dokumenty a kontakt; kotvy a důležité podmínky přímo v textu. Také EN varianta jako pracovní ukázka zahraniční cesty. Oddělené jazykové stránky stále čekají na výslovné rozhodnutí.
+- **Pro diváky /pro-divaky/:** kdy/kde, program, divácká místa, příjezd/parkování, zázemí/děti, bezpečnost, FAQ a kontakt. Statický plánek lze zvětšit; fotografie míst nepotvrzují trasu 2027.
+- **Partnerství /partnerstvi/:** přínos, nejvýše čtyři doložené metriky, tři příklady spolupráce, stručné možnosti zapojení, reference a kontakt. Canva je zdroj obsahu, ne vložená prezentace; ceny, dosahy a TV/stream neslibovat bez potvrzení. Formulář má demonstraci běžného stavu, chyby pole, odesílání, úspěchu a chyby doručení, bez skutečného odesílání.
+
+**C — po připomínkách ke třem stránkám:** odvodit Program, Dětský závod, Partnery, Výsledky, Fotogalerii, Kontakty, Archiv a detail ročníku; případný detail afterparty podle inventury. V aktuálním kole pro ně připravit pouze přehled použitelných společných komponent, ne všechny hotové návrhy naráz.
+
+Před implementací uzavřít připomínky a ověřit klikací prototyp včetně klávesnice, focusu, menu, kontrastu a reduced motion (WEB-010). Vlastní registrace, platby, live, 3D, interní aplikace a přestavba Shoptetu zůstávají mimo tento návrhový krok a podle potvrzeného pořadí až po první verzi webu.
 
 ## 4. Obsah a struktura — návrh první verze
 
@@ -84,8 +116,8 @@ Pravidla fází ročníku, obsahu CZ/EN a zveřejňování neúplných údajů j
 | ID | Část | Cílový výsledek | Stav / návaznost |
 | --- | --- | --- | --- |
 | W01 | Struktura a obsah | Mapa stránek, pořadí sekcí, CZ/EN cesta, jednotné údaje | Revize hotová; pracovní struktura V1 připravená v STRUKTURA_V1.md, úplná inventura a připomínky zbývají |
-| W02 | Nová veřejná část a mobilní vzhled | Opakovatelné styly, správný hero výřez, kratší homepage, čitelný program | Vizuální audit hotový v uvedeném rozsahu; nastavení administrace neprověřeno |
-| W03 | Partnerství | Stručná nabídka, doložená čísla, ukázky plnění, kontakt | Požadavek potvrzen; obsah a ceny k upřesnění |
+| W02 | Nová veřejná část a mobilní vzhled | Opakovatelné styly, správný hero výřez, kratší homepage, čitelný program | Druhé kolo homepage vizuálně posouzeno 16. 11. 2026; opravy, hlavní podstránky a funkční přejímka návrhu zbývají |
+| W03 | Partnerství | Stručná nabídka, doložená čísla, ukázky plnění, kontakt | Nabídka na homepage navržena ve 2. kole; samostatná partnerská stránka je další krok, obsah/ceny/metriky k ověření |
 | W04 | Trať a překážky | Použitelná mapa, body zájmu, volitelné 3D | Návrh; závisí na trase, modelech a webovém exportu |
 | W05 | Live centrum | Stream, výsledky, mezičasy, stav aktuálnosti a výpadku | Návrh; závisí na časomíře a poskytovateli přenosu |
 | W06 | Registrace a platby | CZ/EN přihláška, kapacita, platba, správa a prezence | Posouzena proveditelnost; realizace k rozhodnutí |
@@ -170,7 +202,7 @@ První verze: správné údaje 2027 a oddělený archiv, průchozí CZ/EN cesty 
 
 Následná vydání přidají vlastní přejímku podle funkce: náhradní zobrazení mapy, dostupnost a stáří live dat, případně transakční scénáře registrací a plateb. Tyto testy nejsou podmínkou první verze, která příslušné funkce neobsahuje.
 
-Nejbližší práce: první vizuální kolo homepage a mobilního menu podle VIZUALNI_NAVRH.md; souběžně dokončovat inventuru obsahu a technickou přípravu. Pracovní pořadí homepage a redakční model už obsahuje STRUKTURA_V1.md. Nové nápady zapisovat do následného rozvoje; změnu rozsahu první verze výslovně zaznamenat.
+Nejbližší práce: dokončit opravy druhého kola homepage, navrhnout Pro jezdce / Pro diváky / Partnerství a ověřit propojený prototyp podle kapitoly 3; souběžně dokončovat inventuru obsahu a technickou přípravu. Pracovní pořadí homepage a redakční model už obsahuje STRUKTURA_V1.md. Nové nápady zapisovat do následného rozvoje; změnu rozsahu první verze výslovně zaznamenat.
 
 ## 11. Vývoj, neveřejný náhled a nasazení
 
@@ -335,3 +367,5 @@ Vlastní registrace jezdců W06 musí být navržena také s ohledem na interní
 - 28. 9. 2026: zadavatel upřesnil, že vizuální návrh má silně navazovat na současný web; design systém na GitHubu má při rozporu přednost. Volba nástroje pro návrh zatím není rozhodnutá a nemění tato pravidla.
 
 - 28. 9. 2026: po pokynu pokračovat připraveno VIZUALNI_NAVRH.md pro návrh v Claude Design. První kolo omezeno na homepage a mobilní menu; další stránky následují po připomínkách. Výslovně vyřešena priorita design systému nad starší poznámkou jeho readme o přednosti živého kódu. Návrh v externím nástroji zatím nebyl vytvořen.
+
+- 16. 11. 2026: zadavatel dodal screenshoty druhého kola homepage a požádal o navazující prompt pro opravy i další stránky. Zapsána vizuální kontrola, dostupné fotografie a postup homepage → Pro jezdce / Pro diváky / Partnerství → ostatní šablony po připomínkách. Obrázkové návrhy existují; funkční prototyp, finální schválení a implementace tím nejsou potvrzené. Rozsah první verze ani pořadí odložených rozšíření se nemění.
