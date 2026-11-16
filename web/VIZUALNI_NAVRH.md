@@ -2,6 +2,8 @@
 
 Připraveno 28. 9. 2026. Zadání prvního návrhového kola pro WEB-007; následující kola pokrývají WEB-008/WEB-009. Jde o předání podkladů, nikoli hotový návrh nebo jeho schválení. Claude Design zatím nebyl v rámci této práce otevřen ani naplněn.
 
+**Aktualizace 16. 11. 2026:** původní brief níže zůstává podkladem; homepage už má druhé kolo screenshotů a skutečné fotografie. Aktuální opravy a navazující návrhy Pro jezdce / Pro diváky / Partnerství určuje [ZADANI.md, kapitola 3](ZADANI.md#nejbližší-návrhové-kolo). Původní pořadí kol v tomto briefu je tím upřesněné.
+
 ## 1. Použití a zdroje
 
 Do nového projektu Claude Design vložit úvodní zadání z kapitoly 2 a zpřístupnit tento dokument spolu s následujícími podklady. Samotné vložení URL není dokladem, že nástroj obsah skutečně přečetl. Před kreslením má uvést, které podklady viděl a co chybí.
@@ -128,8 +130,8 @@ Návrh lze předat k implementaci až po kontrole:
 
 ## 8. Aktuální stav a návaznost
 
-**Hotovo:** předávací zadání a kontrolní kritéria.
-**Následuje:** vložení podkladů do Claude Design a první vizuální návrh homepage/menu.
-**Dosud neproběhlo:** vytvoření návrhu v Claude Design, jeho kontrola zadavatelem, export ani implementace.
+**Stav 16. 11. 2026:** hotové předávací podklady, ZIPy včetně 13 fotografií a vizuální kontrola screenshotů druhého kola homepage.
+**Následuje:** opravy homepage → Pro jezdce / Pro diváky / Partnerství → po připomínkách ostatní šablony. Detailní aktuální zadání je v ZADANI.md, kapitola 3.
+**Neověřeno / zbývá:** odkaz nebo zdrojový export klikatelného prototypu, funkční kontrola, finální schválení a implementace. Screenshotové exporty existují; nejsou však důkazem funkční přejímky.
 
 Zadání lze použít i v jiném návrhovém nástroji. Nástroj nemění platnost požadavků. Stav jednotlivých kol udržovat v [UKOLY.md](UKOLY.md); změny rozhodnutí v [ZADANI.md](ZADANI.md).
