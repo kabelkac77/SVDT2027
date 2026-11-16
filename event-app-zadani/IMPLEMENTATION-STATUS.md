@@ -1,5 +1,14 @@
 # Stav implementace
 
+## 2026-11-16 — příprava hlasového projití
+
+Na dnešní pokyn uživatele je připravená [osnova a aktuální mapa hotovosti](41-HLASOVE-PROJITI-STAV-A-OSNOVA.md) a [16 karet modulů](42-HLASOVE-PROJITI-KARTY-MODULU.md) s příklady, otevřenými volbami a návrhem akceptace. Jde o přípravu diskuse, nikoli nová potvrzení nebo implementaci. Relevantní podklady z hlavní pracovní kopie, dostupné části „SVDT Staff Roles“ a organizačního Miro mají soukromý index; konkrétní personální/finanční data ani interní odkazy nejsou zveřejněné.
+
+Dnes ověřeno, že PR35/37/42/47/51/53/55 zůstávají otevřené Draft a nesloučené. Poslední celé ověření kódu z12.11.2026 se nemění; dnes nebyly znovu spuštěné aplikační testy. Finance jsou demo/plán, checker39 a historie UI nejsou implementované, sdílený živý provoz a úplné automatické vzdálené zálohy nejsou aktivované. Skutečný import dál zakázaný.
+
+Při hovoru postupovat po jednom modulu a otázce, potvrzení ukládat do příslušných MD/DECISIONS/backlogu. Vývoj checkeru po menších ohraničených částech zůstává otevřený; příprava hovoru ho neprohlašuje za hotový. Společně vyjasnit také vztah organizačního Notion/Miro a aplikační evidence, Vlastův finanční rozsah, partnerské stavy a samoobsluhu crew.
+
+
 ## 2026-11-12 — čtecí rozhraní původu a historie crew
 
 Implementovaný backend40 nabízí správci konkrétního ročníku2027 metadata zdrojů vybraného rosteru a explicitní čtení jedné původní pracovní řádky2027 s její navázanou historií2026. Zachová původní obsah, NULL/0 a případně chybějící historii. Koordinátor včetně finančního grantu, člen, viewer, cizí správce a anon nemají přístup. Archiv2027 je pro správce čitelný; role se kontroluje při každém volání. Funkce jsou STABLE a fungují v READ ONLY transakci, bez změn dat/auditu/účtů. UI zatím není zapojené.

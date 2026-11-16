@@ -1,5 +1,12 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-16 — příprava dnešního hlasového projití
+
+Uživatel chce projít hotové části, zadanou práci a zadání jednotlivých modulů nad dříve poslanými podklady. Je připravená osnova41, karty42 a soukromý zdrojový index; nejde o schválení nových stavů, kompetencí, kandidátů rolí, finančních rozsahů nebo aktivace. Dřívější23minutový limit byl uzavřený pracovní blok12.11.; dnešní pokyn žádnou novou časovou lhůtu neurčil.
+
+Při přípravě byl pouze čtený organizační Miro board; jeho popisek „Notion = zdroj pravdy“ je podklad k vyjasnění vztahu nástrojů, nikoli automatické přepsání zdejší vývojové specifikace nebo zapnutí synchronizace. Rozdíly mezi potvrzeným UX a kódem zůstávají výslovně viditelné. Osobní kontakty, částky a konkrétní aktuální obsazení se řeší soukromě, nikoli v tomto logu.
+
+
 ## 2026-11-12 — čtení původu a přesné hranice dokončení
 
 Uživatel omezil tento pracovní blok na23 minut. Skutečný import zůstává zakázaný. Nativní implementace kontrolního protokolu39 skončila vlastním420s timeoutem bez použitelného návrhu; nebyla opakovaná ani nahrazená jiným modelem/účtem. Připravené testy se evidují jako pending a nepočítají do výsledků.

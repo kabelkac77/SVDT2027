@@ -1,5 +1,14 @@
 # MASTER BACKLOG
 
+## 2026-11-16 — hlasové zadání a podklady
+
+- [x] Připravená osnova41 a16 karet modulů42: skutečný stav, potvrzený směr, běžný průchod, jedna otázka a návrh akceptace.
+- [x] Zkontrolovaný aktuální stav7 návazných Draft PR; zdroje z hlavní pracovní kopie a dostupného Staff Roles/Miro jsou rozlišené od nových uživatelských potvrzení.
+- [x] Soukromý index podkladů včetně dostupnosti originálů; osobní/finanční obsah a interní odkazy nejsou v Gitu.
+- [ ] Během hlasového rozhovoru postupně projít moduly a uložit skutečně odsouhlasené změny do jejich zadání a rozhodovacího logu. Otázky41/42 nejsou nynější souhlas.
+- [ ] Dále implementačně: menší ohraničené části checkeru39 a spuštění26 pending scénářů; potom soukromý inline detail historie. Dosavadní zákaz skutečného importu a provozní brány31 trvají.
+
+
 ## 2026-11-12 — původ a historie, časově omezený pracovní blok
 
 - [x] Backend40: metadata zdrojů jednoho rosteru a explicitní původní pracovní/historický řádek; pouze správce správného ročníku, archiv readonly.

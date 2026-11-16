@@ -29,3 +29,5 @@ Tato složka obsahuje veřejnou specifikaci. Zdrojová data, podrobné rozbory a
 - [37 — transakční počáteční import](37-CREW-TRANSAKCNI-IMPORT.md) a [38 — čistý builder plánu](38-CREW-IMPORT-PLAN-BUILDER.md): implementovaný kód a syntetické ověření, bez skutečného importu. [Evidence](crew-import-verification.json).
 
 - [40 — čtecí původ a historie crew](40-CREW-CTENI-HISTORIE.md): backend synteticky ověřený, UI/aktivace otevřené. [39 — kontrolní protokol](39-CREW-KONTROLA-PREVODU.md) je rozpracovaný, nikoli implementovaný.
+
+- [41 — hlasové projití: stav a osnova](41-HLASOVE-PROJITI-STAV-A-OSNOVA.md), [42 — karty modulů](42-HLASOVE-PROJITI-KARTY-MODULU.md): příprava diskuse, nikoli nová schválení nebo implementace.
