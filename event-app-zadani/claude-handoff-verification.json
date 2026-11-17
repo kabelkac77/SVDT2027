@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-28",
+  "issue": 16,
+  "pull_request": 17,
+  "data": "synthetic only; public metadata",
+  "proposal": {
+    "base_head": "86453b50df007d50be002753ee2493845d1f7586",
+    "context_bytes": 3990,
+    "completed": true
+  },
+  "review": {
+    "head": "b22159e6e946a3f9f8df56b4ba397cd7b399ffa6",
+    "id": 5683683976,
+    "url": "https://github.com/kabelkac77/SVDT2027/pull/17#pullrequestreview-5683683976",
+    "reproduced_findings": 3
+  },
+  "correction": {
+    "review_head": "b22159e6e946a3f9f8df56b4ba397cd7b399ffa6",
+    "context_bytes": 14577,
+    "completed": true,
+    "files": [
+      {
+        "path": "event-app/tools/review_receipt.py",
+        "sha256": "ea63f085e53654a1ad136b2203a6d910fc19e656d10672354d42283835f7f847"
+      },
+      {
+        "path": "event-app/tests/review_receipt_test.py",
+        "sha256": "bc6017d25d446c374196efd1e3ea36d4def5917712c8eb2c75d46ca5b0401a48"
+      }
+    ]
+  },
+  "verification": {
+    "host_tests": 18,
+    "validator_tests": 22,
+    "total_tests": 40,
+    "independent_malformed_input_cases": 41,
+    "all_passed": true
+  },
+  "limits": [
+    "No application runtime, SQL, production data or deployment changed.",
+    "Mock/synthetic checks do not prove live Supabase authentication or RLS.",
+    "Native Pro and default CLI model; no fallback, tools or model-side MCP.",
+    "Daily complete backups remain a separate unfinished scope."
+  ]
+}

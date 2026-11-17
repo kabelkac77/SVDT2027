@@ -1,5 +1,9 @@
 # Stav implementace
 
+## 2026-10-28 — místní spolupráce Codex a Claude Code
+
+Dodaný a nainstalovaný projektový skill/runner, oddělené strojové vazby mimo Git, ověřené přístupy, samostatná větev a Draft PR #17 pro issue #16. Skutečný nativní návrh, nezávislé připnuté review tří reprodukovaných chyb a oprava ve stejné větvi dokončené. Codex ověřil 40 syntetických testů + 41 dalších negativních případů; kontrola formátu skillu prošla. Zdroj pravdy a důkazy v [22](22-CODEX-CLAUDE-SPOLUPRACE.md). Nové CI testuje jen veřejné syntetické nástroje bez modelového/produkčního přístupu; finální check v PR. Personální pracovní verze, historické údaje, původní index/HEAD, frontend, SQL a produkce se tímto nemění. Denní úplné zálohy nebyly aktivované.
+
 Aktuálně: WhatsApp/Twilio jsou na pokyn uživatele odložené do backlogu. Připravený kód není aktivovaná služba; veřejný flag zůstává standardně vypnutý.
 
 ## 2026-09-28 — interní Partneři V1

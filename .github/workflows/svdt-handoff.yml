@@ -1,0 +1,35 @@
+name: SVDT — místní Claude handoff
+
+on:
+  pull_request:
+    paths:
+      - "event-app/tools/claude_handoff.py"
+      - "event-app/tools/review_receipt.py"
+      - "event-app/tests/claude_handoff_test.py"
+      - "event-app/tests/review_receipt_test.py"
+      - ".github/workflows/svdt-handoff.yml"
+  push:
+    branches: [main]
+    paths:
+      - "event-app/tools/claude_handoff.py"
+      - "event-app/tools/review_receipt.py"
+      - "event-app/tests/claude_handoff_test.py"
+      - "event-app/tests/review_receipt_test.py"
+      - ".github/workflows/svdt-handoff.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-host-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Ověřit hostitelské kontroly na fiktivních datech
+        run: python3 -B -m unittest discover -s event-app/tests -p '*_test.py' -v

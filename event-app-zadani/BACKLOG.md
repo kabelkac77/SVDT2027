@@ -1,5 +1,11 @@
 # MASTER BACKLOG
 
+## Nastavení vývojové spolupráce — samostatně zadaný krok 2026-10-28
+
+- [x] Ověřit oba repozitáře a identitu, zachovat původní rozpracovanou kopii, připravit izolovanou větev.
+- [x] Vytvořit/nainstalovat SVDT skill a vlastní runner, ověřit společný kapacitní guard, 15 hostitelských testů a dry-run.
+- [x] Skutečný návrh → nezávislé review → připnutá oprava → nové review, 40 testů + 41 negativních kontrol; důkazy v [22](22-CODEX-CLAUDE-SPOLUPRACE.md), Draft PR #17.
+
 ## Organizace
 - [ ] Potvrdit Mirka (?) jako Race Coordinatora + najít zálohu.
 - [ ] Jindra (?) jako Vlasta +1; obsadit Vojta +1.

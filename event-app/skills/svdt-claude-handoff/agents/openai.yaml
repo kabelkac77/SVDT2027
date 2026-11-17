@@ -1,0 +1,4 @@
+interface:
+  display_name: "SVDT · místní Claude Code"
+  short_description: "Zadání SVDT Claudovi, review, testy a předání"
+  default_prompt: "Použij $svdt-claude-handoff pro další malý úkol SVDT s nezávislým review a ověřením."
