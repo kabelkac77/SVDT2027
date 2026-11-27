@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-27 — pokračování v nezávislé práci
+
+Uživatel výslovně žádá pokračovat v práci neblokované přihlášením Claude a potřebné přístupy/potvrzení evidovat na později bez otázek. Proto tento blok provádí nezávislé syntetické testy/review a připravuje44/45. Nepřebírá nativní implementaci, neopakuje auth/model/usage a nemění účet nebo kvótu.
+
+Inline historie zachovává dříve potvrzené umístění detailu pod řádkem a neměnnost historie. Nové konkrétní texty/ovládání44 a politika dlouho otevřeného citlivého obsahu jsou návrh k pozdějšímu projití. Připravený protokol45 ani úspěšné DB fixture neudělují provozní oprávnění, nepotvrzují aktuální obsazení/finance a nenahrazují živou obnovu či uživatelský souhlas s importem.
+
 ## 2026-11-27 — pokračování bez nového souhlasu s provozem
 
 Uživatel se vrací k další práci v backlogu. Zachováváme dřívější pořadí a rozdělení: místní Claude navrhuje implementaci, Codex připravuje zadání, nezávislé testy a review/Git. První ohraničený krok je parser43, ne opakování celého timeoutovaného úkolu54. Nejde o nové produktové rozhodnutí uživatele.

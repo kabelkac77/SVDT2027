@@ -155,3 +155,7 @@ Kontrolní modul39 nebyl nativním během dodaný (timeout, bez retry).26 draft 
 ### 2026-11-27 — první část checkeru připravená k implementaci
 
 [Specifikace43](../event-app-zadani/43-CREW-KONTROLA-VALIDACE-PLANU.md) vymezuje samostatný čistý parser přesného plánu. Helper zatím nevznikl, native běh zastavilo chybějící přihlášení.18 nových scénářů v tests/pending není spuštěných; původních26 celého checkeru zůstává pending. Dnes prošlo164 hostitelských Python testů včetně2 nových kontrol, že bez native přihlášení nevznikne modelový běh/zápis. Aplikační/DB kód beze změny; žádný skutečný import ani aktivace.
+
+### 2026-11-27 — rozšířená nezávislá akceptace historie
+
+`crew-history-database.test.ts` má13 syntetických DB scénářů, včetně více podkladů, původních typů a sloupců, odhlášení/cizího ročníku, neměnnosti26 aplikačních tabulek+auth.users, podstrčeného search_path a hranice1000/1001. Nové7 scénáře nepřidávají runtime funkci. [UI akceptace44](../event-app-zadani/44-CREW-HISTORIE-UI-AKCEPTACE.md) a [protokol45](../event-app-zadani/45-PREDPROVOZNI-PROTOKOL.md) jsou příprava; browser/UI a živá aktivace jsou stále otevřené.18+26 pending testů parseru/checkeru se nespouštělo.

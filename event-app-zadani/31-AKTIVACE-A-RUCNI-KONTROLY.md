@@ -1,5 +1,15 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-27 — podklady připravené bez dalších přístupů
+
+- [x] Připravený návrh44 pro historii pod řádkem a12 konkrétních browser případů. UI ani browser průchod nejsou hotové.
+- [x] Připravený protokol45 pro soukromou evidenci skutečných důkazů, rolí, obnovy a samostatného aktivačního rozhodnutí. Výchozí živé kroky NEPROVEDENO/BLOKOVÁNO.
+- [ ] Později projít návrh textů a ovládání historie44; určit politiku reautorizace dlouho otevřeného citlivého obsahu. Test odebrání role při dalším volání není okamžité vzdálené odvolání již zobrazených dat.
+- [ ] Po implementaci UI provést všech12 HUI scénářů v povoleném prostředí se syntetickými podklady a oddělenými skutečnými testovacími účty. Žádné reálné osoby do veřejných fixture/logů.
+- [ ] Před aktivací vyplnit soukromou kopii45 skutečnými výsledky; nepřevzít úspěšné lokální/CI testy jako živou autoritu nebo důkaz zálohy/obnovy.
+
+Zákaz skutečného importu dál platí. Přihlášení Claude ani provozní přístupy se v tomto bloku znovu nekontrolovaly a nevyžadovaly.
+
 ## 2026-11-27 — nativní vývojové přihlášení na později
 
 - [ ] Až později obnovit přihlášení místního Claude Code ke stávajícímu nativnímu účtu/předplatnému. Dnes ověřeno pouze auth status exit1/loggedIn:false/authMethod:none; žádný pokus o přihlášení, přepnutí účtu nebo změnu kvóty. Nevyžadovat hesla/klíče do chatu.

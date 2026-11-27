@@ -1,0 +1,78 @@
+{
+  "date": "2026-11-27",
+  "scope": "independent_tests_and_acceptance_preparation",
+  "baseHead": "418852922f9610cfce4b116e4eda9a8708e8dcd3",
+  "runtimeApplicationChanged": false,
+  "sqlChanged": false,
+  "nativeAuthChecked": false,
+  "nativeModelCalled": false,
+  "validation": {
+    "historyDatabaseTestsPassed": 13,
+    "newHistoryDatabaseTests": 7,
+    "appTestsPassed": 277,
+    "pythonTestsPassed": 164,
+    "legacyNodeTestsPassed": 37,
+    "typecheck": true,
+    "productionBuild": true,
+    "nodeVersion": "24.22.3",
+    "isolatedTrackedSourceCopy": true,
+    "initialRestrictedAttempt": {
+      "testsReported": 267,
+      "passed": 265,
+      "failedTestFiles": 2,
+      "failureCategory": "EPERM_LISTEN_LOOPBACK",
+      "resolution": "rerun_synthetic_suite_with_loopback_permission",
+      "countedAsSuccess": false
+    },
+    "browserTestsPerformed": false,
+    "liveServiceVerified": false
+  },
+  "snapshotCoverage": {
+    "publicApplicationTables": 26,
+    "syntheticAuthUsers": true,
+    "platformAuthIdentities": false,
+    "platformStorageTables": false,
+    "realOAuthOrJwtTransport": false,
+    "multipleClientPostgresConcurrency": false
+  },
+  "catalogInventory": {
+    "migrationFiles": 7,
+    "tables": 30,
+    "applicationTables": 26,
+    "platformTables": 4,
+    "functions": 27,
+    "autoApply": false
+  },
+  "pending": {
+    "parserScenarios": 18,
+    "fullCheckerScenarios": 26,
+    "executed": false,
+    "sha256": {
+      "event-app/tests/pending/crew_import_verify_test.py.pending": "f6617a2a7983f12d395626b1ebdf81ec7a161f982dc1db48c2399d0b6e2c8685",
+      "event-app/tests/pending/crew_import_verify_plan_test.py.pending": "066a2d9e86864e6097c10b4a6ca2c31a8b1e01c2a9a99b3e14fc68fd4da862ac"
+    }
+  },
+  "preparedNotPerformed": {
+    "browserHistoryCases": 12,
+    "operationalGates": 10
+  },
+  "realSourceOpened": false,
+  "realImportRun": false,
+  "liveDdlOrGrantsRun": false,
+  "deployed": false,
+  "offsiteBackupActivated": false,
+  "migrationSha256": {
+    "202609280001_partners.sql": "81a9398c6732da3fb47d0b46601d315891c42861b22e3447d55172a6c1e97b22",
+    "202609290001_partner_history.sql": "26ffb68380b8d4cbc22fdfc2d4a8b5497a6c69acab69001548f42a27b15e9e18",
+    "202611020001_crew.sql": "c71f68b0bdb2af14839bf82922c92cecc6cbff687353a1ffed44513c41b3770c",
+    "202611020002_operations.sql": "8b73cac12d98faf8f4d3a97be3cebe7d9bfd3c62b93a8ede03f043428edf7d46",
+    "202611050001_crew_transfer.sql": "3f34d5f5e7bb755843109b64bdb75eec678633b4a5a2ada39e569c90ee715a71",
+    "202611050002_crew_import.sql": "3193d56460ada463e7a888a3c2401e99d4f924909de6776392eb2c27d9dbc47c",
+    "202611120001_crew_history.sql": "f6fa021e20d3eb63e3498666befc895981d32df5e83f51c2b9fa357567a91238"
+  },
+  "fileSha256": {
+    "event-app/tests/crew-history-database.test.ts": "d45bd1f0f793c5b6bf6f882b1ea25cbe130c347a395641dd807fe98442e52d83",
+    "event-app-zadani/44-CREW-HISTORIE-UI-AKCEPTACE.md": "20fd6861c49a5fe608ff1fb8aedbc21664178e7a572cfd328c1e959842302c77",
+    "event-app-zadani/45-PREDPROVOZNI-PROTOKOL.md": "6384f0b1146684f9cfd37cf50b7078366418c218cef77e910f1e27aa0ecd10e0"
+  }
+}

@@ -29,3 +29,7 @@ Matice rolí, negativní víceúčtové scénáře, souběh, OAuth/ochrana draft
 ## Rozšíření2026-11-05 — zdroje převodu
 
 Aktuální katalogový preflight očekává26tabulek a12funkcí;3interní transferfunkce musí mít execute zakázané pro public/anon/authenticated. Inventář má5migrací se SHA256 a autoApply:false. Nová35 se na skutečný projekt neaplikovala. Před snapshotem/převodem ověřit skutečný stav: dosud nenasazené tabulky nesmějí být mylně požadované v předmigračním dumpu. Po skutečné aktivaci musí být v úplném dumpu a obnovené s oprávněními/vazbami. Porovnání36 je readonly příprava nad explicitním kompletním exportem, nikoli API pro import.
+
+## Aktuální návaznost2026-11-27
+
+Aktuální inventář má7 migrací,26 aplikačních a4 platformní katalogové tabulky a27 kontrolovaných funkcí. Starší počty i diagnostika2026-11-04 výše jsou historický záznam, nikoli dnešní stav připojení. Tento nezávislý blok živé přístupy ani nativní přihlášení znovu nezkoušel. Vyplnitelný soukromý provozní protokol a pořadí důkazů jsou v [45](45-PREDPROVOZNI-PROTOKOL.md); žádná živá brána tím není splněná.

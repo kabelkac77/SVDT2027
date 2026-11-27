@@ -1,5 +1,13 @@
 # Spolupráce při vývoji a denní zálohy
 
+## 2026-11-27 — nezávislá akceptace historie a předprovozní podklady
+
+Bez nového volání Claude/auth/usage doplněné7 syntetických DB scénářů historie; samostatná sada má13 úspěšných testů. Ověřuje více podkladů stejného rosteru a jejich pořadí, původní neznámé sloupce/NULL/0/false/blob/text, ztrátu Auth identity, cizí ročník, nepodvržitelnost přes search_path a přesnou hranici1000/1001 bez tichého zkrácení. Snapshot při čtení i odmítnutí zůstal stejný pro všech26 aplikačních tabulek a syntetickou auth.users; platformní Auth identities/Storage tato fixture neimplementuje.
+
+Připravené [44 — inline historie a12 browser scénářů](44-CREW-HISTORIE-UI-AKCEPTACE.md) a [45 — předprovozní protokol důkazů](45-PREDPROVOZNI-PROTOKOL.md). Jde o návrh implementační akceptace a prázdný soukromý provozní protokol, nikoli hotové UI nebo schválení nových produktových voleb. Přesný aktuální inventář:7 nezměněných migrací,26 aplikačních +4 platformní tabulky v katalogu,27 kontrolovaných funkcí.
+
+Parser43 a celý checker39 zůstávají neimplementované;18+26 scénářů pending se nespouštělo. Přihlášení Claude zůstává na později, tento krok ho znovu nekontroloval ani neobcházel. Žádná migrace nebo aplikační runtime kód se nemění, skutečné zdroje/SQLite se neotvíraly a neproběhl import, grant, deploy nebo aktivace záloh. Ověření v oddělené kopii:277 app/DB,164 Python a37 původních Node kontrol, TypeScript a build prošly. Podrobné výsledky tohoto bloku jsou v crew-history-acceptance-verification.json.
+
 ## 2026-11-27 — pokračování kontroly převodu, chybí nativní přihlášení
 
 Připravená menší samostatná část [43 — striktní validace plánu](43-CREW-KONTROLA-VALIDACE-PLANU.md), issue57. Dry-run ověřil připnutý HEAD, jediný povolený výstup a6273 bytes veřejného kontextu. Běh se zastavil před modelovým voláním: runner HOST_IO_OR_RESPONSE_FAILED; následná bezpečná kontrola pouze přihlášení potvrdila native auth exit1, loggedIn:false, authMethod:none. Přihlášení ani účet/model/kvóta se neměnily; bez retry a bez API fallbacku. Žádný parser nevznikl.
