@@ -11,3 +11,9 @@ Obě RPC jsou STABLE, SECURITY DEFINER s prázdným search_path. Vynucují přih
 Pro budoucí UI: nejdřív metadata konkrétního řádku, potom explicitní zdroj. Vykreslovat jako escapovaný text, nikdy HTML nebo instrukce. Neukládat do dema/public/localStorage/logů ani nehromadit obsah všech balíčků do běžného seznamu. Celý source_text se tímto RPC neposílá; operátorský byte-for-byte readback pro kontrolní protokol39 je samostatný privátní krok.
 
 Ověření i meze se zapisují do crew-history-verification.json. Živé RLS/účty, browser/UI, víceklientový PostgreSQL, potvrzený projekt a aktivace zůstávají na později v31. Toto rozhraní neprokazuje nezměnitelnost proti infrastrukturnímu správci, autoritu dodaných exportů nebo vzdálenou obnovu.
+
+## Rozšířená nezávislá akceptace2026-11-27
+
+Přidaných7 syntetických DB scénářů (celkem13 pro historii) ověřilo více původů a stabilní pořadí, přesný obsah/typy neznámých sloupců, ztrátu identity, cizí ročník, všech26 aplikačních tabulek a auth.users bez změny, odolnost proti podstrčenému search_path a úplnost1000/odmítnutí1001. Platformní Auth identities/Storage ani živé účty tato fixture netestuje. Původních7 migrací beze změny; nové testy nepřidávají runtime funkci nebo grant.
+
+Budoucí UI má samostatné zadání a12 dosud neprovedených browser scénářů v [44](44-CREW-HISTORIE-UI-AKCEPTACE.md). Soukromé důkazy živé akceptace se později vyplní podle [45](45-PREDPROVOZNI-PROTOKOL.md). Tento krok nic z toho neaktivuje.

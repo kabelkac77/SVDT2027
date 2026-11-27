@@ -17,3 +17,7 @@ Zdroj hranic: https://www.postgresql.org/docs/current/app-pgdump.html a https://
 ## Stav2026-11-02
 
 Implementováno a nezávisle opraveno,9/9 syntetických scénářů s fakepg_dump/pg_restore. Testy ověřují argumenty/env, TOC, warnings/failures, verze, velikosti/práva a cizí náhradu inode. Nejde o živý dump nebo skutečnou databázovou obnovu; chybějící provozní přístup zůstává v31.
+
+## Návaznost aktuálního inventáře2026-11-27
+
+Nezávislé2 nové scénáře propojují explicitně dodaný inventář kolektoru s30 relacemi katalogového preflightu a kontrolují odmítnutí dumpu při absenci TABLE DATA každé ze6 provenance/import tabulek. Fake executable není živý server ani důkaz obnovy. Obecné mandatory minimum7 je kontrola tvaru/základního rozsahu, nikoli úplný seznam aplikace. Skutečný operátor musí schválit aktuální seznam podle skutečně nasazeného schématu: před DDL zálohovat přítomné tabulky bez požadavku na neexistující budoucí, po aktivaci zahrnout všechny nové. Vzdálené napojení/plánovač a skutečná obnova zůstávají otevřené podle31/45.

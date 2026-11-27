@@ -1,5 +1,22 @@
 # MASTER BACKLOG
 
+## 2026-11-27 — doplnění kontrol obnovovacího inventáře
+
+- [x]2 nové syntetické kontroly PG kolektoru: explicitní aktuální30tabulkový inventář a odmítnutí každé ze6 chybějících provenance/import relací. Samostatná PG sada11 scénářů prošla; fake executable není obnova cloudu.
+- [x] Znovu ověřit celou app/DB sadu po doplnění:279 testů prošlo. Celkem9 nových spouštěných scénářů (7 historie +2 PG inventář), bez runtime změny.
+- [ ] Při budoucím napojení skutečného hostu/provideru ověřit úplný inventář proti potvrzenému skutečně aplikovanému stavu. Obecné povinné minimum7 relací není úplný inventář SVDT. Před DDL nezaměňovat budoucí tabulky za již existující.
+
+## 2026-11-27 — práce bez závislosti na přihlášení Claude
+
+- [x] Nezávisle rozšířit testy historie o7 konkrétních případů;13 history DB scénářů prošlo, včetně hranice1000/1001 a ochrany před podstrčeným search_path.
+- [x] Připravit návrh inline historie44: explicitní výběr zdroje, zachování sloupců a typů, oddělení starého podkladu od dnešního stavu, chybové stavy a12 browser scénářů.
+- [x] Připravit provozní protokol45:10 bran se skutečně potřebnými důkazy, bez předstírání udělených oprávnění nebo obnovených záloh.
+- [x] Spustit celé ověření v oddělené kopii:277 app/DB,164 Python,37 původních Node kontrol, TypeScript a build prošly.18+26 pending scénářů zůstává nespouštěných.
+- [x] Ověřit všechny7 migrační hashe beze změny a katalogový rozsah26 aplikačních +4 platformních tabulek /27 funkcí.
+- [ ] Dále nezávisle podle potřeby: review a rozšiřování syntetických kontrol existujícího kódu; produktové otázky a návaznosti držet v41/42/44/45 bez nových potvrzení uživatele.
+- [ ] Blokovaná implementace: parser43 → celý checker39 → UI historie44.18+26 parser/checker scénářů je stále pending a nepočítá se do prošlých testů.
+- [ ] Později podle31/45: native přihlášení, živý projekt/účty/rozsahy/mapování, skutečný PostgreSQL souběh a browser, úplná vzdálená obnova a samostatný aktivační pokyn. Zatím bez dotazů a bez skutečného importu.
+
 ## 2026-11-27 — další samostatná práce a přesné pořadí
 
 - [x] Připravit malou samostatnou specifikaci43 a native issue57 pouze pro parser přesného plánu; dry-run6273 bytes, jeden povolený soubor.
