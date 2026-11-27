@@ -57,3 +57,7 @@ Vývojové přihlášení Claude je samostatná překážka kódu, nikoli apliko
 ## Rozhodnutí až po vyhodnocení
 
 Povolený rozsah: **žádný nový**. Skutečný import: **zakázaný**. Živý sdílený provoz a automatické úplné vzdálené zálohy: **dosud neaktivované**. Pracovní SQLite a historie zůstávají zachované. Předložené UI texty a otevřené produktové otázky nejsou odsouhlasené mlčením.
+
+## Dodatečný důkaz inventáře pro G03
+
+Zaznamenat přesný schválený seznam requiredRelations a jeho vazbu na skutečně aplikovaný stav G02. Obecné minimum7 relací kolektoru není úplný inventář aplikace. Očekávaných30 relací katalogu platí pro celé cílové schéma; před jeho aktivací se zálohuje skutečný existující stav a po aktivaci i nové tabulky. Uložit výsledek kontroly TABLE DATA pro všechny deklarované relace, nikoli pouze hashe dumpu. Žádná z těchto kontrol sama nepotvrzuje obnovu, globální role, Storage bajty nebo externí Auth konfiguraci.

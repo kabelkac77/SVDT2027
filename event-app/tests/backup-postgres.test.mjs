@@ -88,6 +88,68 @@ test("full custom dump preserves every declared required relation and records ve
     f.clean();
   }
 });
+
+function currentCatalogRelations() {
+  const sql = readFileSync(
+    new URL("../supabase/preflight-readonly.sql", import.meta.url),
+    "utf8",
+  );
+  return [
+    ...sql.matchAll(
+      /\('((?:public|auth|storage)\.[a-z_]+)','(?:application|platform)'\)/g,
+    ),
+  ].map((match) => match[1]);
+}
+
+test("operator-supplied current catalog includes every crew import and provenance relation", async () => {
+  const relations = currentCatalogRelations();
+  assert.equal(relations.length, 30);
+  assert.equal(new Set(relations).size, 30);
+  const f = fixture({ relations });
+  f.options.requiredRelations = relations;
+  try {
+    const files = await collectPostgres(f.options);
+    const manifest = JSON.parse(
+      files.find((file) => file.path === "postgres/manifest.json").bytes,
+    );
+    assert.deepEqual(manifest.requiredRelations, relations);
+    for (const table of [
+      "crew_transfer_packages",
+      "crew_transfer_links",
+      "crew_import_approvals",
+      "crew_import_revocations",
+      "crew_import_requests",
+      "crew_import_source_rows",
+    ])
+      assert.ok(manifest.requiredRelations.includes(`public.${table}`));
+    assert.equal(manifest.restoreTested, false);
+    assert.equal(manifest.storageObjectsIncluded, false);
+    assert.equal(manifest.serverRolesIncluded, false);
+  } finally {
+    f.clean();
+  }
+});
+
+test("missing importer or provenance table data rejects a dump against the current approved inventory", async () => {
+  const relations = currentCatalogRelations();
+  for (const table of [
+    "crew_transfer_packages",
+    "crew_transfer_links",
+    "crew_import_approvals",
+    "crew_import_revocations",
+    "crew_import_requests",
+    "crew_import_source_rows",
+  ]) {
+    const f = fixture({ relations, omit: `public.${table}` });
+    f.options.requiredRelations = relations;
+    try {
+      await fail(() => collectPostgres(f.options));
+      assert.ok(!readdirSync(f.root).some((name) => name.startsWith(".svdt")));
+    } finally {
+      f.clean();
+    }
+  }
+});
 test("commands use the explicit service alias, preserve ACL and never receive ambient secrets", async () => {
   const f = fixture();
   const old = process.env.PGPASSWORD;

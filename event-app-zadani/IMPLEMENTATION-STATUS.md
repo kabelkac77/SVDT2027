@@ -1,5 +1,11 @@
 # Stav implementace
 
+## 2026-11-27 — návaznost záloh na aktuální crew tabulky
+
+Doplněné2 syntetické kontroly PostgreSQL kolektoru: přijme explicitní úplný inventář30 katalogových tabulek a odmítne dump, v němž schází TABLE DATA kterékoli ze6 provenance/import tabulek. Samostatně prošlo všech11 backup-postgres scénářů. Po doplnění prošla celá sada279 app/DB testů;164 Python,37 původních Node, TypeScript a build mají úspěšné výsledky tohoto bloku. Jde o fake pg_dump/pg_restore executable, nikoli skutečný dump/obnovu nebo připojený vzdálený cíl.
+
+Kolektor neodvozuje aktuální nasazený stav a jeho obecné minimum7 relací není dostatečný inventář této aplikace. Důvěryhodný host/operátor musí po zjištění stavu dodávat úplný schválený seznam aktuálně existujících tabulek; před DDL nesmí vynucovat budoucí nepřítomné tabulky, po aktivaci nesmí vynechat nové. Napojení skutečného hostu/provideru/plánovače zůstává otevřené v31/45. Runtime kolektoru se nemění.
+
 ## 2026-11-27 — nezávislá akceptace historie a předprovozní podklady
 
 Bez nového volání Claude/auth/usage doplněné7 syntetických DB scénářů historie; samostatná sada má13 úspěšných testů. Ověřuje více podkladů stejného rosteru a jejich pořadí, původní neznámé sloupce/NULL/0/false/blob/text, ztrátu Auth identity, cizí ročník, nepodvržitelnost přes search_path a přesnou hranici1000/1001 bez tichého zkrácení. Snapshot při čtení i odmítnutí zůstal stejný pro všech26 aplikačních tabulek a syntetickou auth.users; platformní Auth identities/Storage tato fixture neimplementuje.

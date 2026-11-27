@@ -1,5 +1,11 @@
 # MASTER BACKLOG
 
+## 2026-11-27 — doplnění kontrol obnovovacího inventáře
+
+- [x]2 nové syntetické kontroly PG kolektoru: explicitní aktuální30tabulkový inventář a odmítnutí každé ze6 chybějících provenance/import relací. Samostatná PG sada11 scénářů prošla; fake executable není obnova cloudu.
+- [x] Znovu ověřit celou app/DB sadu po doplnění:279 testů prošlo. Celkem9 nových spouštěných scénářů (7 historie +2 PG inventář), bez runtime změny.
+- [ ] Při budoucím napojení skutečného hostu/provideru ověřit úplný inventář proti potvrzenému skutečně aplikovanému stavu. Obecné povinné minimum7 relací není úplný inventář SVDT. Před DDL nezaměňovat budoucí tabulky za již existující.
+
 ## 2026-11-27 — práce bez závislosti na přihlášení Claude
 
 - [x] Nezávisle rozšířit testy historie o7 konkrétních případů;13 history DB scénářů prošlo, včetně hranice1000/1001 a ochrany před podstrčeným search_path.

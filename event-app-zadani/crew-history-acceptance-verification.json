@@ -9,7 +9,7 @@
   "validation": {
     "historyDatabaseTestsPassed": 13,
     "newHistoryDatabaseTests": 7,
-    "appTestsPassed": 277,
+    "appTestsPassed": 279,
     "pythonTestsPassed": 164,
     "legacyNodeTestsPassed": 37,
     "typecheck": true,
@@ -25,7 +25,10 @@
       "countedAsSuccess": false
     },
     "browserTestsPerformed": false,
-    "liveServiceVerified": false
+    "liveServiceVerified": false,
+    "backupPostgresTestsPassed": 11,
+    "newBackupInventoryTests": 2,
+    "newTestsTotal": 9
   },
   "snapshotCoverage": {
     "publicApplicationTables": 26,
@@ -73,6 +76,16 @@
   "fileSha256": {
     "event-app/tests/crew-history-database.test.ts": "d45bd1f0f793c5b6bf6f882b1ea25cbe130c347a395641dd807fe98442e52d83",
     "event-app-zadani/44-CREW-HISTORIE-UI-AKCEPTACE.md": "20fd6861c49a5fe608ff1fb8aedbc21664178e7a572cfd328c1e959842302c77",
-    "event-app-zadani/45-PREDPROVOZNI-PROTOKOL.md": "6384f0b1146684f9cfd37cf50b7078366418c218cef77e910f1e27aa0ecd10e0"
+    "event-app-zadani/45-PREDPROVOZNI-PROTOKOL.md": "a78af7f0b6187f7b1ac6a396620f49703c029e51304a1b3936e3d7ac323c7d1c",
+    "event-app/tests/backup-postgres.test.mjs": "dea6b1ca4d9854c4a2de835a5abb685f8ed531f94f2ed8e527f769da77585519",
+    "event-app-zadani/29d-ZALOHY-POSTGRES.md": "790c4a2534516628b55081855bf36d94537c346c389756a9a2fcb07ee8ebd92c"
+  },
+  "backupInventoryCoverage": {
+    "explicitCatalogRelations": 30,
+    "missingProvenanceOrImporterRelationsRejected": 6,
+    "executables": "synthetic_fixtures",
+    "liveHostInventoryWired": false,
+    "realPostgresRestored": false,
+    "liveCatalogRelationListStillRequiresOperatorReview": true
   }
 }
