@@ -1,5 +1,17 @@
 # MASTER BACKLOG
 
+## 2026-11-27 — další samostatná práce a přesné pořadí
+
+- [x] Připravit malou samostatnou specifikaci43 a native issue57 pouze pro parser přesného plánu; dry-run6273 bytes, jeden povolený soubor.
+- [x] Ověřit příčinu zastavení bez opakování modelového běhu: chybí místní nativní přihlášení Claude Code. Přístupy/účet/kvóta beze změny.
+- [x] Přidat2 regresní hostitelské kontroly selhání přihlášení a zákazu jiné auth metody;164 Python testů prošlo.
+- [x] Připravit18 syntetických akceptačních scénářů parseru; zatím pouze syntaxe, NEspuštěno, uloženo v tests/pending.
+- [ ] **Nejbližší implementace — blokováno přihlášením:** parser43; po implementaci přesunout18 scénářů do běžné sady a skutečně spustit. Samotný parser ještě nedokončuje checker39.
+- [ ] Potom checker39: receipt + ověření before/after/provenance, přesné schválené identity,26 původních pending scénářů a propojení s čistě syntetickým importerem.
+- [ ] Potom soukromý inline detail historie40, explicitní výběr původu a bezpečný text bez hromadných dat/localStorage.
+- [ ] Později s uživatelem31: obnovení místního Claude přihlášení; projekt/role a mapování, vzdálený cíl/klíč/plánovač, úplná obnova, živá víceúčtová/browser akceptace a výslovná aktivace. Zatím bez dotazů a bez skutečného importu.
+- [ ] Další produktová práce: potvrdit priority a akceptaci modulů podle41/42, následně dopracovat leadership „Moje práce“, Partnery a skutečné Finance. Připravená otázka není potvrzené rozhodnutí.
+
 ## 2026-11-16 — hlasové zadání a podklady
 
 - [x] Připravená osnova41 a16 karet modulů42: skutečný stav, potvrzený směr, běžný průchod, jedna otázka a návrh akceptace.

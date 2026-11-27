@@ -31,3 +31,7 @@ Drž návrh malý, přehledný a ohraničený jen tímto parserem. Návrh comple
 Syntetické testy: kompatibilita s builderem38 pro create/keep, zachování identity a NULL/0 preview, bez mutací; duplicate keys nahoře/vnořené, shape/type/UTF8/size, strict verze včetně exponentů, UUID/hash/newline, pokrytí/duplicity, pravidla identity a odměn, neunikající chyby. Žádný reálný zdroj, DB, import nebo změna oprávnění. Úspěšné načtení neprokazuje autoritu plánu, schválení operátorem nebo správnost výsledku importu.
 
 Další samostatná část: ověřit receipt a before/after podle39, propojit s existujícími26 pending scénáři a syntetickým DB importerem. Vždy zůstanou ruční brány31 a zákaz skutečného importu.
+
+## Skutečný stav tohoto kroku
+
+Native issue57: dry-run úspěšný,6273 bytes kontextu; běh zastavený před modelem kvůli chybějícímu přihlášení. `crew_import_verify_plan.py` není implementovaný.18 nezávislých scénářů v `event-app/tests/pending/crew_import_verify_plan_test.py.pending` má ověřenou pouze syntaxi. Přesun do `event-app/tests/crew_import_verify_plan_test.py` a spuštění až s modulem; importy předpokládají tuto budoucí cestu v tests/. Nezapočítávat mezi164 skutečně prošlých hostitelských kontrol.
