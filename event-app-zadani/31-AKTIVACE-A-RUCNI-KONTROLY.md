@@ -1,5 +1,14 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-27 — izolovaná zkouška místo provozní aktivace
+
+- [x]4 skutečné testy46 v novém vlastním PostgreSQL prošly:3 souběhové případy a skutečný dump/restore30 tabulek; normální úklid vlastního kontejneru/volumes/přístupů ověřený.
+- [ ] Později ověřit globální role a konfiguraci skutečného Auth/Storage, skutečný vzdálený balíček/klíč a izolovanou obnovu v jiném cílovém prostředí. Současná testovací DB je na témže syntetickém serveru a platformní tabulky jsou minimální fixture.
+- [ ] Živé user JWT/OAuth, skutečná transportní oprávnění a browser, další souběhy a samostatné aktivační rozhodnutí zůstávají podle45 otevřené.170 hostitelských testů +4 skutečné izolované případy nejsou provozní souhlas.
+- [ ] Samostatně dopracovat nouzový checkpoint a úklid při násilném ukončení hostitele; nikdy globální prune nebo mazání cizího kontejneru.
+
+Žádné dotazy na přístupy, žádný skutečný import nebo produkční DDL/grant/deploy v tomto bloku. Vývojové přihlášení Claude se znovu nekontrolovalo.
+
 ## 2026-11-27 — podklady připravené bez dalších přístupů
 
 - [x] Připravený návrh44 pro historii pod řádkem a12 konkrétních browser případů. UI ani browser průchod nejsou hotové.

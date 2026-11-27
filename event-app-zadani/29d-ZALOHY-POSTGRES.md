@@ -21,3 +21,7 @@ Implementováno a nezávisle opraveno,9/9 syntetických scénářů s fakepg_dum
 ## Návaznost aktuálního inventáře2026-11-27
 
 Nezávislé2 nové scénáře propojují explicitně dodaný inventář kolektoru s30 relacemi katalogového preflightu a kontrolují odmítnutí dumpu při absenci TABLE DATA každé ze6 provenance/import tabulek. Fake executable není živý server ani důkaz obnovy. Obecné mandatory minimum7 je kontrola tvaru/základního rozsahu, nikoli úplný seznam aplikace. Skutečný operátor musí schválit aktuální seznam podle skutečně nasazeného schématu: před DDL zálohovat přítomné tabulky bez požadavku na neexistující budoucí, po aktivaci zahrnout všechny nové. Vzdálené napojení/plánovač a skutečná obnova zůstávají otevřené podle31/45.
+
+## Skutečný dump a obnova fixture — 2026-11-27
+
+RP04 v [46](46-IZOLOVANY-POSTGRES-SOUBEH-A-OBNOVA.md) používá skutečný PostgreSQL18.6, pg_dump/pg_restore18.6 a tento kolektor; dump30 syntetických tabulek se obnovil do nové DB a zachoval řádky/zdroj/historii/NULL0, aplikační RLS/politiky a vybrané zákazy RPC. Manifest kolektoru zůstává restoreTested:false; úspěch konkrétní samostatně provedené obnovy se dokládá oddělenou evidencí. Není to živá úplná cloudová obnova, globální role jsou ve fixture předem připravené a Storage bajty/Auth provider nejsou ověřené.

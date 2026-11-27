@@ -1,5 +1,15 @@
 # MASTER BACKLOG
 
+## 2026-11-27 — skutečný PostgreSQL bez provozních přístupů
+
+- [x] Vlastní izolovaný PostgreSQL18.6 se syntetickými daty:4 případy46 skutečně prošly, kontejner/anonymní data i jednorázové přístupy uklizené.
+- [x] Prokázat souběžné čekání dvou klientů na stejný request a jediný zápis; timeout/rollback/přesný retry; odebrání role během čekání.
+- [x] Skutečný pg_dump/pg_restore přes existující kolektor do nové DB; všech30 tabulek/historie/původní text/NULL0/RLS/politiky a vybrané zákazy RPC zachované.
+- [x]6 nových bezpečnostních unit testů bez Dockeru;170 hostitelských kontrol prošlo, bezpečnostní sada i při Python -O. CI filtry přidané bez automatického spouštění serveru.
+- [ ] Dále nezávisle: nouzový checkpoint/úklid po SIGTERM hostitele a další izolované souběhy (různé requesty/ročníky, revokace/expirace approval, ztráta odpovědi). Dosavadní3 souběhové případy nejsou kompletní živá akceptace.
+- [ ] Později31/45: skutečný projekt/účty/OAuth a scopes, kompletní vzdálený provider/klíč/obnova/plánovač, browser a samostatná aktivace. Tato testovací obnova neobnovuje globální role/provider secrets nebo Storage bajty.
+- [ ] Implementace parser43 → checker39 → UI44 dál čeká na native přihlášení;18+26 scénářů zůstává pending. Skutečný import crew dál zakázaný, žádné dotazy uživateli.
+
 ## 2026-11-27 — doplnění kontrol obnovovacího inventáře
 
 - [x]2 nové syntetické kontroly PG kolektoru: explicitní aktuální30tabulkový inventář a odmítnutí každé ze6 chybějících provenance/import relací. Samostatná PG sada11 scénářů prošla; fake executable není obnova cloudu.

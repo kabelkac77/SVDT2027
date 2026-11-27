@@ -1,5 +1,13 @@
 # Spolupráce při vývoji a denní zálohy
 
+## 2026-11-27 — skutečný izolovaný PostgreSQL: souběh a obnova
+
+Bez Claude dokončené [4 skutečné PostgreSQL zkoušky46](46-IZOLOVANY-POSTGRES-SOUBEH-A-OBNOVA.md): souběžný stejný request s pozorovaným zámkem a jediným zápisem; timeout55P03 s úplným rollbackem a přesným retry; odebrání role během čekání s odmítnutím42501; skutečný PostgreSQL kolektor/dump/obnova do nové DB. Obnova zachovala30 tabulek, původní zdroj/historii/NULL0, RLS/politiky a vybrané zákazy RPC. [Sanitizovaná evidence](isolated-postgres-verification.json).
+
+PostgreSQL18.6 běžel v novém vlastním kontejneru na localhost s náhodným heslem a syntetickými daty. Po běhu ověřené odstranění tohoto kontejneru i jeho anonymních dat a smazání jednorázových přístupů. Žádný provozní projekt, skutečná SQLite/lidé ani existující DB se nekontaktovaly. Součástí je6 bezpečnostních unit scénářů; všech170 hostitelských testů prošlo, bezpečnostní sada i pod Python -O. Normální CI nespouští Docker; změněné jen testovací path filtry.279 app/37 legacy/typecheck/build mají místní baseline z předchozího bloku, nikoli nové lokální spuštění.
+
+Jde o dílčí skutečný technický důkaz G03/G06, ne živou akceptaci služby: Auth je syntetická session identita, Storage jen minimální metadata, globální role nejsou obnovené z dumpu a cílová DB je na témže testovacím serveru. Skutečná vzdálená záloha/klíč/provider/obnova, OAuth/user JWT, browser a další provozní souběhy zůstávají otevřené v31/45. Parser/checker18+26 pending scénářů nejsou spuštěné. Žádný provozní import/DDL/grant, deploy, merge nebo aktivace. Nativní auth/model/usage se nezkoušely.
+
 ## 2026-11-27 — návaznost záloh na aktuální crew tabulky
 
 Doplněné2 syntetické kontroly PostgreSQL kolektoru: přijme explicitní úplný inventář30 katalogových tabulek a odmítne dump, v němž schází TABLE DATA kterékoli ze6 provenance/import tabulek. Samostatně prošlo všech11 backup-postgres scénářů. Po doplnění prošla celá sada279 app/DB testů;164 Python,37 původních Node, TypeScript a build mají úspěšné výsledky tohoto bloku. Jde o fake pg_dump/pg_restore executable, nikoli skutečný dump/obnovu nebo připojený vzdálený cíl.
