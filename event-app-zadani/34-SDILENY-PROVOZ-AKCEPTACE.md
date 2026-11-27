@@ -53,3 +53,7 @@ Nezávislé vzdálené stažení musí odpovídat nové šifrované kopii. Obnov
 ## Záznam výsledku později
 
 Soukromý protokol musí uvést schválený commit/migrace, potvrzený projekt/ročník, snapshot a hash importního náhledu, rozhodnutí mapování, účet provádějící krok, časové okno, jednotlivé povolené i zakázané scénáře, důkaz vzdálené obnovy a stav otevřených výjimek. Záznam nesmí obsahovat hesla/tokeny. Tento dokument žádný z těchto kroků sám neprovádí.
+
+## Skutečný izolovaný PostgreSQL — 2026-11-27
+
+Dřívější absence skutečného víceklientového testu je částečně doplněná: RP01–RP03 podle [46](46-IZOLOVANY-POSTGRES-SOUBEH-A-OBNOVA.md) ověřily reálný zámek/stejný request, timeout/rollback/retry a odebrání role během čekání. RP04 obnovil skutečný dump30 syntetických tabulek s historií/RLS/politikami a vybranými zákazy RPC. Nejde o skutečné user JWT nebo browser, externí Auth/Storage ani úplnou vzdálenou obnovu. Další souběhy a živé brány zůstávají otevřené, bez nového souhlasu s aktivací.

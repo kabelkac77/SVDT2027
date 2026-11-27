@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-27 — rozsah skutečné izolované zkoušky
+
+Pokyn pokračovat bez Claude využit pro nezávislé skutečné PostgreSQL testy46. Nový server/kontejner a všechny jeho databáze/role/řádky jsou pouze testovací, vytvořené ze sledovaných syntetických fixture. Použití skutečného importního RPC zde není uživatelský převod provozní crew a nezmírňuje dosavadní zákaz skutečného importu. Žádné existující provozní přístupy se nepřebírají a nativní přihlášení/účet/kvóta se nemění.
+
+Důkaz čtyř úspěšných serverových zkoušek rozšiřuje technickou akceptaci o skutečné zámky a dump/restore. Neprohlašuje globální role, reálný Auth/OAuth, Storage bajty, vzdálený cíl/klíč, browser, autoritu exportů nebo aktivaci za ověřené. Živé stavy G03/G06 v45 proto zůstávají neprovedené; dílčí izolovaný důkaz se eviduje zvlášť. Žádné nové produktové potvrzení uživatele.
+
 ## 2026-11-27 — pokračování v nezávislé práci
 
 Uživatel výslovně žádá pokračovat v práci neblokované přihlášením Claude a potřebné přístupy/potvrzení evidovat na později bez otázek. Proto tento blok provádí nezávislé syntetické testy/review a připravuje44/45. Nepřebírá nativní implementaci, neopakuje auth/model/usage a nemění účet nebo kvótu.

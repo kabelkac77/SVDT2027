@@ -159,3 +159,7 @@ Kontrolní modul39 nebyl nativním během dodaný (timeout, bez retry).26 draft 
 ### 2026-11-27 — rozšířená nezávislá akceptace historie
 
 `crew-history-database.test.ts` má13 syntetických DB scénářů, včetně více podkladů, původních typů a sloupců, odhlášení/cizího ročníku, neměnnosti26 aplikačních tabulek+auth.users, podstrčeného search_path a hranice1000/1001. Nové7 scénáře nepřidávají runtime funkci. [UI akceptace44](../event-app-zadani/44-CREW-HISTORIE-UI-AKCEPTACE.md) a [protokol45](../event-app-zadani/45-PREDPROVOZNI-PROTOKOL.md) jsou příprava; browser/UI a živá aktivace jsou stále otevřené.18+26 pending testů parseru/checkeru se nespouštělo.
+
+### 2026-11-27 — samostatná skutečná PostgreSQL akceptace
+
+[Specifikace46](../event-app-zadani/46-IZOLOVANY-POSTGRES-SOUBEH-A-OBNOVA.md) a `tests/postgres-acceptance.manual.py` přidávají4 úspěšné skutečné zkoušky souběhu a dump/restore v novém vlastním izolovaném serveru. Vyžadují explicitní opt-in; normální CI server nestartuje.6 běžných bezpečnostních unit scénářů ověřuje rozsah bez Dockeru, celkem170 hostitelských testů prošlo. Soukromé přístupy/výstupy mimo Git; runtime/migrace a provozní data beze změny. Živé Auth/Storage/vzdálené zálohy/browser/aktivace a18+26 pending parser/checker scénářů zůstávají otevřené.
