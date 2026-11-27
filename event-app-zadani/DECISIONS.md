@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-27 — pokračování bez nového souhlasu s provozem
+
+Uživatel se vrací k další práci v backlogu. Zachováváme dřívější pořadí a rozdělení: místní Claude navrhuje implementaci, Codex připravuje zadání, nezávislé testy a review/Git. První ohraničený krok je parser43, ne opakování celého timeoutovaného úkolu54. Nejde o nové produktové rozhodnutí uživatele.
+
+Nativní přihlášení dnes není dostupné; žádný modelový návrh nevznikl. Obnovení přihlášení zapisujeme do31 na později bez dotazu, nenahrazujeme jiným účtem/modelem/API. Připravených18 scénářů parseru a původních26 scénářů checkeru jsou pending.164 skutečně spuštěných hostitelských testů neprokazuje dokončený checker, živý provoz nebo obnovu. Skutečný import dál zakázaný.
+
 ## 2026-11-16 — příprava dnešního hlasového projití
 
 Uživatel chce projít hotové části, zadanou práci a zadání jednotlivých modulů nad dříve poslanými podklady. Je připravená osnova41, karty42 a soukromý zdrojový index; nejde o schválení nových stavů, kompetencí, kandidátů rolí, finančních rozsahů nebo aktivace. Dřívější23minutový limit byl uzavřený pracovní blok12.11.; dnešní pokyn žádnou novou časovou lhůtu neurčil.

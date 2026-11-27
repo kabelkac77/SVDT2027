@@ -1,5 +1,13 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-27 — nativní vývojové přihlášení na později
+
+- [ ] Až později obnovit přihlášení místního Claude Code ke stávajícímu nativnímu účtu/předplatnému. Dnes ověřeno pouze auth status exit1/loggedIn:false/authMethod:none; žádný pokus o přihlášení, přepnutí účtu nebo změnu kvóty. Nevyžadovat hesla/klíče do chatu.
+- [ ] Po obnovení znovu ověřit čistý HEAD/rozsah a společný guard při novém konkrétním běhu parseru43. Dnešní selhání nebylo modelovým timeoutem a žádný modelový výstup nevznikl.
+- [ ] Zlepšit bezpečnou diagnostiku runneru při nenulovém návratu auth status: nyní se projeví obecné HOST_IO_OR_RESPONSE_FAILED; testy ověřují zastavení bez modelu/zápisu, nikoli přesnější veřejnou kategorii.
+
+Tato vývojová kontrola nenahrazuje žádnou provozní bránu a nepovoluje import/DDL/granty nebo nasazení. Zaznamenáno bez dotazu podle dřívějšího pokynu uživatele.
+
 ## 2026-11-12 — čtecí historie a odložené kontroly
 
 - [x] Čtecí DB rozhraní40 v kódu,6 PGlite scénářů, bez živého DDL. Inventář nyní7 migrací; předchozí počty níže jsou historické.

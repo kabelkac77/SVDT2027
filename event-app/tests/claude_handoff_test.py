@@ -72,6 +72,22 @@ class ReplyTests(unittest.TestCase):
         with self.assertRaises(h.Rejected):h.parse_reply('{"is_error":true}',[])
 
 class HostGateTests(unittest.TestCase):
+    def test_failed_native_auth_never_reads_usage_calls_model_or_applies_files(self):
+        args=SimpleNamespace(worktree='/private/tmp/synthetic-svdt-auth-gate',expected_head='a'*40,
+                             allow=['event-app/tools/a.py'],context=[],context_ddl=[],issue=1,review=None,dry_run=False,timeout=30)
+        failure=h.subprocess.CalledProcessError(1,['claude','auth','status'])
+        with patch.object(h,'verify_tree'),patch.object(h,'github_task',return_value={}),patch.object(h,'build_prompt',return_value='synthetic'),patch.object(h,'command',return_value='codex/test'),patch.object(h.subprocess,'run',side_effect=failure),patch.object(h,'usage_guard') as usage,patch.object(h.subprocess,'Popen') as model,patch.object(h,'apply_files') as apply:
+            with self.assertRaises(h.subprocess.CalledProcessError):h.run(args)
+            usage.assert_not_called();model.assert_not_called();apply.assert_not_called()
+    def test_missing_native_pro_subscription_cannot_use_another_auth_method(self):
+        args=SimpleNamespace(worktree='/private/tmp/synthetic-svdt-auth-gate',expected_head='a'*40,
+                             allow=['event-app/tools/a.py'],context=[],context_ddl=[],issue=1,review=None,dry_run=False,timeout=30)
+        for auth in [dict(loggedIn=False,authMethod='none',subscriptionType=None),
+                     dict(loggedIn=True,authMethod='api_key',subscriptionType='pro'),
+                     dict(loggedIn=True,authMethod='claude.ai',subscriptionType='unknown')]:
+            with self.subTest(auth=auth),patch.object(h,'verify_tree'),patch.object(h,'github_task',return_value={}),patch.object(h,'build_prompt',return_value='synthetic'),patch.object(h,'command',return_value='codex/test'),patch.object(h.subprocess,'run',return_value=SimpleNamespace(stdout=json.dumps(auth))),patch.object(h,'usage_guard') as usage,patch.object(h.subprocess,'Popen') as model,patch.object(h,'apply_files') as apply:
+                with self.assertRaisesRegex(h.Rejected,'^NATIVE_CLAUDE_PRO_LOGIN_REQUIRED$'):h.run(args)
+                usage.assert_not_called();model.assert_not_called();apply.assert_not_called()
     def test_api_credentials_not_inherited(self):
         with patch.dict(h.os.environ,{'ANTHROPIC_API_KEY':'synthetic','CLAUDE_CODE_OAUTH_TOKEN':'synthetic','DATABASE_URL':'synthetic'}):
             self.assertFalse({'ANTHROPIC_API_KEY','CLAUDE_CODE_OAUTH_TOKEN','DATABASE_URL'}&h.native_env().keys())

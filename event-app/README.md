@@ -151,3 +151,7 @@ Specifikace37/38 a `crew-import-verification.json` popisují připravenou šesto
 Nová migrace202611120001 a specifikace40 přidávají pouze chráněné STABLE RPC crew_transfer_history_index/crew_transfer_history_row. Správce vybere roster a konkrétní balíček, archiv2027 je readonly; jiné role nemají původní osobní/finanční podklady dostupné. Funkce nic neimportují ani nezakládají účty. UI ještě není zapojené, vše čeká na samostatnou aktivaci podle31.270 aplikačních testů včetně6 nových DB scénářů a čistý build prošly; evidence crew-history-verification.json.
 
 Kontrolní modul39 nebyl nativním během dodaný (timeout, bez retry).26 draft scénářů v tests/pending/crew_import_verify_test.py.pending není spuštěných; pro budoucí ověření vyžadují dokončený modul a přesun do tests/crew_import_verify_test.py. Nevydávat je za úspěšné kontroly.
+
+### 2026-11-27 — první část checkeru připravená k implementaci
+
+[Specifikace43](../event-app-zadani/43-CREW-KONTROLA-VALIDACE-PLANU.md) vymezuje samostatný čistý parser přesného plánu. Helper zatím nevznikl, native běh zastavilo chybějící přihlášení.18 nových scénářů v tests/pending není spuštěných; původních26 celého checkeru zůstává pending. Dnes prošlo164 hostitelských Python testů včetně2 nových kontrol, že bez native přihlášení nevznikne modelový běh/zápis. Aplikační/DB kód beze změny; žádný skutečný import ani aktivace.

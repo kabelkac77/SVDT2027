@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-27",
+  "status": "spec_and_acceptance_prepared_native_auth_blocked",
+  "baseHead": "88e3e3d27a5a6aaac91f4fa3ff9c7bae49ad5001",
+  "nativeTaskHead": "83c2ee10074b9747d076cfbaa95aefc70e504b31",
+  "nativeIssue": 57,
+  "nativeDryRun": {
+    "contextBytes": 6273,
+    "allowedFiles": [
+      "event-app/tools/crew_import_verify_plan.py"
+    ],
+    "passed": true
+  },
+  "nativeRun": {
+    "status": "blocked",
+    "category": "HOST_IO_OR_RESPONSE_FAILED",
+    "modelStarted": false,
+    "safeDiagnostic": {
+      "authExitCode": 1,
+      "loggedIn": false,
+      "authMethod": "none"
+    }
+  },
+  "validation": {
+    "pythonTestsPassed": 164,
+    "newAuthGateTests": 2,
+    "pendingParserScenarios": 18,
+    "pendingFullCheckerScenarios": 26,
+    "pendingExecuted": false,
+    "pendingSyntaxChecked": true,
+    "applicationTestsRerun": false
+  },
+  "parserImplemented": false,
+  "fullCheckerImplemented": false,
+  "liveImportRun": false,
+  "liveDatabaseWritten": false,
+  "originalSqliteOpened": false,
+  "deployed": false,
+  "fileSha256": {
+    "event-app/tests/claude_handoff_test.py": "b5841a4852bd501002ee69718af86cba96ef441fe134256b16c3f5c3904b7de1",
+    "event-app/tests/pending/crew_import_verify_plan_test.py.pending": "066a2d9e86864e6097c10b4a6ca2c31a8b1e01c2a9a99b3e14fc68fd4da862ac",
+    "event-app-zadani/43-CREW-KONTROLA-VALIDACE-PLANU.md": "5b3ed132f2a19f67229e52fe4c6416d371ac2dc97025d5a489c1cd36d302b49a"
+  }
+}

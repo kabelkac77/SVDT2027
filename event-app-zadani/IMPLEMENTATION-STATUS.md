@@ -1,5 +1,13 @@
 # Stav implementace
 
+## 2026-11-27 — pokračování kontroly převodu, chybí nativní přihlášení
+
+Připravená menší samostatná část [43 — striktní validace plánu](43-CREW-KONTROLA-VALIDACE-PLANU.md), issue57. Dry-run ověřil připnutý HEAD, jediný povolený výstup a6273 bytes veřejného kontextu. Běh se zastavil před modelovým voláním: runner HOST_IO_OR_RESPONSE_FAILED; následná bezpečná kontrola pouze přihlášení potvrdila native auth exit1, loggedIn:false, authMethod:none. Přihlášení ani účet/model/kvóta se neměnily; bez retry a bez API fallbacku. Žádný parser nevznikl.
+
+Nezávisle doplněné2 spouštěné regresní testy brání volání modelu, odečtu usage a aplikaci návrhu při selhání přihlášení nebo nevhodné metodě/předplatném. Prošlo164 hostitelských Python testů.18 scénářů parseru je pouze připravených v tests/pending/crew_import_verify_plan_test.py.pending (syntaxe zkontrolovaná, NEspuštěno); původních26 pending scénářů celého checkeru39 zůstává také nespouštěných. Dnes žádný aplikační kód/SQL změněný není; starší270 app/37 legacy výsledky z12.11. nejsou novým během.
+
+Další pořadí: obnovit místní nativní přihlášení na pozdější ruční kontrolu31; potom implementovat parser43 a spustit jeho scénáře, následně receipt/before/after/provenance checker39 a syntetické propojení s importerem. Potom soukromý inline detail historie40. Živé účty, přístupy, sdílený provoz a vzdálené zálohy stále vyžadují samostatné provozní brány31. Skutečný import je dál zakázaný. Soukromá SQLite/historie se neotevírala ani neměnila.
+
 ## 2026-11-16 — příprava hlasového projití
 
 Na dnešní pokyn uživatele je připravená [osnova a aktuální mapa hotovosti](41-HLASOVE-PROJITI-STAV-A-OSNOVA.md) a [16 karet modulů](42-HLASOVE-PROJITI-KARTY-MODULU.md) s příklady, otevřenými volbami a návrhem akceptace. Jde o přípravu diskuse, nikoli nová potvrzení nebo implementaci. Relevantní podklady z hlavní pracovní kopie, dostupné části „SVDT Staff Roles“ a organizačního Miro mají soukromý index; konkrétní personální/finanční data ani interní odkazy nejsou zveřejněné.
