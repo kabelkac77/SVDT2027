@@ -23,6 +23,7 @@ APP = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(APP / 'tests'), str(APP / 'tools')]
 from crew_import_preview_test import fixture, encode
 from crew_import_plan import build_import_plan
+from postgres_test_recovery import recover_checkpoint
 
 IMAGE = 'postgres@sha256:f1ea2a1a4fb7b68d4836be1fdcb8a6466a89b072158bf9d97663600538c294c5'
 OWNER = 'svdt_synthetic_owner'
@@ -269,8 +270,8 @@ insert into public.crew_members values('{uid(101)}','{uid(2)}','coordinator',tru
     def actor(self, user=1, client=False):
         return f"set request.jwt.claim.sub={literal(uid(user))};" + ('set role authenticated;' if client else '')
 
-    def apply_sql(self):
-        return f"select public.crew_import_apply('{uid(101)}','{self.approval}','{self.request}',{literal(self.plan)},{literal(self.source)});"
+    def apply_sql(self, request=None):
+        return f"select public.crew_import_apply('{uid(101)}','{self.approval}','{request or self.request}',{literal(self.plan)},{literal(self.source)});"
 
     def counts(self):
         return RUN.value(self.db, "select jsonb_build_object('packages',(select count(*) from crew_transfer_packages),'requests',(select count(*) from crew_import_requests),'roster',(select count(*) from crew_roster),'compensation',(select count(*) from crew_compensation),'people',(select count(*) from people),'users',(select count(*) from auth.users))")
@@ -391,6 +392,86 @@ insert into public.crew_members values('{uid(101)}','{uid(2)}','coordinator',tru
         self.assertIn('42501', error)
         self.assertEqual(self.counts(), dict(packages=0, requests=0, roster=0, compensation=0, people=0, users=2))
 
+    def test_07_different_request_cannot_reuse_an_approval_after_waiting(self):
+        first = RUN.worker(self.db, 'svdt_distinct_a', 'begin;' + self.actor(client=True) + self.apply_sql() + 'select pg_sleep(4);commit;')
+        self.assertTrue(RUN.observed(self.db, 'svdt_distinct_a', "wait_event='PgSleep'"))
+        second = RUN.worker(self.db, 'svdt_distinct_b', self.actor(client=True) + "set lock_timeout='8s';" + self.apply_sql(str(uuid.uuid4())))
+        self.assertTrue(RUN.observed(self.db, 'svdt_distinct_b', "wait_event_type='Lock'"))
+        self.assertEqual(RUN.finish(first)[0], 0)
+        code, _, error = RUN.finish(second)
+        self.assertNotEqual(code, 0)
+        self.assertIn('CREW_IMPORT_APPROVAL_USED', error)
+        self.assertEqual(self.counts(), dict(packages=1, requests=1, roster=1, compensation=1, people=0, users=2))
+
+    def test_08_lost_client_result_after_commit_replays_without_duplicates(self):
+        client = RUN.worker(self.db, 'svdt_lost_result', 'begin;' + self.actor(client=True) + self.apply_sql() + 'commit;select pg_sleep(4);')
+        self.assertTrue(RUN.observed(self.db, 'svdt_lost_result', "wait_event='PgSleep'"))
+        # The commit is known to have completed; deliberately never consume its result.
+        client.kill()
+        client.communicate(timeout=5)
+        original = RUN.value(self.db, f"select response from public.crew_import_requests where request_id='{self.request}'")
+        before = self.snapshot(self.db)
+        for _ in range(2):
+            self.assertEqual(RUN.value(self.db, self.actor(client=True) + self.apply_sql()), original)
+        self.assertEqual(self.snapshot(self.db), before)
+        self.assertEqual(self.counts(), dict(packages=1, requests=1, roster=1, compensation=1, people=0, users=2))
+
+    def test_09_other_edition_waits_on_global_lock_without_mixing_data(self):
+        second_edition = uid(202)
+        RUN.sql(self.db, f"insert into public.events(id,name) values('{uid(201)}','Second synthetic');insert into public.editions(id,event_id,year,name) values('{second_edition}','{uid(201)}',2027,'Second synthetic');insert into public.edition_members values('{second_edition}','{uid(1)}','Synthetic admin','admin');")
+        target = RUN.value(self.db, self.actor() + f"select public.crew_import_target_preview('{second_edition}')")
+        mapping = {'editionId': second_edition, 'categories': {'cat1': {'id': uid(701), 'action': 'create'}},
+                   'entries': {'w1': {'id': uid(801), 'action': 'create', 'compensationAction': 'create', 'kind': 'group'}}}
+        plan = build_import_plan(self.source.encode(), mapping, target)['planText']
+        approval = RUN.scalar(self.db, self.actor() + f"select public.crew_import_stage_approval('{second_edition}',{literal(plan)},'{('b' * 64)}')")
+        first = RUN.worker(self.db, 'svdt_year_a', 'begin;' + self.actor(client=True) + self.apply_sql() + 'select pg_sleep(4);commit;')
+        self.assertTrue(RUN.observed(self.db, 'svdt_year_a', "wait_event='PgSleep'"))
+        sql = f"select public.crew_import_apply('{second_edition}','{approval}','{uuid.uuid4()}',{literal(plan)},{literal(self.source)});"
+        second = RUN.worker(self.db, 'svdt_year_b', self.actor(client=True) + "set lock_timeout='8s';" + sql)
+        self.assertTrue(RUN.observed(self.db, 'svdt_year_b', "wait_event_type='Lock' and exists(select 1 from pg_locks l where l.pid=pg_stat_activity.pid and l.mode='ShareRowExclusiveLock' and not l.granted)"))
+        self.assertEqual(RUN.finish(first)[0], 0)
+        self.assertEqual(RUN.finish(second)[0], 0)
+        self.assertEqual(self.counts(), dict(packages=2, requests=2, roster=2, compensation=2, people=0, users=2))
+        self.assertEqual(RUN.value(self.db, "select jsonb_agg(jsonb_build_array(id,edition_id) order by id) from public.crew_roster"), [[uid(601), uid(101)], [uid(801), second_edition]])
+
+    def restart_owned_server_after_crash(self):
+        marker = RUN.docker('inspect', '--format', '{{index .Config.Labels "svdt.acceptance.run"}}', RUN.container).stdout.strip()
+        self.assertEqual(marker, RUN.token)
+        RUN.docker('kill', '--signal', 'KILL', RUN.container)
+        RUN.docker('start', RUN.container)
+        binding = RUN.docker('port', RUN.container, '5432/tcp').stdout.strip()
+        self.assertRegex(binding, r'^127\.0\.0\.1:[0-9]+$')
+        port = int(binding.split(':')[1])
+        credentials = {
+            RUN.pass_file: f'127.0.0.1:{port}:*:{OWNER}:{RUN.password}\n',
+            RUN.service_file: f'[synthetic]\nhost=127.0.0.1\nport={port}\nuser={OWNER}\ndbname=postgres\nsslmode=disable\n',
+        }
+        for path, text in credentials.items():
+            fd = os.open(path, os.O_WRONLY | os.O_TRUNC | os.O_NOFOLLOW)
+            with os.fdopen(fd, 'w') as out:
+                out.write(text)
+        deadline = time.monotonic() + 25
+        while time.monotonic() < deadline:
+            if RUN.sql('postgres', 'select 1', check=False).returncode == 0:
+                return
+            time.sleep(0.1)
+        self.fail('Owned PostgreSQL did not recover after crash')
+
+    def test_10_server_crash_rolls_back_pending_and_preserves_committed_import(self):
+        before = self.snapshot(self.db)
+        pending = RUN.worker(self.db, 'svdt_crash_pending', 'begin;' + self.actor(client=True) + self.apply_sql() + 'select pg_sleep(15);commit;')
+        self.assertTrue(RUN.observed(self.db, 'svdt_crash_pending', "wait_event='PgSleep'"))
+        self.restart_owned_server_after_crash()
+        self.assertNotEqual(RUN.finish(pending)[0], 0)
+        self.assertEqual(self.snapshot(self.db), before)
+        result = RUN.value(self.db, self.actor(client=True) + self.apply_sql())
+        committed = self.snapshot(self.db)
+        self.restart_owned_server_after_crash()
+        self.assertEqual(self.snapshot(self.db), committed)
+        self.assertEqual(RUN.value(self.db, self.actor(client=True) + self.apply_sql()), result)
+        self.assertEqual(self.snapshot(self.db), committed)
+        self.assertEqual(self.counts(), dict(packages=1, requests=1, roster=1, compensation=1, people=0, users=2))
+
     def probe_expiry_after_table_lock_must_deny_the_write(self):
         """Separate strict diagnostic, not an expected-failure or a passing test."""
         self.approval = RUN.scalar(self.db, self.actor() + f"select public.crew_import_stage_approval('{uid(101)}',{literal(self.plan)},'{('b' * 64)}',clock_timestamp()+interval '2 seconds')")
@@ -414,12 +495,12 @@ insert into public.crew_members values('{uid(101)}','{uid(2)}','coordinator',tru
         self.assertEqual(self.counts(), dict(packages=0, requests=0, roster=0, compensation=0, people=0, users=2))
 
 
-def verify_sigterm(args):
+def verify_sigterm(args, hard_kill=False):
     """Own child PID only; checkpoints are read as evidence, never deletion commands."""
     root = Path(args.output_root).resolve()
     require(root.is_dir() and root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0,
             'Signal probe requires a private owned output root')
-    directory = Path(tempfile.mkdtemp(prefix='sigterm-probe-', dir=root))
+    directory = Path(tempfile.mkdtemp(prefix='sigkill-probe-' if hard_kill else 'sigterm-probe-', dir=root))
     command = [sys.executable, '-B', str(Path(__file__).resolve()), '--run-synthetic', '--probe-interruption']
     for key in ('docker', 'docker_socket', 'pg_bin', 'node'):
         command.extend(['--' + key.replace('_', '-'), getattr(args, key)])
@@ -436,14 +517,26 @@ def verify_sigterm(args):
                 break
             time.sleep(0.1)
         require(checkpoint is not None, 'Signal probe child did not become ready')
-        child.send_signal(signal.SIGTERM)
+        child.send_signal(signal.SIGKILL if hard_kill else signal.SIGTERM)
         stdout, stderr = child.communicate(timeout=25)
-        require(child.returncode == 128 + signal.SIGTERM, 'Interrupted test must not report normal success')
-        report = json.loads((checkpoint.parent / 'report.json').read_text())
+        if hard_kill:
+            require(child.returncode == -signal.SIGKILL and not (checkpoint.parent / 'report.json').exists(),
+                    'Hard kill cannot report successful test completion')
+            recovery_command = [arg for arg in command if arg != '--probe-interruption']
+            recovery_command.extend(['--recover-owned-test', str(checkpoint)])
+            for attempt in range(2):
+                recovered = subprocess.run(recovery_command, capture_output=True, text=True, timeout=40, check=True)
+                receipt = json.loads(recovered.stdout)
+                require(receipt['successful'] and not receipt['testSuiteSuccessful']
+                        and receipt['alreadyAbsent'] == (attempt == 1), 'Recovery/repeat receipt mismatch')
+        else:
+            require(child.returncode == 128 + signal.SIGTERM, 'Interrupted test must not report normal success')
+            report = json.loads((checkpoint.parent / 'report.json').read_text())
+            require(report['interruptedBy'] == signal.SIGTERM and not report['successful'] and report['casesRun'] == 0,
+                    'Invalid interruption receipt')
+            require(report['containerRemoved'] and report['anonymousVolumesRemoved'], 'Interruption cleanup failed')
         state = json.loads(checkpoint.read_text())
-        require(state['phase'] == 'cleaned' and report['interruptedBy'] == signal.SIGTERM
-                and not report['successful'] and report['casesRun'] == 0, 'Invalid interruption receipt')
-        require(report['containerRemoved'] and report['anonymousVolumesRemoved'], 'Interruption cleanup failed')
+        require(state['phase'] == 'cleaned', 'Checkpoint not cleaned')
         require(re.fullmatch('[0-9a-f]{64}', state['containerId'])
                 and all(re.fullmatch('[0-9a-f]{64}', name) for name in state['anonymousVolumes']), 'Invalid resource receipt')
         observer = object.__new__(SyntheticServer)
@@ -453,10 +546,10 @@ def verify_sigterm(args):
         for name in state['anonymousVolumes']:
             require(confirmed_absence(observer.docker('volume', 'inspect', '--format', '{{.Name}}', name, check=False), 'volume'), 'Removed volume not independently confirmed')
         require(all(not (checkpoint.parent / name).exists() for name in ('password', 'pgpass', 'services')), 'Disposable credential remains')
-        result = {'version': 1, 'mode': 'controlled_sigterm_probe', 'successful': True,
+        result = {'version': 1, 'mode': 'controlled_sigkill_recovery_probe' if hard_kill else 'controlled_sigterm_probe', 'successful': True,
                   'childExitCode': child.returncode, 'checkpointCleaned': True,
                   'containerRemoved': True, 'anonymousVolumesRemoved': True, 'disposableCredentialsRemoved': True,
-                  'liveImportRun': False, 'forcedKillRecoveryVerified': False}
+                  'liveImportRun': False, 'forcedKillRecoveryVerified': hard_kill, 'repeatedRecoveryVerified': hard_kill}
         SyntheticServer.private_write(directory / 'report.json', json.dumps(result, indent=2) + '\n')
         print(json.dumps(result), flush=True)
         return 0
@@ -483,9 +576,17 @@ def main():
     mode.add_argument('--probe-interruption', action='store_true', help='Only for the controlled signal probe; waits at most30 seconds')
     mode.add_argument('--probe-expiry-after-lock', action='store_true', help='Strict isolated diagnostic of expiration after table-lock waiting')
     mode.add_argument('--verify-sigterm', action='store_true', help='Create an owned child and independently verify its SIGTERM cleanup')
+    mode.add_argument('--verify-hard-kill', action='store_true', help='Kill only the owned child, recover in a new process and repeat safely')
+    mode.add_argument('--recover-owned-test', metavar='CHECKPOINT', help='Explicit recovery after independent live ownership/storage verification')
     args = parser.parse_args()
     if args.verify_sigterm:
         return verify_sigterm(args)
+    if args.verify_hard_kill:
+        return verify_sigterm(args, hard_kill=True)
+    if args.recover_owned_test:
+        report = recover_checkpoint(args, args.recover_owned_test, SyntheticServer, IMAGE, confirmed_absence)
+        print(json.dumps(report), flush=True)
+        return 0
     global RUN
     RUN = SyntheticServer(args)
     result = None

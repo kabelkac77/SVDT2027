@@ -1,5 +1,13 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — mez důvěry při úklidu testovacího prostředí
+
+Uživatel žádá pokračovat samostatně hlavně v soubězích a obnově po přerušení, přístupy/potvrzení odložit.49 rozšiřuje pouze hostitelské testy; nijak nepřebírá nativní implementaci aplikace nebo neobchází přihlášení.
+
+Explicitní recovery testovacího serveru vyžaduje soukromý validovaný checkpoint a nezávislou shodu živého ID/názvu/image/labelu/připojených dat. JSON sám není oprávnění k mazání. Při chybějícím kontejneru se pouze ověřuje absence zaznamenaných volumes; existující orphan se automaticky nemaže. Úspěšný úklid neudělá ze zabitého testu úspěšnou sadu ani nepovolí provozní aktivaci.
+
+RX01 nadále potvrzuje neopravenou expiraci48/issue61; ostatní zelené kontroly to nemění. Žádné nové uživatelské kompetence/finanční rozsahy nebo aktivační souhlasy.
+
 ## 2026-11-28 — nezávislé ověření a chybu nezakrývat zelenými testy
 
 Pokračování backlogu zachovává rozdělení práce: zde se doplňují hostitelské testy/checkpoint a review, bez runtime náhrady nativního vývoje a bez dalšího auth/model/usage pokusu. SIGTERM je řízené přerušení se samostatným výsledkem, nikoli úspěšně dokončená sada. Checkpoint slouží pouze jako soukromá evidence vlastních prostředků.

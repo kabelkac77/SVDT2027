@@ -167,3 +167,7 @@ Kontrolní modul39 nebyl nativním během dodaný (timeout, bez retry).26 draft 
 ### 2026-11-28 — checkpoint/SIGTERM a neopravená expirace
 
 [47](../event-app-zadani/47-POSTGRES-PRERUSENI-A-SCHVALENI.md) přidává atomický soukromý checkpoint a opt-in `--verify-sigterm`; přerušený vlastní child nehlásí úspěch a jeho prostředky jsou uklizené. Šest běžných skutečných PG případů a174 hostitelských kontrol prošlo,10 bezpečnostních i při Python -O. **Samostatný striktní `--probe-expiry-after-lock` ale selhal:** RPC dovolí nový zápis po expiraci při pozdějším tabulkovém čekání. Nejde o expectedFailure ani hotovou opravu; [48](../event-app-zadani/48-CREW-EXPIRACE-PO-ZAMKU.md)/issue61 blokuje aktivaci. Runtime/SQL a provozní data v tomto bloku beze změny.
+
+### 2026-11-28 — další souběhy a úklid po SIGKILL
+
+[49](../event-app-zadani/49-POSTGRES-SOUBEH-A-RECOVERY.md) rozšiřuje manuální syntetickou sadu na10 skutečných PG případů. `--verify-hard-kill` ověřuje úklid zabitého vlastního child procesu novým procesem a bezpečné opakování. `--recover-owned-test CHECKPOINT` vyžaduje explicitní opt-in, soukromý validovaný soubor a nezávislou shodu živé identity/image/labelu/mounts; orphan volumes se automaticky nemažou.182 hostitelských a18 optimalizovaných bezpečnostních kontrol prošlo. **RX01 stále selhává a61/48 blokuje aktivaci**; runtime/SQL beze změny. Normální CI Docker ani recovery nespouští.

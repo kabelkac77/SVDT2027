@@ -1,5 +1,17 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — další souběhy a bezpečný úklid po SIGKILL
+
+- [x] RP07: jiný request pod stejným approval po skutečném čekání odmítnut bez druhého zápisu.
+- [x] RP08: záměrně ztracený výsledek klienta po COMMIT, dva přesné replay vrátí uložený výsledek a nezmění30tabulkový snapshot.
+- [x] RP09: dvě akce se samostatnými edition2027, pozorované globální zamykání a úspěšné izolované zápisy. Celkem10 běžných skutečných PG scénářů prošlo.
+- [x] RP10: SIGKILL vlastního PostgreSQL před COMMIT vrátí původní30tabulkový snapshot, přesný retry uspěje; další pád po COMMIT zachová data i uložený replay.
+- [x] SIGKILL po ready checkpointu: nový proces ověřil živou identitu/image/label/mounts a uklidil pouze vlastní kontejner/volumes/přístupy. Druhá recovery idempotentní; SIGTERM zůstává úspěšný.
+- [x]8 nových ochranných testů recovery bez Dockeru;182 hostitelských a18 bezpečnostních pod Python -O prošlo. CI přidává jen path filtry testů, nespouští recovery/server automaticky.
+- [ ] **Aktivaci dál blokuje48/issue61.** Striktní RX01 znovu selhal; runtime není opravený. V nativním toku má oprava přednost před parser43/checker39/UI44. Přihlášení se nezkoušelo.
+- [ ] Dále nezávisle: chybové stavy Docker create/neúplné checkpointy, poškození filesystemu a recovery po skutečném výpadku hostitele. Osiřelý volume bez doloženého živého kontejneru se automaticky nemaže.
+- [ ] Skutečný projekt/účty/OAuth/scopes, plné vzdálené zálohy/klíč/obnova, Storage/provider secrets, browser a samostatná aktivace zůstávají na později31/45.18+26 pending scénářů nespouštěno; skutečný import zakázaný.
+
 ## 2026-11-28 — úklid přerušení a nová překážka aktivace
 
 - [x] Atomický checkpoint bez hesel, odolnost replace/symlink a blokování signálů během create→identity→checkpoint.

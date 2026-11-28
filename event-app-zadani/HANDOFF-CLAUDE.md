@@ -1,5 +1,13 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## 2026-11-28 — další souběhy a recovery po SIGKILL
+
+[49](49-POSTGRES-SOUBEH-A-RECOVERY.md): prošly4 nové skutečné PG scénáře (jiný request/stejné approval; ztracený klientský výsledek po COMMIT; dvě oddělené akce/edition2027 s globálním zámkem bez smíchání dat; pád serveru před/po COMMIT s rollbackem a zachováním potvrzených dat). Celkem10 běžných skutečných PG případů prošlo. Ověřené také SIGTERM a SIGKILL vlastního child procesu: nový recovery proces nezávisle ověří ID/název/image/label/mounts a teprve potom uklidí; druhá recovery je bezpečně idempotentní.182 hostitelských kontrol prošlo,18 bezpečnostních i pod Python -O. [Oddělená evidence](postgres-hardkill-verification.json).
+
+Checkpoint sám mazání neautorizuje. Cizí metadata, symlinky/oprávnění, změněný checkpoint, dodatečné bindy, chybějící daemon nebo existující osiřelý volume úklid zastaví. Jména volumes z JSON se nikdy neposílají do volume rm. Testovaný SIGKILL následuje až po ready checkpointu; výpadek napájení/poškození souborů/neúplná inicializace se za hotové nevydávají.
+
+**Chyba61/48 stále neopravena:** samostatný striktní RX01 znovu selhal (0 prošlých/1 selhání), po expiraci se vytvořil nový syntetický zápis. Zelené běžné kontroly aktivaci nepovolují. Aplikační runtime a7 migrací beze změny; žádný native auth/model/usage, skutečná crew/SQLite, provozní import/DDL/grant/deploy nebo vzdálená aktivace.18+26 parser/checker scénářů zůstává pending. Živé přístupy a potvrzení jsou odložené v31/45 bez dotazů.
+
 ## 2026-11-28 — SIGTERM/checkpoint hotové, chyba expirace blokuje aktivaci
 
 [47](47-POSTGRES-PRERUSENI-A-SCHVALENI.md): atomický soukromý checkpoint a řízený SIGTERM skutečně ověřené; přerušený child vrací143/successful:false, vlastní kontejner/volumes/přístupy odstraněné a nezávisle potvrzené. Šest běžných skutečných PG scénářů prošlo (včetně odvolání/expirace při čekání na edition lock).174 hostitelských kontrol prošlo,10 bezpečnostních i při Python -O.
