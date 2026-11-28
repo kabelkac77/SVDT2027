@@ -1,5 +1,12 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — přímý Codex a přerušení zápisu54
+
+- [x] Výslovný pokyn: implementaci nyní provádí přímo Codex. Přihlášení Claude nevyžadovat jako blokátor; případný návrat k němu je volitelný pozdější krok, guard/účet beze změny.
+- [x] Dílčí54:4 skutečná přerušení zápisu a6 závodů inventáře,234 hostitelských/70 optimalizovaných,10 skutečných PG/5 přerušení recovery ověřené.
+- [ ] Čtyři zachované soukromé syntetické temporaries po SIGKILL/nejasné zbytky posoudit později; bez čtení obsahu pro inventář a bez automatického mazání. Nejsou publikovaným reportem, zámek není stale PID.
+- [ ] Před aktivací opravit48/issue61 přímo Codexem a ověřit stejný striktní RX01; nyní selhává0/1. Živé účty/OAuth/Storage/provider/klíč/plná vzdálená obnova/browser/aktivace nadále podle45. Zákaz skutečného importu platí, bez dotazů nyní.
+
 ## 2026-11-28 — přerušení recovery a inventář53
 
 - [x] Dílčí53:5 skutečných SIGKILL držitele recovery a nové/opakované převzetí ověřené;226 hostitelských/62 optimalizovaných kontrol prošlo. Řízené body nejsou power loss nebo přerušení uprostřed zápisu.

@@ -28,6 +28,21 @@ from postgres_test_recovery import recover_checkpoint, read_checkpoint, persist_
 IMAGE = 'postgres@sha256:f1ea2a1a4fb7b68d4836be1fdcb8a6466a89b072158bf9d97663600538c294c5'
 OWNER = 'svdt_synthetic_owner'
 RUN = None
+WRITE_PROBE = None
+WRITE_STAGES = ('checkpoint-partial', 'checkpoint-before-publish', 'report-partial', 'report-before-publish')
+
+
+def write_probe_pause(stage, target):
+    if WRITE_PROBE is not None and WRITE_PROBE['stage'] == stage:
+        marker = target.parent / ('write-paused-' + stage + '.json')
+        payload = json.dumps({'stage': stage, 'baselineSha256': WRITE_PROBE['baselineSha256']}).encode()
+        fd = os.open(marker, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, 'wb') as out:
+            out.write(payload)
+            out.flush()
+            os.fsync(out.fileno())
+        time.sleep(15)
+        raise RuntimeError('Partial-write probe was not interrupted')
 
 
 class SyntheticInterrupted(KeyboardInterrupt):
@@ -109,9 +124,15 @@ class SyntheticServer:
         published = False
         try:
             with os.fdopen(fd, 'w') as out:
+                if path.name == 'report.json' and WRITE_PROBE is not None and WRITE_PROBE['stage'] == 'report-partial':
+                    out.write(text[:max(1, len(text) // 2)])
+                    out.flush()
+                    write_probe_pause('report-partial', path)
                 out.write(text)
                 out.flush()
                 os.fsync(out.fileno())
+            if path.name == 'report.json':
+                write_probe_pause('report-before-publish', path)
             os.link(temporary, path)
             published = True
         finally:
@@ -147,10 +168,15 @@ class SyntheticServer:
         temporary = Path(name)
         try:
             with os.fdopen(fd, 'w') as out:
+                if WRITE_PROBE is not None and WRITE_PROBE['stage'] == 'checkpoint-partial':
+                    out.write('{"version":')
+                    out.flush()
+                    write_probe_pause('checkpoint-partial', target)
                 json.dump(payload, out, sort_keys=True)
                 out.write('\n')
                 out.flush()
                 os.fsync(out.fileno())
+            write_probe_pause('checkpoint-before-publish', target)
             if getattr(getattr(self, 'args', None), 'probe_evidence_failure', None) == 'checkpoint-' + phase:
                 raise OSError('Controlled synthetic checkpoint publication failure')
             os.replace(temporary, target)
@@ -881,6 +907,96 @@ def verify_recovery_interruption(args):
     return 0 if result['successful'] else 1
 
 
+def probe_partial_write(args):
+    global WRITE_PROBE
+    root = Path(args.output_root).resolve()
+    require(root.is_dir() and root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0,
+            'Partial-write probe requires a private owned root')
+    server = object.__new__(SyntheticServer)
+    server.args, server.folder = args, Path(tempfile.mkdtemp(prefix='postgres-synthetic-', dir=root))
+    server.token = uuid.uuid4().hex
+    server.name, server.container, server.volumes = 'svdt-synthetic-' + server.token, None, []
+    with operation_lock(server.folder):
+        server.checkpoint('prepared')
+        baseline = hashlib.sha256((server.folder / 'checkpoint.json').read_bytes()).hexdigest()
+        WRITE_PROBE = {'stage': args.probe_partial_write, 'baselineSha256': baseline}
+        try:
+            if args.probe_partial_write.startswith('checkpoint-'):
+                server.checkpoint('creating')
+            else:
+                server.private_write(server.folder / 'report.json', json.dumps({'synthetic': True, 'payload': 'synthetic-only-' * 20}) + '\n')
+        finally:
+            WRITE_PROBE = None
+    raise RuntimeError('Partial-write probe did not pause')
+
+
+def verify_partial_writes(args):
+    root = Path(args.output_root).resolve()
+    require(root.is_dir() and root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0,
+            'Partial-write verification requires a private owned root')
+    directory = Path(tempfile.mkdtemp(prefix='partial-write-probe-', dir=root))
+    cases = []
+    for stage in WRITE_STAGES:
+        case_root = directory / stage
+        case_root.mkdir(mode=0o700)
+        command = [sys.executable, '-B', str(Path(__file__).resolve()), '--run-synthetic',
+                   '--probe-partial-write', stage, '--output-root', str(case_root)]
+        child = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        try:
+            deadline = time.monotonic() + 10
+            marker = None
+            while time.monotonic() < deadline:
+                require(child.poll() is None, 'Writer exited before controlled pause')
+                found = list(case_root.glob('postgres-synthetic-*/write-paused-' + stage + '.json'))
+                if len(found) == 1:
+                    marker = found[0]
+                    break
+                time.sleep(0.05)
+            require(marker is not None, 'Writer did not reach controlled pause')
+            checkpoint = marker.parent / 'checkpoint.json'
+            _, state, raw = read_checkpoint(checkpoint, IMAGE)
+            metadata = json.loads(marker.read_text())
+            require(state['phase'] == 'prepared' and hashlib.sha256(raw).hexdigest() == metadata['baselineSha256'],
+                    'Previous checkpoint was replaced before publication')
+            require(not (marker.parent / 'report.json').exists(), 'Unpublished report has a final name')
+            with contextlib.ExitStack() as stack:
+                try:
+                    stack.enter_context(operation_lock(marker.parent))
+                except RecoveryBusy:
+                    pass
+                else:
+                    raise RuntimeError('Writer did not hold its lease')
+            before = inventory_residues(case_root)
+            category = 'temporaryCheckpoint' if stage.startswith('checkpoint-') else 'temporaryPrivate'
+            files = [f for f in before['findings'] if f['category'] == category]
+            require(before['complete'] and len(files) == 1 and files[0]['kind'] == 'file'
+                    and files[0]['bytes'] > 0 and files[0]['permissions'] == '0o600', 'Temporary write metadata invalid')
+            child.kill()
+            out, _ = child.communicate(timeout=5)
+            require(child.returncode == -signal.SIGKILL and not out.strip(), 'Killed writer cannot report success')
+            with operation_lock(marker.parent):
+                require(checkpoint.read_bytes() == raw, 'Previous checkpoint lost after writer kill')
+            after = inventory_residues(case_root)
+            remaining = [f for f in after['findings'] if f['category'] == category]
+            require(after['complete'] and remaining == files and not (marker.parent / 'report.json').exists(),
+                    'Unpublished evidence was lost or published after writer kill')
+            cases.append({'stage': stage, 'childExitCode': -signal.SIGKILL, 'checkpointUnchanged': True,
+                          'finalReportAbsent': True, 'leaseReleased': True, 'temporaryPreserved': True,
+                          'temporaryCategory': category, 'temporaryBytes': files[0]['bytes'],
+                          'inventoryContentRead': False, 'inventoryDeletedFiles': False})
+        finally:
+            if child.poll() is None:
+                child.kill()
+                child.communicate(timeout=5)
+    result = {'version': 1, 'mode': 'controlled_partial_write_probe', 'successful': True,
+              'casesVerified': len(cases), 'cases': cases, 'dockerContacted': False, 'resourcesCreated': False,
+              'preservedTemporaryFiles': len(cases), 'automaticResidueDeletionAllowed': False,
+              'cutoverReady': False, 'liveImportRun': False}
+    persist_report(result, directory / 'report.json', SyntheticServer.private_write)
+    print(json.dumps(result), flush=True)
+    return 0 if result['successful'] else 1
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-synthetic', action='store_true', required=True)
@@ -897,6 +1013,8 @@ def main():
     mode.add_argument('--verify-concurrent-recovery', action='store_true', help='Verify active-owner and competing recovery exclusion')
     mode.add_argument('--verify-recovery-interruption', action='store_true', help='Kill owned recovery at five controlled points and resume')
     mode.add_argument('--inventory-residues', action='store_true', help='Read-only metadata inventory; no Docker, file content or cleanup')
+    mode.add_argument('--verify-partial-writes', action='store_true', help='Kill four owned filesystem writers without Docker')
+    mode.add_argument('--probe-partial-write', choices=WRITE_STAGES, help='Controlled synthetic-only unpublished write pause')
     mode.add_argument('--recover-owned-test', metavar='CHECKPOINT', help='Explicit recovery after independent live ownership/storage verification')
     mode.add_argument('--probe-recovery-contention', metavar='CHECKPOINT', help='Controlled recovery holder with a bounded private gate')
     mode.add_argument('--probe-recovery-interruption', nargs=2, metavar=('STAGE', 'CHECKPOINT'), help='Controlled recovery pause for owned SIGKILL probe')
@@ -914,6 +1032,10 @@ def main():
                       'contentRead': False, 'filesDeleted': False, 'dockerContacted': False, 'locksAcquired': False}
         print(json.dumps(report), flush=True)
         return 0 if report['successful'] else 1
+    if args.verify_partial_writes:
+        return verify_partial_writes(args)
+    if args.probe_partial_write:
+        return probe_partial_write(args)
     for name in ('docker', 'docker_socket', 'pg_bin', 'node'):
         if not getattr(args, name):
             parser.error('--' + name.replace('_', '-') + ' is required outside metadata inventory')

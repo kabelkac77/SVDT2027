@@ -1,5 +1,15 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — přímý Codex a přerušení zápisu54
+
+- [x] Výslovná změna uživatele „Programuj teď ty a ne Claude“ zapsaná do22/AGENTS/rozhodnutí. Implementace přímo Codex, žádné Claude auth/model/usage a žádná podmínka jeho přihlášení.
+- [x]4 skutečné SIGKILL při částečném checkpoint/report zápisu a po fsync před publikací. Původní CP nezměněný, report není zveřejněný;4 soukromé syntetické temporaries zachované bez čtení obsahu/mazání. [54](54-POSTGRES-CASTECNY-ZAPIS-A-ZMENY-ADRESARU.md).
+- [x] Šest reálných rename/mkdir/symlink fixture závodů inventáře: zmizení, náhrada a detach adresáře/rootu a změna položek vracejí neúplný výsledek, nevydávají cizí podstrom za původní cestu.
+- [x]8 nových unit případů;234 hostitelských/70 optimalizovaných,10 skutečných PG a5 přerušení recovery prošlo. [Evidence](postgres-partial-write-verification.json). Starší4 startup/6 I/O/souběh/signály jsou baseline53, ne nové běhy.
+- [ ] **Nejbližší implementace přímo Codexem: oprava48/issue61.** RX01 dál selhává0/1 a blokuje aktivaci; nová additive migrace, původních7 SHA zachovat, žádné provozní DDL/import. Přihlášení Claude není potřeba.
+- [ ] Potom přímo43 parser →39 checker →44 UI;18+26 pending scénářů dosud nespouštěno. Otevřené uživatelské volby zůstávají návrhy, ne souhlas mlčením.
+- [ ] Později31/45:4 evidované syntetické temporaries/nejasné zbytky bezpečně posoudit, bez automatického mazání; fyzický disk/power loss/síťové úložiště/obnova a skutečné účty/OAuth/Storage/provider/backup klíč/browser/aktivace. Bez dotazů nyní a bez skutečného importu.
+
 ## 2026-11-28 — přerušení recovery a inventář53
 
 - [x] Pět skutečných SIGKILL přímo držitele recovery na dokončených bodech verified/removed/credentials/checkpoint/report; busy před pádem, převzetí lease novým procesem a idempotentní opakování ověřené. [53](53-POSTGRES-PRERUSENI-RECOVERY-A-INVENTAR.md).

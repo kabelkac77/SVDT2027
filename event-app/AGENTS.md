@@ -1,5 +1,9 @@
 # SVDT — společná pravidla vývoje
 
+## Aktuální způsob implementace — 2026-11-28
+
+Výslovný pokyn uživatele: „Programuj teď ty a ne Claude.“ Implementaci i opravy nyní provádí přímo Codex. Nepředávat práci Claude ani nevyžadovat jeho přihlášení/usage jako podmínku pokračování. Starší instrukce o povinném native handoffu jsou pro tuto aktuální práci nahrazené; runner a sdílený účet/guard se nemění ani neobcházejí, zůstávají nepoužité. Nadále platí nezávislé ověření, úzký rozsah, ochrana skutečných dat a vlastní větev/Draft PR bez merge/deploy. Tento pokyn sám nepovoluje provozní import, DDL/grant nebo aktivaci. Viz22 a DECISIONS.
+
 Tato pravidla se týkají organizační aplikace v této složce a její dokumentace `../event-app-zadani/`. Ostatní projekty v repozitáři neměň bez souvisejícího zadání.
 
 - Source of truth je `../event-app-zadani/`. Při převzetí práce začni `HANDOFF-CLAUDE.md`, aktuálním `IMPLEMENTATION-STATUS.md` a `DECISIONS.md`; potom čti model konkrétního modulu. Původní architektura popisuje i budoucí záměr, nikoli jen hotový software. Nejnovější výslovný pokyn uživatele má přednost; rozpor oprav v dokumentaci.

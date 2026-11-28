@@ -435,6 +435,29 @@ class PostgresManualScopeTests(unittest.TestCase):
             server.assert_not_called()
             recover.assert_not_called()
 
+    def test_write_probe_is_opt_in_and_has_bounded_pause(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / 'report.json'
+            with patch.object(manual, 'WRITE_PROBE', None), patch.object(manual.time, 'sleep') as sleep:
+                manual.write_probe_pause('report-partial', target)
+            sleep.assert_not_called()
+            self.assertEqual(list(Path(folder).iterdir()), [])
+            probe = {'stage': 'report-partial', 'baselineSha256': 'a' * 64}
+            with patch.object(manual, 'WRITE_PROBE', probe), patch.object(manual.time, 'sleep') as sleep, self.assertRaises(RuntimeError):
+                manual.write_probe_pause('report-partial', target)
+            sleep.assert_called_once_with(15)
+            self.assertFalse(target.exists())
+            metadata = json.loads((Path(folder) / 'write-paused-report-partial.json').read_text())
+            self.assertEqual(metadata, probe)
+
+    def test_partial_write_cli_has_no_docker_tool_requirement(self):
+        argv = ['synthetic-test', '--run-synthetic', '--output-root', '/synthetic/output', '--verify-partial-writes']
+        with patch.object(sys, 'argv', argv), patch.object(manual, 'verify_partial_writes', return_value=0) as verify, \
+             patch.object(manual, 'SyntheticServer') as server:
+            self.assertEqual(manual.main(), 0)
+        verify.assert_called_once()
+        server.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

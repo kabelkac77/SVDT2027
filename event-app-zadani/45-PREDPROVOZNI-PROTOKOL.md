@@ -89,3 +89,7 @@ Společný flock ochránil aktivní syntetický test i souběh dvou recovery pro
 ## Dílčí důkaz pádu recovery53 — 2026-11-28
 
 Pět řízených SIGKILL přímo držitele syntetické recovery a nové/opakované převzetí prošly. Samostatný metadatový inventář deklarovaného testovacího rozsahu je pouze read-only přítomnostní snapshot, ne oprávnění smazat nálezy nebo důkaz platnosti checkpointů/živosti zámků. Viz [53](53-POSTGRES-PRERUSENI-RECOVERY-A-INVENTAR.md). Živé stavy G03/G06 ani souhlas s výpadkem hostitele/aktivací se nemění;48/61 a projektové/Auth/Storage/backup/browser brány zůstávají otevřené.
+
+## Dílčí54 a změna implementátora — 2026-11-28
+
+Přímo Codexem ověřené4 filesystem SIGKILL před zveřejněním a6 skutečných adresářových fixture závodů. Zachované syntetické zbytky pouze evidované, inventář není autorita k mazání/živé aktivaci. [54](54-POSTGRES-CASTECNY-ZAPIS-A-ZMENY-ADRESARU.md). Přihlášení Claude už neblokuje implementaci; uživatel výslovně určil přímý Codex.48/61 stále neopravena a přednostní, živé stavy G03/G06/projektové účty/backup/Auth/Storage/browser i samostatný aktivační pokyn zůstávají otevřené.

@@ -383,6 +383,114 @@ class RecoveryScopeTests(unittest.TestCase):
         sleep.assert_called_once_with(15)
         self.assertEqual(server.private_write.call_args.args[0], self.folder / 'recovery-paused-verified.json')
 
+    def test_inventory_refuses_directory_disappearance_before_open(self):
+        opener = os.open
+        moved = False
+        def race(path, flags, *args, **kwargs):
+            nonlocal moved
+            if path == self.folder.name and not moved:
+                moved = True
+                self.folder.rename(self.root / 'parked')
+            return opener(path, flags, *args, **kwargs)
+        with patch.object(recovery.os, 'open', side_effect=race):
+            report = recovery.inventory_residues(self.root)
+        self.assertTrue(moved)
+        self.assertFalse(report['complete'])
+        self.assertIn('ENTRY_UNVERIFIED', report['errors'])
+        self.assertNotIn('credential', report['summary'])
+
+    def test_inventory_refuses_directory_to_symlink_swap_before_open(self):
+        opener = os.open
+        moved = False
+        def race(path, flags, *args, **kwargs):
+            nonlocal moved
+            if path == self.folder.name and not moved:
+                moved = True
+                parked = self.root / 'parked'
+                self.folder.rename(parked)
+                self.folder.symlink_to(parked, target_is_directory=True)
+            return opener(path, flags, *args, **kwargs)
+        with patch.object(recovery.os, 'open', side_effect=race):
+            report = recovery.inventory_residues(self.root)
+        self.assertFalse(report['complete'])
+        self.assertIn('ENTRY_UNVERIFIED', report['errors'])
+        self.assertNotIn('credential', report['summary'])
+
+    def test_inventory_refuses_replacement_directory_with_different_inode(self):
+        opener = os.open
+        moved = False
+        def race(path, flags, *args, **kwargs):
+            nonlocal moved
+            if path == self.folder.name and not moved:
+                moved = True
+                self.folder.rename(self.root / 'parked')
+                self.folder.mkdir(mode=0o700)
+                (self.folder / '.private-replacement').touch()
+            return opener(path, flags, *args, **kwargs)
+        with patch.object(recovery.os, 'open', side_effect=race):
+            report = recovery.inventory_residues(self.root)
+        self.assertFalse(report['complete'])
+        self.assertIn('ENTRY_UNVERIFIED', report['errors'])
+        self.assertFalse(any('replacement' in f['relativePath'] for f in report['findings']))
+
+    def test_inventory_discards_paths_when_open_directory_is_detached(self):
+        scanner = os.scandir
+        inode = self.folder.stat().st_ino
+        moved = False
+        def race(fd):
+            nonlocal moved
+            if os.fstat(fd).st_ino == inode and not moved:
+                moved = True
+                self.folder.rename(self.root / 'parked')
+                self.folder.mkdir(mode=0o700)
+            return scanner(fd)
+        with patch.object(recovery.os, 'scandir', side_effect=race):
+            report = recovery.inventory_residues(self.root)
+        self.assertTrue(moved)
+        self.assertFalse(report['complete'])
+        self.assertIn('ENTRY_UNVERIFIED', report['errors'])
+        self.assertNotIn('credential', report['summary'])
+        self.assertFalse(any(f['relativePath'].startswith(self.folder.name + '/') for f in report['findings']))
+
+    def test_inventory_discards_all_paths_when_root_is_replaced(self):
+        root = self.root / 'scope'
+        run = root / 'postgres-synthetic-root-race'
+        run.mkdir(parents=True, mode=0o700)
+        root.chmod(0o700)
+        (run / '.private-synthetic').touch()
+        scanner = os.scandir
+        inode = root.stat().st_ino
+        moved = False
+        def race(fd):
+            nonlocal moved
+            if os.fstat(fd).st_ino == inode and not moved:
+                moved = True
+                root.rename(self.root / 'scope-old')
+                root.mkdir(mode=0o700)
+            return scanner(fd)
+        with patch.object(recovery.os, 'scandir', side_effect=race):
+            report = recovery.inventory_residues(root)
+        self.assertFalse(report['complete'])
+        self.assertIn('ROOT_CHANGED', report['errors'])
+        self.assertEqual(report['findings'], [])
+        self.assertEqual(report['summary'], {})
+
+    def test_inventory_does_not_claim_complete_snapshot_after_entry_creation(self):
+        scanner = os.scandir
+        inode = self.root.stat().st_ino
+        os.utime(self.root, ns=(0, 0))
+        @contextlib.contextmanager
+        def race(fd):
+            with scanner(fd) as entries:
+                yield entries
+            if os.fstat(fd).st_ino == inode:
+                (self.root / 'created-during-inventory').mkdir(mode=0o700)
+        with patch.object(recovery.os, 'scandir', side_effect=race):
+            report = recovery.inventory_residues(self.root)
+        self.assertFalse(report['complete'])
+        self.assertFalse(report['successful'])
+        self.assertIn('DIRECTORY_CHANGED', report['errors'])
+
 
 if __name__ == '__main__':
     unittest.main()
