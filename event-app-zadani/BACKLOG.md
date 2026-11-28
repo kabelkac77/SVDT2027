@@ -1,5 +1,16 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — úklid přerušení a nová překážka aktivace
+
+- [x] Atomický checkpoint bez hesel, odolnost replace/symlink a blokování signálů během create→identity→checkpoint.
+- [x] Skutečný řízený SIGTERM vlastního child procesu: exit143, žádný předstíraný úspěch; nezávisle ověřené odstranění kontejneru/volumes/přístupů.
+- [x] Dva nové skutečné PG scénáře odvolání/expirace při čekání na edition lock; celkem6 běžných scénářů prošlo.174 hostitelských kontrol a10 optimalizovaných bezpečnostních kontrol prošlo.
+- [x] Samostatně reprodukovat RX01 s neuděleným ShareRowExclusiveLock po dřívější validaci. Výsledek: očekávané odmítnutí nenastalo, skutečně selhal1 test; nepočítat jako úspěch.
+- [ ] **Přednostně opravit48 / issue61 před aktivací:** expiraci znovu ověřit po čekání/validaci před prvním novým zápisem. Nová additive migrace, předchozích7 SHA zachovat; úspěšný replay po expiraci zůstává dovolený. Runtime oprava zatím není hotová a nativní přihlášení se nezkoušelo.
+- [ ] Potom pokračovat parser43 → checker39 → UI44;18+26 pending případů se nespouštělo.
+- [ ] Dále nezávisle: další souběhy requestů/ročníků, ztráta odpovědi, SIGKILL/power loss a bezpečná ruční/automatická recovery z checkpointu. Aktuální checkpoint je evidence, nikoli oprávnění k mazání z JSON.
+- [ ] Živé účty/OAuth/scopes, skutečné vzdálené zálohy/klíč/obnova, browser a samostatný aktivační pokyn podle31/45 zůstávají na později. Skutečný import zakázaný.
+
 ## 2026-11-27 — skutečný PostgreSQL bez provozních přístupů
 
 - [x] Vlastní izolovaný PostgreSQL18.6 se syntetickými daty:4 případy46 skutečně prošly, kontejner/anonymní data i jednorázové přístupy uklizené.

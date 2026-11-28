@@ -55,3 +55,7 @@ Výstupní root musí existovat jako soukromý adresář uživatele. Skript do n
 Aktualizuje dílčí technické důkazy G03/G06 v [45](45-PREDPROVOZNI-PROTOKOL.md). Živé brány [31](31-AKTIVACE-A-RUCNI-KONTROLY.md)/[34](34-SDILENY-PROVOZ-AKCEPTACE.md) zůstávají otevřené a skutečný import zakázaný. Nikdo uživateli nepřiděluje roli nebo neschvaluje aktivaci mlčením.
 
 Technické podklady k oficiálnímu image a souborovému předání hesla: [Docker PostgreSQL](https://github.com/docker-library/docs/blob/master/postgres/README.md#docker-secrets). Verze a digest v evidenci jsou skutečně testované, ne tvrzení o nejnovější dostupné verzi.
+
+## Aktuální rozšíření2026-11-28
+
+47 doplňuje checkpoint/SIGTERM a dva úspěšné případy schválení při čekání na edition; běžná sada nyní6 případů. Zvlášť RX01 prokázal neopravenou chybu expirace při pozdějším čekání na ShareRowExclusiveLock. Tento striktní test selhává a blokuje aktivaci podle48, i když starší4 případy a běžné CI zůstávají zelené. Viz [47](47-POSTGRES-PRERUSENI-A-SCHVALENI.md), [48](48-CREW-EXPIRACE-PO-ZAMKU.md).

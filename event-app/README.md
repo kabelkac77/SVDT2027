@@ -163,3 +163,7 @@ Kontrolní modul39 nebyl nativním během dodaný (timeout, bez retry).26 draft 
 ### 2026-11-27 — samostatná skutečná PostgreSQL akceptace
 
 [Specifikace46](../event-app-zadani/46-IZOLOVANY-POSTGRES-SOUBEH-A-OBNOVA.md) a `tests/postgres-acceptance.manual.py` přidávají4 úspěšné skutečné zkoušky souběhu a dump/restore v novém vlastním izolovaném serveru. Vyžadují explicitní opt-in; normální CI server nestartuje.6 běžných bezpečnostních unit scénářů ověřuje rozsah bez Dockeru, celkem170 hostitelských testů prošlo. Soukromé přístupy/výstupy mimo Git; runtime/migrace a provozní data beze změny. Živé Auth/Storage/vzdálené zálohy/browser/aktivace a18+26 pending parser/checker scénářů zůstávají otevřené.
+
+### 2026-11-28 — checkpoint/SIGTERM a neopravená expirace
+
+[47](../event-app-zadani/47-POSTGRES-PRERUSENI-A-SCHVALENI.md) přidává atomický soukromý checkpoint a opt-in `--verify-sigterm`; přerušený vlastní child nehlásí úspěch a jeho prostředky jsou uklizené. Šest běžných skutečných PG případů a174 hostitelských kontrol prošlo,10 bezpečnostních i při Python -O. **Samostatný striktní `--probe-expiry-after-lock` ale selhal:** RPC dovolí nový zápis po expiraci při pozdějším tabulkovém čekání. Nejde o expectedFailure ani hotovou opravu; [48](../event-app-zadani/48-CREW-EXPIRACE-PO-ZAMKU.md)/issue61 blokuje aktivaci. Runtime/SQL a provozní data v tomto bloku beze změny.

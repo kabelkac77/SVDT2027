@@ -4,12 +4,14 @@ Never accepts an existing database URL, account credential or operational data.
 Not collected by the normal unittest/npm suites. See specification46.
 """
 import argparse
+import contextlib
 import hashlib
 import json
 import os
 from pathlib import Path
 import re
 import secrets
+import signal
 import subprocess
 import sys
 import tempfile
@@ -25,6 +27,25 @@ from crew_import_plan import build_import_plan
 IMAGE = 'postgres@sha256:f1ea2a1a4fb7b68d4836be1fdcb8a6466a89b072158bf9d97663600538c294c5'
 OWNER = 'svdt_synthetic_owner'
 RUN = None
+
+
+class SyntheticInterrupted(KeyboardInterrupt):
+    def __init__(self, signum):
+        self.signum = signum
+
+
+def interrupt_test(signum, frame):
+    raise SyntheticInterrupted(signum)
+
+
+@contextlib.contextmanager
+def resource_transition():
+    # Do not lose the container identity/checkpoint between create and receipt.
+    previous = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGINT, signal.SIGTERM})
+    try:
+        yield
+    finally:
+        signal.pthread_sigmask(signal.SIG_SETMASK, previous)
 
 
 def require(condition, message):
@@ -56,6 +77,7 @@ class SyntheticServer:
         self.docker_config = self.folder / 'docker-client'
         self.docker_config.mkdir(mode=0o700)
         self.token = uuid.uuid4().hex
+        self.name = 'svdt-synthetic-' + self.token
         self.container = None
         self.volumes = []
         self.children = []
@@ -63,6 +85,7 @@ class SyntheticServer:
         self.pass_file = self.folder / 'pgpass'
         self.service_file = self.folder / 'services'
         self.password = secrets.token_hex(32)
+        self.checkpoint('prepared')
         self.private_write(self.password_file, self.password)
         self.env = {k: v for k, v in os.environ.items() if k in ('PATH', 'LANG', 'LC_ALL')}
         self.env.update(PGPASSFILE=str(self.pass_file), PGSERVICEFILE=str(self.service_file),
@@ -74,6 +97,25 @@ class SyntheticServer:
         with os.fdopen(fd, 'w') as out:
             out.write(text)
 
+    def checkpoint(self, phase):
+        """Private data-only receipt, never an input that authorizes deletion."""
+        target = self.folder / 'checkpoint.json'
+        require(not target.is_symlink(), 'Checkpoint cannot be a symlink')
+        payload = {'version': 1, 'phase': phase, 'token': self.token,
+                   'name': self.name, 'containerId': self.container,
+                   'anonymousVolumes': self.volumes, 'image': IMAGE}
+        fd, name = tempfile.mkstemp(prefix='.checkpoint-', dir=self.folder)
+        temporary = Path(name)
+        try:
+            with os.fdopen(fd, 'w') as out:
+                json.dump(payload, out, sort_keys=True)
+                out.write('\n')
+                out.flush()
+                os.fsync(out.fileno())
+            os.replace(temporary, target)
+        finally:
+            temporary.unlink(missing_ok=True)
+
     def docker(self, *args, check=True):
         # Explicit Unix socket; ignore ambient DOCKER_HOST/context and never inspect other containers.
         return subprocess.run([self.args.docker, '--host', 'unix://' + self.args.docker_socket, *args],
@@ -82,17 +124,9 @@ class SyntheticServer:
                               capture_output=True, text=True, timeout=60, check=check)
 
     def start(self):
-        result = self.docker('run', '--detach', '--pull=never', '--name', 'svdt-synthetic-' + self.token,
-                             '--label', 'svdt.acceptance.run=' + self.token,
-                             '--publish', '127.0.0.1::5432', '--memory', '512m', '--cpus', '1',
-                             '--mount', f'type=bind,source={self.password_file},target=/run/secrets/dbpass,readonly',
-                             '--env', 'POSTGRES_PASSWORD_FILE=/run/secrets/dbpass',
-                             '--env', 'POSTGRES_USER=' + OWNER, '--env', 'POSTGRES_DB=postgres', IMAGE)
-        self.container = result.stdout.strip()
-        require(re.fullmatch('[0-9a-f]{64}', self.container), 'Invalid owned container identity')
-        mounts = json.loads(self.docker('inspect', '--format', '{{json .Mounts}}', self.container).stdout)
-        self.volumes = [mount['Name'] for mount in mounts if mount['Type'] == 'volume']
-        require(self.volumes and all(re.fullmatch('[0-9a-f]{64}', name) for name in self.volumes), 'Only new anonymous volumes are allowed')
+        with resource_transition():
+            self.create_container()
+        self.docker('start', self.container)
         binding = self.docker('port', self.container, '5432/tcp').stdout.strip()
         require(re.fullmatch(r'127\.0\.0\.1:[0-9]+', binding), 'Only loopback publication is allowed')
         self.port = int(binding.split(':')[1])
@@ -108,6 +142,21 @@ class SyntheticServer:
         self.version = self.scalar('postgres', 'show server_version')
         require(self.version.startswith('18.6'), 'Unexpected pinned server version')
         self.sql('postgres', 'create role anon nologin;create role authenticated nologin;')
+        self.checkpoint('ready')
+
+    def create_container(self):
+        result = self.docker('create', '--pull=never', '--name', self.name,
+                             '--label', 'svdt.acceptance.run=' + self.token,
+                             '--publish', '127.0.0.1::5432', '--memory', '512m', '--cpus', '1',
+                             '--mount', f'type=bind,source={self.password_file},target=/run/secrets/dbpass,readonly',
+                             '--env', 'POSTGRES_PASSWORD_FILE=/run/secrets/dbpass',
+                             '--env', 'POSTGRES_USER=' + OWNER, '--env', 'POSTGRES_DB=postgres', IMAGE)
+        self.container = result.stdout.strip()
+        require(re.fullmatch('[0-9a-f]{64}', self.container), 'Invalid owned container identity')
+        mounts = json.loads(self.docker('inspect', '--format', '{{json .Mounts}}', self.container).stdout)
+        self.volumes = [mount['Name'] for mount in mounts if mount['Type'] == 'volume']
+        require(self.volumes and all(re.fullmatch('[0-9a-f]{64}', name) for name in self.volumes), 'Only new anonymous volumes are allowed')
+        self.checkpoint('created')
 
     def connection(self, database, application='svdt_acceptance'):
         require(re.fullmatch('[a-z0-9_]+', database), 'Invalid synthetic database name')
@@ -160,6 +209,7 @@ class SyntheticServer:
             if child.poll() is None:
                 child.kill()
                 child.communicate(timeout=5)
+        self.checkpoint('cleaning')
         removed = False
         if self.container:
             actual = self.docker('inspect', '--format', '{{index .Config.Labels "svdt.acceptance.run"}}', self.container).stdout.strip()
@@ -173,6 +223,7 @@ class SyntheticServer:
             if file.exists():
                 file.unlink()
         self.password = None
+        self.checkpoint('cleaned')
         return removed
 
 
@@ -316,6 +367,109 @@ insert into public.crew_members values('{uid(101)}','{uid(2)}','coordinator',tru
         self.assertEqual(RUN.scalar(restored, "select has_function_privilege('authenticated','public.crew_import_stage_approval(uuid,text,text,timestamptz)','execute')"), 'f')
         service.unlink()
 
+    def test_05_approval_revoked_while_waiting_denies_the_write(self):
+        holder = RUN.worker(self.db, 'svdt_approval_holder', 'begin;' + self.actor() +
+                            f"select id from public.editions where id='{uid(101)}' for update;select pg_sleep(4);select public.crew_import_revoke('{uid(101)}','{self.approval}');commit;")
+        self.assertTrue(RUN.observed(self.db, 'svdt_approval_holder', "wait_event='PgSleep'"))
+        waiting = RUN.worker(self.db, 'svdt_approval_client', self.actor(client=True) + "set lock_timeout='8s';" + self.apply_sql())
+        self.assertTrue(RUN.observed(self.db, 'svdt_approval_client', "wait_event_type='Lock'"))
+        self.assertEqual(RUN.finish(holder)[0], 0)
+        code, _, error = RUN.finish(waiting)
+        self.assertNotEqual(code, 0)
+        self.assertIn('42501', error)
+        self.assertEqual(self.counts(), dict(packages=0, requests=0, roster=0, compensation=0, people=0, users=2))
+
+    def test_06_approval_expired_while_waiting_denies_the_write(self):
+        self.approval = RUN.scalar(self.db, self.actor() + f"select public.crew_import_stage_approval('{uid(101)}',{literal(self.plan)},'{('b' * 64)}',clock_timestamp()+interval '2 seconds')")
+        holder = RUN.worker(self.db, 'svdt_expiry_holder', f"begin;select id from public.editions where id='{uid(101)}' for update;select pg_sleep(4);commit;")
+        self.assertTrue(RUN.observed(self.db, 'svdt_expiry_holder', "wait_event='PgSleep'"))
+        waiting = RUN.worker(self.db, 'svdt_expiry_client', self.actor(client=True) + "set lock_timeout='8s';" + self.apply_sql())
+        self.assertTrue(RUN.observed(self.db, 'svdt_expiry_client', "wait_event_type='Lock'"))
+        self.assertEqual(RUN.finish(holder)[0], 0)
+        code, _, error = RUN.finish(waiting)
+        self.assertNotEqual(code, 0)
+        self.assertIn('42501', error)
+        self.assertEqual(self.counts(), dict(packages=0, requests=0, roster=0, compensation=0, people=0, users=2))
+
+    def probe_expiry_after_table_lock_must_deny_the_write(self):
+        """Separate strict diagnostic, not an expected-failure or a passing test."""
+        self.approval = RUN.scalar(self.db, self.actor() + f"select public.crew_import_stage_approval('{uid(101)}',{literal(self.plan)},'{('b' * 64)}',clock_timestamp()+interval '2 seconds')")
+        # SHARE permits earlier reads/plan preparation, unlike ACCESS EXCLUSIVE.
+        # Require the actual importer SHARE ROW EXCLUSIVE wait after its first expiry check.
+        holder = RUN.worker(self.db, 'svdt_expiry_holder', 'begin;lock table public.crew_roster in share mode;select pg_sleep(4);commit;')
+        self.assertTrue(RUN.observed(self.db, 'svdt_expiry_holder', "wait_event='PgSleep'"))
+        waiting = RUN.worker(self.db, 'svdt_expiry_client', self.actor(client=True) + "set lock_timeout='8s';" + self.apply_sql())
+        self.assertTrue(RUN.observed(self.db, 'svdt_expiry_client', "wait_event_type='Lock' and exists(select 1 from pg_locks l where l.pid=pg_stat_activity.pid and l.relation='public.crew_roster'::regclass and l.mode='ShareRowExclusiveLock' and not l.granted)"))
+        self.assertEqual(RUN.finish(holder)[0], 0)
+        code, _, error = RUN.finish(waiting)
+        RUN.expiry_diagnostic = {
+            'observedWaitMode': 'ShareRowExclusiveLock',
+            'approvalExpiredAtCompletion': RUN.scalar(self.db, f"select expires_at<clock_timestamp() from public.crew_import_approvals where id='{self.approval}'") == 't',
+            'sqlExitCode': code,
+            'counts': self.counts(),
+        }
+        self.assertTrue(RUN.expiry_diagnostic['approvalExpiredAtCompletion'])
+        self.assertNotEqual(code, 0)
+        self.assertIn('42501', error)
+        self.assertEqual(self.counts(), dict(packages=0, requests=0, roster=0, compensation=0, people=0, users=2))
+
+
+def verify_sigterm(args):
+    """Own child PID only; checkpoints are read as evidence, never deletion commands."""
+    root = Path(args.output_root).resolve()
+    require(root.is_dir() and root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0,
+            'Signal probe requires a private owned output root')
+    directory = Path(tempfile.mkdtemp(prefix='sigterm-probe-', dir=root))
+    command = [sys.executable, '-B', str(Path(__file__).resolve()), '--run-synthetic', '--probe-interruption']
+    for key in ('docker', 'docker_socket', 'pg_bin', 'node'):
+        command.extend(['--' + key.replace('_', '-'), getattr(args, key)])
+    command.extend(['--output-root', str(directory)])
+    child = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    try:
+        deadline = time.monotonic() + 45
+        checkpoint = None
+        while time.monotonic() < deadline:
+            require(child.poll() is None, 'Signal probe child exited before ready checkpoint')
+            candidates = list(directory.glob('postgres-synthetic-*/checkpoint.json'))
+            if len(candidates) == 1 and json.loads(candidates[0].read_text())['phase'] == 'ready':
+                checkpoint = candidates[0]
+                break
+            time.sleep(0.1)
+        require(checkpoint is not None, 'Signal probe child did not become ready')
+        child.send_signal(signal.SIGTERM)
+        stdout, stderr = child.communicate(timeout=25)
+        require(child.returncode == 128 + signal.SIGTERM, 'Interrupted test must not report normal success')
+        report = json.loads((checkpoint.parent / 'report.json').read_text())
+        state = json.loads(checkpoint.read_text())
+        require(state['phase'] == 'cleaned' and report['interruptedBy'] == signal.SIGTERM
+                and not report['successful'] and report['casesRun'] == 0, 'Invalid interruption receipt')
+        require(report['containerRemoved'] and report['anonymousVolumesRemoved'], 'Interruption cleanup failed')
+        require(re.fullmatch('[0-9a-f]{64}', state['containerId'])
+                and all(re.fullmatch('[0-9a-f]{64}', name) for name in state['anonymousVolumes']), 'Invalid resource receipt')
+        observer = object.__new__(SyntheticServer)
+        observer.args = args
+        observer.docker_config = checkpoint.parent / 'docker-client'
+        require(confirmed_absence(observer.docker('inspect', '--format', '{{.Id}}', state['containerId'], check=False), 'object'), 'Removed container not independently confirmed')
+        for name in state['anonymousVolumes']:
+            require(confirmed_absence(observer.docker('volume', 'inspect', '--format', '{{.Name}}', name, check=False), 'volume'), 'Removed volume not independently confirmed')
+        require(all(not (checkpoint.parent / name).exists() for name in ('password', 'pgpass', 'services')), 'Disposable credential remains')
+        result = {'version': 1, 'mode': 'controlled_sigterm_probe', 'successful': True,
+                  'childExitCode': child.returncode, 'checkpointCleaned': True,
+                  'containerRemoved': True, 'anonymousVolumesRemoved': True, 'disposableCredentialsRemoved': True,
+                  'liveImportRun': False, 'forcedKillRecoveryVerified': False}
+        SyntheticServer.private_write(directory / 'report.json', json.dumps(result, indent=2) + '\n')
+        print(json.dumps(result), flush=True)
+        return 0
+    finally:
+        if child.poll() is None:
+            child.terminate()
+            try:
+                child.communicate(timeout=25)
+            except subprocess.TimeoutExpired:
+                child.kill()
+                child.communicate(timeout=5)
+                raise RuntimeError('Signal probe failed; inspect private checkpoint, never prune other resources')
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -325,26 +479,50 @@ def main():
     parser.add_argument('--pg-bin', required=True)
     parser.add_argument('--node', required=True)
     parser.add_argument('--output-root', required=True)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--probe-interruption', action='store_true', help='Only for the controlled signal probe; waits at most30 seconds')
+    mode.add_argument('--probe-expiry-after-lock', action='store_true', help='Strict isolated diagnostic of expiration after table-lock waiting')
+    mode.add_argument('--verify-sigterm', action='store_true', help='Create an owned child and independently verify its SIGTERM cleanup')
     args = parser.parse_args()
+    if args.verify_sigterm:
+        return verify_sigterm(args)
     global RUN
     RUN = SyntheticServer(args)
     result = None
     removed = False
+    interrupted = None
+    previous = {sig: signal.signal(sig, interrupt_test) for sig in (signal.SIGINT, signal.SIGTERM)}
     try:
         RUN.start()
-        result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(PostgresAcceptance))
+        if args.probe_interruption:
+            time.sleep(30)
+            raise RuntimeError('Interruption probe did not receive a signal')
+        else:
+            suite = (unittest.TestSuite([PostgresAcceptance('probe_expiry_after_table_lock_must_deny_the_write')])
+                     if args.probe_expiry_after_lock else unittest.defaultTestLoader.loadTestsFromTestCase(PostgresAcceptance))
+            result = unittest.TextTestRunner(verbosity=2).run(suite)
+    except SyntheticInterrupted as error:
+        interrupted = error.signum
     finally:
-        removed = RUN.cleanup()
+        try:
+            removed = RUN.cleanup()
+        finally:
+            for sig, handler in previous.items():
+                signal.signal(sig, handler)
     report = {'version': 1, 'mode': 'isolated_synthetic_postgres', 'image': IMAGE,
-              'serverVersion': RUN.version, 'casesRun': result.testsRun, 'casesPassed': result.testsRun - len(result.failures) - len(result.errors),
-              'successful': result.wasSuccessful(), 'containerRemoved': removed,
+              'serverVersion': getattr(RUN, 'version', None), 'casesRun': result.testsRun if result else 0,
+              'casesPassed': result.testsRun - len(result.failures) - len(result.errors) if result else 0,
+              'successful': result.wasSuccessful() if result else False, 'interruptedBy': interrupted, 'containerRemoved': removed,
+              'expiryDiagnostic': getattr(RUN, 'expiry_diagnostic', None), 'cutoverReady': False,
               'anonymousVolumesRemoved': removed and bool(RUN.volumes),
               'applicationRuntimeChanged': False, 'realSourceOpened': False, 'liveImportRun': False,
               'liveAuthProviderVerified': False, 'storageBytesRestored': False, 'offsiteBackupActivated': False}
     path = RUN.folder / 'report.json'
     RUN.private_write(path, json.dumps(report, indent=2) + '\n')
     print(json.dumps(report), flush=True)
-    return 0 if result.wasSuccessful() and removed else 1
+    if interrupted is not None:
+        return 128 + interrupted
+    return 0 if result and result.wasSuccessful() and removed else 1
 
 
 if __name__ == '__main__':

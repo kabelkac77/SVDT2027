@@ -1,5 +1,14 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — potvrzená překážka aktivace: expirace po čekání
+
+- [x] SIGTERM/checkpoint47, šest běžných skutečných PG scénářů a174 hostitelských kontrol ověřené; samy nepovolují aktivaci.
+- [ ] **Před jakoukoli aktivací opravit a samostatně akceptovat48 / issue61.** RX01 přes ShareRowExclusiveLock vytvořil nový syntetický import i po expiraci schválení. Reproducer nyní selhává a není počítaný jako úspěch.
+- [ ] Po opravě znovu ověřit RX01, úspěšný replay po expiraci, ostatní oprávnění/rollback a skutečný syntetický dump/restore se8. migrací. Zelené běžné CI není náhrada tohoto důkazu.
+- [ ] SIGKILL/power loss a automatický úklid z checkpointu dosud nejsou ověřené; nikdy nekopírovat jeho ID do globálního prune nebo mazat cizí resources.
+
+Bez dotazů na přístupy a bez nativního auth/model pokusu. Dosavadní zákaz skutečného importu a ostatní živé brány zůstávají v platnosti.
+
 ## 2026-11-27 — izolovaná zkouška místo provozní aktivace
 
 - [x]4 skutečné testy46 v novém vlastním PostgreSQL prošly:3 souběhové případy a skutečný dump/restore30 tabulek; normální úklid vlastního kontejneru/volumes/přístupů ověřený.

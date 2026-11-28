@@ -5,6 +5,7 @@ import io
 import os
 from pathlib import Path
 import sys
+import json
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -66,6 +67,7 @@ class PostgresManualScopeTests(unittest.TestCase):
         server.children = []
         server.container = 'a' * 64
         server.token = 'expected-synthetic-run'
+        server.checkpoint = Mock()
         server.docker = Mock(return_value=SimpleNamespace(stdout='foreign-run\n'))
         with self.assertRaisesRegex(RuntimeError, 'Refuse cleanup'):
             server.cleanup()
@@ -78,6 +80,51 @@ class PostgresManualScopeTests(unittest.TestCase):
             for code, message in [(0, ''), (1, 'permission denied'), (1, 'cannot connect to daemon'), (2, 'no such ' + kind)]:
                 with self.subTest(kind=kind, code=code, message=message):
                     self.assertFalse(manual.confirmed_absence(SimpleNamespace(returncode=code, stderr=message), kind))
+
+    def test_checkpoint_is_private_atomic_and_contains_no_credentials(self):
+        with tempfile.TemporaryDirectory() as folder:
+            server = object.__new__(manual.SyntheticServer)
+            server.folder = Path(folder)
+            server.token = 'a' * 32
+            server.name = 'svdt-synthetic-' + server.token
+            server.container = 'b' * 64
+            server.volumes = ['c' * 64]
+            server.password = 'synthetic-secret-never-in-checkpoint'
+            server.checkpoint('created')
+            path = server.folder / 'checkpoint.json'
+            old = path.read_bytes()
+            self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+            self.assertNotIn(server.password, old.decode())
+            self.assertEqual(json.loads(old)['containerId'], server.container)
+            with patch.object(manual.os, 'replace', side_effect=OSError('synthetic interrupted replace')):
+                with self.assertRaises(OSError):
+                    server.checkpoint('ready')
+            self.assertEqual(path.read_bytes(), old)
+            self.assertEqual(list(server.folder.glob('.checkpoint-*')), [])
+
+    def test_checkpoint_refuses_symlink_without_modifying_foreign_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            server = object.__new__(manual.SyntheticServer)
+            server.folder = Path(folder)
+            foreign = server.folder / 'foreign'
+            foreign.write_text('synthetic original')
+            (server.folder / 'checkpoint.json').symlink_to(foreign)
+            with self.assertRaisesRegex(RuntimeError, 'symlink'):
+                server.checkpoint('created')
+            self.assertEqual(foreign.read_text(), 'synthetic original')
+
+    def test_signal_is_controlled_interruption_not_an_ordinary_passing_test(self):
+        with self.assertRaises(manual.SyntheticInterrupted) as error:
+            manual.interrupt_test(manual.signal.SIGTERM, None)
+        self.assertEqual(error.exception.signum, manual.signal.SIGTERM)
+        self.assertIsInstance(error.exception, KeyboardInterrupt)
+
+    def test_creation_records_resource_identity_with_termination_blocked(self):
+        with patch.object(manual.signal, 'pthread_sigmask', side_effect=[{'synthetic_previous'}, None]) as mask:
+            with manual.resource_transition():
+                self.assertEqual(mask.call_count, 1)
+        self.assertEqual(mask.call_args_list[0].args[0], manual.signal.SIG_BLOCK)
+        self.assertEqual(mask.call_args_list[1].args, (manual.signal.SIG_SETMASK, {'synthetic_previous'}))
 
 
 if __name__ == '__main__':
