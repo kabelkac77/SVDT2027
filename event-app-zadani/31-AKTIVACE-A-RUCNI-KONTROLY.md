@@ -1,5 +1,13 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — dílčí recovery a souběhy49
+
+- [x] Čtyři další skutečné případy souběhu/pádu serveru a řízený SIGKILL→nový recovery proces→opakovaná recovery ověřené na vlastních syntetických serverech. Kontejnery/volumes/přístupy uklizené;10 standardních PG případů,182 hostitelských a18 optimalizovaných bezpečnostních prošlo.
+- [ ] Nepřenášet tento důkaz na výpadek napájení, ztrátu/neúplnost checkpointu, cizí/orphan volumes nebo provozní data. Při neprokázané identitě recovery odmítne zásah, případné ruční posouzení evidovat zvlášť.
+- [ ] Před aktivací dál opravit48/issue61 a projít skutečné projektové/user JWT/OAuth/backup/restore/browser brány45. Striktní RX01 stále selhává a runtime oprava hotová není.
+
+Bez přístupových dotazů a bez provozního importu/DDL/grant/deploy nebo vzdálené aktivace. Checkpoint není uživatelské schválení skutečného převodu crew.
+
 ## 2026-11-28 — potvrzená překážka aktivace: expirace po čekání
 
 - [x] SIGTERM/checkpoint47, šest běžných skutečných PG scénářů a174 hostitelských kontrol ověřené; samy nepovolují aktivaci.

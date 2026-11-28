@@ -69,3 +69,7 @@ Podle46 prošly4 skutečné PostgreSQL18.6 případy: tři souběhy s pozorovan�
 ## Dodatečná překážka G05/G06/G09 — 2026-11-28
 
 Oprava48 / issue61 musí předcházet aktivaci. Samostatný RX01 reproducer po tabulkovém čekání selhal: RPC vytvořilo nový syntetický import po expiraci. Šest běžných PG scénářů a SIGTERM47 prošly, ale chybu nezneplatňují. Vyžadovat opravený commit/migrační hash a úspěšný stejný striktní ShareRowExclusiveLock reproducer; teprve potom dále posuzovat ostatní živé brány. Žádný souhlas nebo skutečný import tímto zápisem nevzniká.
+
+## Dílčí doplnění souběhů a recovery49 — 2026-11-28
+
+RP07–RP10 rozšiřují izolovaný důkaz o různé requesty, ztrátu klientského výsledku po commit a dvě oddělené akce2027 se skutečně pozorovaným globálním zámkem; skutečný pád serveru před/po COMMIT zachoval rollback/potvrzená data a přesný replay. SIGKILL/recovery po ready checkpointu a druhý idempotentní úklid prošly. Nejde o provozní obnovu ani důkaz výpadku napájení; existující orphan volume se automaticky nemaže. G05/G06/G09 dál blokuje61/48, RX01 je stále selhávající. Živé projektové/backup/Auth/Storage/browser brány zůstávají otevřené.

@@ -31,3 +31,7 @@ RX01 je samostatný striktní reproducer `--probe-expiry-after-lock`, není expe
 - RX01 je doložená neopravená chyba, nikoli úspěšná akceptace. Aktivace je blokovaná podle48 i nadále obecně31/45.
 - SIGKILL, ztráta napájení, dvojí přerušení během úklidu, timeout samotného Docker create a automatická obnova z checkpointu nejsou touto zkouškou prokázané. Checkpoint nedovoluje spustit libovolné mazání; případná další recovery implementace musí zachovat nezávislou kontrolu vlastnictví.
 - Živý OAuth/user JWT, skutečný projekt/role, globální role/provider secrets/Storage bajty, vzdálený cíl/klíč/obnova/plánovač, browser a samostatný souhlas s aktivací zůstávají otevřené.18+26 pending scénářů parseru/checkeru nejsou spuštěné. Skutečná crew SQLite/historie zůstala netknutá.
+
+## Navazující rozšíření49
+
+Aktuální testovací recovery po SIGKILL má samostatný opt-in a před mazáním vyžaduje nezávislé živé ID/název/image/label/mounts; původní checkpoint se tím nestává samotným oprávněním. Nový proces a opakovaná recovery po ready stavu prošly, power loss/neúplné checkpointy/orphan data zůstávají mimo potvrzený rozsah. Viz [49](49-POSTGRES-SOUBEH-A-RECOVERY.md). Chyba48/61 není opravená.
