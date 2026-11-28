@@ -1,5 +1,12 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — chyby startu a neúplné checkpointy50
+
+- [x] Dílčí start/recovery50:4 řízené skutečné chyby, ztracené ID ověřené z živých metadat, čtyři opakované recovery.190 hostitelských/26 optimalizovaných a10 standardních PG, SIGTERM/SIGKILL prošlo.
+- [ ] Creating bez kontejneru/orphan či neověřitelný checkpoint později ručně posoudit; žádné slepé opakování create, globální prune nebo volume rm. CP sám zásah neautorizuje.
+- [ ] Fyzický výpadek hostitele/disk full a úplnou vzdálenou obnovu řešit až v dohodnutém prostředí. Řízené chyby50 tento důkaz nenahrazují.
+- [ ] Před aktivací dál48/issue61 a živé projektové/Auth/Storage/backup/browser brány45. RX01 stále selhává. Přístupy/potvrzení odložené, skutečný import zakázaný; bez dotazů nyní.
+
 ## 2026-11-28 — dílčí recovery a souběhy49
 
 - [x] Čtyři další skutečné případy souběhu/pádu serveru a řízený SIGKILL→nový recovery proces→opakovaná recovery ověřené na vlastních syntetických serverech. Kontejnery/volumes/přístupy uklizené;10 standardních PG případů,182 hostitelských a18 optimalizovaných bezpečnostních prošlo.

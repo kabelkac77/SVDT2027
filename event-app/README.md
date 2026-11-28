@@ -171,3 +171,7 @@ Kontrolní modul39 nebyl nativním během dodaný (timeout, bez retry).26 draft 
 ### 2026-11-28 — další souběhy a úklid po SIGKILL
 
 [49](../event-app-zadani/49-POSTGRES-SOUBEH-A-RECOVERY.md) rozšiřuje manuální syntetickou sadu na10 skutečných PG případů. `--verify-hard-kill` ověřuje úklid zabitého vlastního child procesu novým procesem a bezpečné opakování. `--recover-owned-test CHECKPOINT` vyžaduje explicitní opt-in, soukromý validovaný soubor a nezávislou shodu živé identity/image/labelu/mounts; orphan volumes se automaticky nemažou.182 hostitelských a18 optimalizovaných bezpečnostních kontrol prošlo. **RX01 stále selhává a61/48 blokuje aktivaci**; runtime/SQL beze změny. Normální CI Docker ani recovery nespouští.
+
+### 2026-11-28 — chyby startu a neúplné checkpointy
+
+[50](../event-app-zadani/50-POSTGRES-STARTUP-A-NEUPLNE-CHECKPOINTY.md): opt-in `--verify-startup-failures` skutečně ověřil4 řízené chyby a opakované recovery v nových procesech. Child s chybou startu vrací exit1/STARTUP_FAILED/cases0, i když úklid uspěje; neověřitelný úklid označí manualReviewRequired. CP v2 odliší prepared/creating před Docker create; ztracené ID přijímá jen z plně ověřeného živého vlastního kontejneru. Creating+absence zachová důkazy a zastaví zásah. Úplné v1 jsou podporované. Celkem190 hostitelských/26 optimalizovaných bezpečnostních a10 standardních PG, SIGTERM/SIGKILL prošlo. **RX01 stále selhává a48/61 blokuje aktivaci.** Runtime/SQL beze změny; normální CI server ani recovery nespouští. Power loss/disk full, živý provoz a18+26 pending případů nejsou ověřené.

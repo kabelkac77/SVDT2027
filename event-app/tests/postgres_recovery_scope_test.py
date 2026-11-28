@@ -130,6 +130,61 @@ class RecoveryScopeTests(unittest.TestCase):
             recovery.recover_checkpoint(self.args, self.path, server, IMAGE, self.absent)
         server.docker.assert_not_called()
 
+    def early(self, phase):
+        data = dict(self.data, version=2, phase=phase, containerId=None, anonymousVolumes=[])
+        self.write(data)
+        return data
+
+    def test_v2_early_phase_is_explicit_but_legacy_ambiguity_is_rejected(self):
+        for phase in ['prepared', 'creating', 'cleaned']:
+            data = self.early(phase)
+            self.assertEqual(recovery.read_checkpoint(self.path, IMAGE)[1], data)
+            data['version'] = 1
+            self.write(data)
+            with self.assertRaises(RuntimeError):
+                recovery.read_checkpoint(self.path, IMAGE)
+
+    def test_missing_receipt_can_only_take_identity_from_matching_live_metadata(self):
+        early = self.early('creating')
+        live = self.metadata()
+        self.assertEqual(recovery.validate_live_identity(early, self.folder, live), ('b' * 64, ['c' * 64]))
+        for index in [1, 2, 3]:
+            changed = copy.deepcopy(live)
+            changed[index] = 'foreign'
+            with self.assertRaises(RuntimeError):
+                recovery.validate_live_identity(early, self.folder, changed)
+
+    def test_uncertain_create_absence_preserves_evidence_and_credentials(self):
+        self.early('creating')
+        before = self.path.read_bytes()
+        server = self.fake_type([SimpleNamespace(returncode=1, stderr='No such object')])
+        with patch.object(Path, 'is_socket', return_value=True), self.assertRaisesRegex(RuntimeError, 'Uncertain create'):
+            recovery.recover_checkpoint(self.args, self.path, server, IMAGE, self.absent)
+        self.assertEqual(self.path.read_bytes(), before)
+        self.assertTrue((self.folder / 'password').exists())
+        server.cleanup.assert_not_called()
+        server.checkpoint.assert_not_called()
+
+    def test_prepared_absence_can_remove_only_local_unused_credentials(self):
+        self.early('prepared')
+        server = self.fake_type([SimpleNamespace(returncode=1, stderr='No such object')])
+        with patch.object(Path, 'is_socket', return_value=True):
+            report = recovery.recover_checkpoint(self.args, self.path, server, IMAGE, self.absent)
+        self.assertTrue(report['successful'])
+        self.assertTrue(report['alreadyAbsent'])
+        self.assertFalse(report['testSuiteSuccessful'])
+        self.assertFalse((self.folder / 'password').exists())
+        server.cleanup.assert_not_called()
+        self.assertEqual(server.docker.call_count, 1)
+
+    def test_partial_ids_cannot_be_mixed_with_early_or_completed_states(self):
+        for change in [dict(containerId=None), dict(anonymousVolumes=[]), dict(version=2, phase='creating'),
+                       dict(version=2, phase='prepared', containerId=None)]:
+            data = dict(self.data, **change)
+            self.write(data)
+            with self.assertRaises(RuntimeError):
+                recovery.read_checkpoint(self.path, IMAGE)
+
 
 if __name__ == '__main__':
     unittest.main()

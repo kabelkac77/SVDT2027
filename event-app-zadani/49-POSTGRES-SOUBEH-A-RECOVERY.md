@@ -48,3 +48,7 @@ Recovery helper je pouze testovací `tests/postgres_test_recovery.py`. Běžné 
 - Checkpoint recovery dokončuje úklid zabitého testovacího běhu. RP10 odděleně prokazuje restart stejné testovací DB po pádu serverového procesu: rollback necommitnuté transakce a zachování commitnutých dat. Není to výpadek napájení VM/úložiště ani úplná provozní obnova ze vzdálené zálohy.
 - Chyba61, skutečný projekt/účty/OAuth/scopes, globální role a provider secrets, skutečné Storage bajty, úplný vzdálený cíl/klíč/obnova/plánovač, browser a samostatný souhlas s aktivací zůstávají otevřené podle31/45/48.
 - Žádné native auth/model/usage, reálné crew/SQLite, provozní import/DDL/grant/deploy nebo aktivace záloh.18+26 pending scénářů parseru/checkeru zůstává nespouštěných.
+
+## 2026-11-28 — návaznost50 pro rané checkpointy
+
+Výše popsané odmítnutí neúplného prepared stavu odpovídá tehdejší verzi1. [50](50-POSTGRES-STARTUP-A-NEUPLNE-CHECKPOINTY.md) zavádí v2 prepared/creating, přesně omezené převzetí ztraceného ID z živých metadat a zachování důkazů při nejasném creating+absence. Úplné v1 zůstávají čitelné; libovolný neúplný JSON se tím nepovoluje. Čtyři skutečné řízené startovací chyby i jejich opakovaná recovery prošly. Výpadek napájení, poškození FS nebo nejasný orphan se stále automaticky neřeší. RX01/61 dál blokuje aktivaci.

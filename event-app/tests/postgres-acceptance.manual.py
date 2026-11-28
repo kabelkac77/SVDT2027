@@ -102,7 +102,7 @@ class SyntheticServer:
         """Private data-only receipt, never an input that authorizes deletion."""
         target = self.folder / 'checkpoint.json'
         require(not target.is_symlink(), 'Checkpoint cannot be a symlink')
-        payload = {'version': 1, 'phase': phase, 'token': self.token,
+        payload = {'version': 2, 'phase': phase, 'token': self.token,
                    'name': self.name, 'containerId': self.container,
                    'anonymousVolumes': self.volumes, 'image': IMAGE}
         fd, name = tempfile.mkstemp(prefix='.checkpoint-', dir=self.folder)
@@ -125,14 +125,17 @@ class SyntheticServer:
                               capture_output=True, text=True, timeout=60, check=check)
 
     def start(self):
+        self.startup_fault('prepared')
         with resource_transition():
             self.create_container()
+        self.startup_fault('start')
         self.docker('start', self.container)
         binding = self.docker('port', self.container, '5432/tcp').stdout.strip()
         require(re.fullmatch(r'127\.0\.0\.1:[0-9]+', binding), 'Only loopback publication is allowed')
         self.port = int(binding.split(':')[1])
         self.private_write(self.pass_file, f'127.0.0.1:{self.port}:*:{OWNER}:{self.password}\n')
         self.private_write(self.service_file, f'[synthetic]\nhost=127.0.0.1\nport={self.port}\nuser={OWNER}\ndbname=postgres\nsslmode=disable\n')
+        self.startup_fault('readiness')
         deadline = time.monotonic() + 40
         while time.monotonic() < deadline:
             if self.sql('postgres', 'select 1', check=False).returncode == 0:
@@ -146,18 +149,24 @@ class SyntheticServer:
         self.checkpoint('ready')
 
     def create_container(self):
+        self.checkpoint('creating')
         result = self.docker('create', '--pull=never', '--name', self.name,
                              '--label', 'svdt.acceptance.run=' + self.token,
                              '--publish', '127.0.0.1::5432', '--memory', '512m', '--cpus', '1',
                              '--mount', f'type=bind,source={self.password_file},target=/run/secrets/dbpass,readonly',
                              '--env', 'POSTGRES_PASSWORD_FILE=/run/secrets/dbpass',
                              '--env', 'POSTGRES_USER=' + OWNER, '--env', 'POSTGRES_DB=postgres', IMAGE)
+        self.startup_fault('receipt')
         self.container = result.stdout.strip()
         require(re.fullmatch('[0-9a-f]{64}', self.container), 'Invalid owned container identity')
         mounts = json.loads(self.docker('inspect', '--format', '{{json .Mounts}}', self.container).stdout)
         self.volumes = [mount['Name'] for mount in mounts if mount['Type'] == 'volume']
         require(self.volumes and all(re.fullmatch('[0-9a-f]{64}', name) for name in self.volumes), 'Only new anonymous volumes are allowed')
         self.checkpoint('created')
+
+    def startup_fault(self, stage):
+        if getattr(self.args, 'probe_startup_failure', None) == stage:
+            raise RuntimeError('Controlled synthetic startup failure')
 
     def connection(self, database, application='svdt_acceptance'):
         require(re.fullmatch('[a-z0-9_]+', database), 'Invalid synthetic database name')
@@ -564,6 +573,72 @@ def verify_sigterm(args, hard_kill=False):
                 raise RuntimeError('Signal probe failed; inspect private checkpoint, never prune other resources')
 
 
+def verify_startup_failures(args):
+    root = Path(args.output_root).resolve()
+    require(root.is_dir() and root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0,
+            'Startup probe requires a private owned output root')
+    directory = Path(tempfile.mkdtemp(prefix='startup-failure-probe-', dir=root))
+    cases = []
+    for stage in ('prepared', 'receipt', 'start', 'readiness'):
+        case_root = directory / stage
+        case_root.mkdir(mode=0o700)
+        command = [sys.executable, '-B', str(Path(__file__).resolve()), '--run-synthetic', '--probe-startup-failure', stage]
+        for key in ('docker', 'docker_socket', 'pg_bin', 'node'):
+            command.extend(['--' + key.replace('_', '-'), getattr(args, key)])
+        command.extend(['--output-root', str(case_root)])
+        child = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        try:
+            stdout, stderr = child.communicate(timeout=50)
+            require(child.returncode == 1, 'Failed startup must not report normal success')
+            report = json.loads(stdout)
+            require(report['failureCategory'] == 'STARTUP_FAILED' and report['casesRun'] == 0
+                    and not report['successful'] and not report['manualReviewRequired'], 'Invalid startup failure receipt')
+            require(report['containerRemoved'] and report['anonymousVolumesRemoved'], 'Startup cleanup not verified')
+            checkpoints = list(case_root.glob('postgres-synthetic-*/checkpoint.json'))
+            require(len(checkpoints) == 1, 'Startup checkpoint missing')
+            checkpoint = checkpoints[0]
+            state = json.loads(checkpoint.read_text())
+            require(state['version'] == 2 and state['phase'] == 'cleaned', 'Startup checkpoint not cleaned')
+            require(report['startupRecovery']['identityRecoveredFromLive'] == (stage == 'receipt'), 'Wrong identity recovery evidence')
+            recovery_command = [sys.executable, '-B', str(Path(__file__).resolve()), '--run-synthetic',
+                                '--recover-owned-test', str(checkpoint)]
+            for key in ('docker', 'docker_socket', 'pg_bin', 'node'):
+                recovery_command.extend(['--' + key.replace('_', '-'), getattr(args, key)])
+            recovery_command.extend(['--output-root', str(case_root)])
+            repeated = subprocess.run(recovery_command, capture_output=True, text=True, timeout=25, check=True)
+            repeated_report = json.loads(repeated.stdout)
+            require(repeated_report['alreadyAbsent'] and repeated_report['containerRemoved']
+                    and repeated_report['anonymousVolumesRemoved'] and not repeated_report['testSuiteSuccessful'],
+                    'Failed-startup recovery is not idempotent')
+            observer = object.__new__(SyntheticServer)
+            observer.args = args
+            observer.docker_config = checkpoint.parent / 'docker-client'
+            require(confirmed_absence(observer.docker('inspect', '--format', '{{.Id}}', state['containerId'] or state['name'], check=False), 'object'),
+                    'Failed-startup container absence not confirmed')
+            for name in state['anonymousVolumes']:
+                require(confirmed_absence(observer.docker('volume', 'inspect', '--format', '{{.Name}}', name, check=False), 'volume'),
+                        'Failed-startup volume absence not confirmed')
+            require(all(not (checkpoint.parent / name).exists() for name in ('password', 'pgpass', 'services')), 'Startup credential remains')
+            cases.append({'stage': stage, 'childExitCode': 1, 'startupFailed': True, 'cleanupVerified': True,
+                          'containerWasCreated': stage != 'prepared',
+                          'repeatedRecoveryVerified': True,
+                          'identityRecoveredFromLive': report['startupRecovery']['identityRecoveredFromLive']})
+        finally:
+            if child.poll() is None:
+                child.terminate()
+                try:
+                    child.communicate(timeout=25)
+                except subprocess.TimeoutExpired:
+                    child.kill()
+                    child.communicate(timeout=5)
+                    raise RuntimeError('Startup probe interrupted; preserve checkpoint for owned recovery')
+    result = {'version': 1, 'mode': 'controlled_startup_failure_probe', 'successful': True,
+              'casesVerified': len(cases), 'cases': cases, 'cutoverReady': False, 'liveImportRun': False}
+    SyntheticServer.private_write(directory / 'report.json', json.dumps(result, indent=2) + '\n')
+    print(json.dumps(result), flush=True)
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-synthetic', action='store_true', required=True)
@@ -578,6 +653,8 @@ def main():
     mode.add_argument('--verify-sigterm', action='store_true', help='Create an owned child and independently verify its SIGTERM cleanup')
     mode.add_argument('--verify-hard-kill', action='store_true', help='Kill only the owned child, recover in a new process and repeat safely')
     mode.add_argument('--recover-owned-test', metavar='CHECKPOINT', help='Explicit recovery after independent live ownership/storage verification')
+    mode.add_argument('--probe-startup-failure', choices=['prepared', 'receipt', 'start', 'readiness'], help='Controlled fault in the owned disposable server startup')
+    mode.add_argument('--verify-startup-failures', action='store_true', help='Verify four controlled startup faults and their cleanup')
     args = parser.parse_args()
     if args.verify_sigterm:
         return verify_sigterm(args)
@@ -587,14 +664,21 @@ def main():
         report = recover_checkpoint(args, args.recover_owned_test, SyntheticServer, IMAGE, confirmed_absence)
         print(json.dumps(report), flush=True)
         return 0
+    if args.verify_startup_failures:
+        return verify_startup_failures(args)
     global RUN
     RUN = SyntheticServer(args)
     result = None
     removed = False
     interrupted = None
+    started = False
+    failure = None
+    cleanup_error = None
+    cleanup_receipt = None
     previous = {sig: signal.signal(sig, interrupt_test) for sig in (signal.SIGINT, signal.SIGTERM)}
     try:
         RUN.start()
+        started = True
         if args.probe_interruption:
             time.sleep(30)
             raise RuntimeError('Interruption probe did not receive a signal')
@@ -604,18 +688,29 @@ def main():
             result = unittest.TextTestRunner(verbosity=2).run(suite)
     except SyntheticInterrupted as error:
         interrupted = error.signum
+    except Exception as error:
+        failure = 'STARTUP_FAILED' if not started else 'TEST_RUN_FAILED'
     finally:
         try:
-            removed = RUN.cleanup()
+            if started:
+                removed = RUN.cleanup()
+            else:
+                cleanup_receipt = recover_checkpoint(args, RUN.folder / 'checkpoint.json', SyntheticServer, IMAGE, confirmed_absence)
+                removed = cleanup_receipt['containerRemoved']
+        except Exception as error:
+            cleanup_error = type(error).__name__
         finally:
             for sig, handler in previous.items():
                 signal.signal(sig, handler)
     report = {'version': 1, 'mode': 'isolated_synthetic_postgres', 'image': IMAGE,
               'serverVersion': getattr(RUN, 'version', None), 'casesRun': result.testsRun if result else 0,
               'casesPassed': result.testsRun - len(result.failures) - len(result.errors) if result else 0,
-              'successful': result.wasSuccessful() if result else False, 'interruptedBy': interrupted, 'containerRemoved': removed,
+              'successful': bool(result and result.wasSuccessful() and not failure and not cleanup_error),
+              'interruptedBy': interrupted, 'containerRemoved': removed,
+              'failureCategory': failure, 'cleanupErrorCategory': cleanup_error, 'manualReviewRequired': cleanup_error is not None,
+              'startupFailureStage': args.probe_startup_failure, 'startupRecovery': cleanup_receipt,
               'expiryDiagnostic': getattr(RUN, 'expiry_diagnostic', None), 'cutoverReady': False,
-              'anonymousVolumesRemoved': removed and bool(RUN.volumes),
+              'anonymousVolumesRemoved': cleanup_receipt['anonymousVolumesRemoved'] if cleanup_receipt else removed and bool(RUN.volumes),
               'applicationRuntimeChanged': False, 'realSourceOpened': False, 'liveImportRun': False,
               'liveAuthProviderVerified': False, 'storageBytesRestored': False, 'offsiteBackupActivated': False}
     path = RUN.folder / 'report.json'
@@ -623,7 +718,7 @@ def main():
     print(json.dumps(report), flush=True)
     if interrupted is not None:
         return 128 + interrupted
-    return 0 if result and result.wasSuccessful() and removed else 1
+    return 0 if report['successful'] and removed else 1
 
 
 if __name__ == '__main__':
