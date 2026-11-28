@@ -1,5 +1,11 @@
 # Stav implementace
 
+## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
+
+Přímo Codexem implementovaná oprava [55](55-CREW-OPRAVA-EXPIRACE-A-OVERENI.md) přidává8. additive migraci; původních7 SHA zachované. crew_import_apply znovu ověří clock_timestamp() po čekání i validaci těsně před prvním novým zápisem. Identický úspěšný replay po expiraci zůstává beze změny; role/revokace/konflikty i ACL/owner/SECURITY DEFINER/search_path zachované.
+
+**Stejný striktní RX01 nyní prošel1/1:** doložený ShareRowExclusiveLock a expirace,42501/CREW_IMPORT_APPROVAL_EXPIRED, nula nových řádků a nezměněný30tabulkový snapshot.12 skutečných PG včetně platného krátkého čekání/replay po expiraci, pomalé validace a dump/restore přesné funkce prošlo.281 app/DB,35 cílených,234 hostitelských/70 optimalizovaných, typecheck/build prošly. [Evidence](crew-expiry-fix-verification.json). Technická oprava je k review, **není sloučená/nasazená ani ověřená na živém cíli**; autoApply:false/targetAppliedState:unknown, ostatní31/45 brány stále otevřené. Další přímá implementace:43 →39 →44,18+26 pending neprovedeno. Claude nepoužitý, skutečný import/DDL/grant/deploy/merge/aktivace neprovedené.
+
 ## 2026-11-28 — přímý Codex a přerušení zápisu54
 
 Uživatel výslovně změnil postup: „Programuj teď ty a ne Claude.“ Implementuje přímo Codex, bez předání/auth/model/usage Claude; jeho přihlášení už není blokátor. Aktuální22/AGENTS nahrazují historickou povinnost native handoffu. Zachovaná ochrana dat, cílené testy/vlastní větev/Draft PR a zákaz skutečného importu/živé aktivace.

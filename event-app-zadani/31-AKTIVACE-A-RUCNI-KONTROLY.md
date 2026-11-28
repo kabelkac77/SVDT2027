@@ -1,5 +1,12 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
+
+- [x] Technická oprava48/61 v55 implementovaná přímo Codexem a synteticky ověřená: RX01 prošel1/1,12 standardních PG včetně dump/restore,281 app/DB a234 hostitelských kontrol. Sedm původních migrací neměněno, nová8. autoApply:false.
+- [ ] Později projít Draft PR a skutečně aplikovaný stav potvrzeného projektu. Není doloženo sloučení/nasazení nebo živé tělo; existence původní signatury v katalogu není důkaz8. opravy. Porovnat prosrc hash/owner/config/ACL a bezpečnou akceptaci55.
+- [ ] Před aktivací vyplnit ostatní živé45 důkazy (Auth/scopes/účty/Storage/provider/úplná vzdálená obnova/browser a výslovný souhlas s importem). Technicky zelený RX01 není automatická aktivace; skutečný import stále zakázaný.
+- [ ]4 syntetické soukromé temporaries z54 posoudit až později, žádné automatické mazání/obsahové čtení pro inventář. Bez dotazů nyní; Claude přihlášení není podmínka pokračování43/39/44.
+
 ## 2026-11-28 — přímý Codex a přerušení zápisu54
 
 - [x] Výslovný pokyn: implementaci nyní provádí přímo Codex. Přihlášení Claude nevyžadovat jako blokátor; případný návrat k němu je volitelný pozdější krok, guard/účet beze změny.

@@ -22,6 +22,7 @@ async function setup() {
     "202611050001_crew_transfer.sql",
     "202611050002_crew_import.sql",
     "202611120001_crew_history.sql",
+    "202611280001_crew_import_expiry_guard.sql",
   ])
     await db.exec(
       await readFile(

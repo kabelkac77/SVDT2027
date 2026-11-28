@@ -1,5 +1,9 @@
 # SVDT — Codex a místní Claude Code
 
+## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
+
+Přímo Codexem implementovaná oprava48/61 je ověřená v55; stejný striktní RX01 po nové8. migraci prošel. Oprava je připravená k review, ne sloučená nebo nasazená. Další přímé pořadí43 parser →39 checker →44 UI historie. Claude auth/model/usage ani přihlášení se nevyžaduje. Ochrana soukromých dat a živé brány31/45 nadále platí.
+
 ## Aktuální výslovná změna — 2026-11-28
 
 Uživatel: „Programuj teď ty a ne Claude.“ Implementaci a opravy nyní provádí přímo Codex; nečeká na přihlášení Claude, nespouští jeho auth/model/usage ani modelové předání. Starší rozdělení implementátor Claude / revizor Codex níže je historické a není aktuální podmínkou práce. Runner/účet/kvóta/guard iNice ani SVDT se nepřepínají či neobcházejí, jednoduše se nepoužívají.

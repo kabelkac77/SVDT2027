@@ -1,5 +1,15 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
+
+- [x] Přímá oprava48/issue61:8. additive migrace, původních7 SHA beze změny, recheck po všech čekáních/validaci před prvním INSERT. Signatura/owner/ACL/config a cache replay zachované.
+- [x] Stejný RX01 před opravou skutečně selhal0/1, po opravě prošel1/1 s42501 a úplným30tabulkovým rollback snapshotem. Žádný expectedFailure či oslabené očekávání. [55](55-CREW-OPRAVA-EXPIRACE-A-OVERENI.md).
+- [x] Nové skutečné případy platného čekání/replay po expiraci a expirace při pomalé validaci;12 standardních PG včetně dump/restore opravené funkce prošlo.281 app/DB,35 cílených,234 hostitelských/70 optimalizovaných, TypeScript/build prošly. [Evidence](crew-expiry-fix-verification.json).
+- [x] Review-only inventář8 migrací a nová živá brána crew_import_expiry_after_lock_acceptance; katalog stále30 relací/27 funkcí. Presence preflight neprokazuje opravené tělo.
+- [ ] Opravu61 zkontrolovat v Draft PR; žádný merge nebo nasazení v tomto bloku. Před živou aktivací doložit skutečně aplikovanou8. migraci/tělo a ostatní31/45 důkazy. Technické ověření není živý souhlas.
+- [ ] **Další přímá implementace Codexem:43 parser přesného plánu →39 checker →44 inline historie.**18+26 pending scénářů stále nespouštěno. Claude přihlášení není blokátor.
+- [ ] Později31/45: skutečné účty/OAuth/Storage/provider/backup klíč/plná vzdálená obnova/browser a samostatná aktivace,4 soukromé syntetické temporaries z54 pouze evidované. Bez dotazů nyní, skutečný import zakázaný.
+
 ## 2026-11-28 — přímý Codex a přerušení zápisu54
 
 - [x] Výslovná změna uživatele „Programuj teď ty a ne Claude“ zapsaná do22/AGENTS/rozhodnutí. Implementace přímo Codex, žádné Claude auth/model/usage a žádná podmínka jeho přihlášení.

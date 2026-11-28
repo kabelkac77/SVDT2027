@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
+
+Oprava55 technicky zpřesňuje existující37/48, nepřidává nový finanční/kompetenční rozsah. Platnost schválení se znovu hodnotí serverovým clock_timestamp() bezprostředně před prvním novým zápisem po zámcích a validaci. Úspěšný identický replay už uložené odpovědi po expiraci zůstává povolený pouze při stále platné identitě/roli/revokačních pravidlech.
+
+Nová additive migrace místo přepsání již aplikovaných7 souborů; CREATE OR REPLACE zachovává signaturu/owner/SECURITY DEFINER/search_path/ACL. RX01 se neoslabuje a po opravě skutečně prošel. Jde o implementovanou a synteticky ověřenou opravu k review, nikoli doložený stav živého hostu. Před aktivací vyžadovat skutečný migrační/body důkaz a ostatní31/45 brány. Další práce přímo Codex43/39/44 bez Claude; žádný provozní souhlas mlčením.
+
 ## 2026-11-28 — přímý Codex a přerušení zápisu54
 
 Uživatel výslovně zadal: „Programuj teď ty a ne Claude.“ Od tohoto pokynu implementuje i opravuje přímo Codex; native Claude auth/model/usage ani přihlášení nejsou podmínkou pokračování. Historické rozdělení implementátor Claude / Codex review je pro aktuální práci nahrazené. Runner/účtový guard/účet/kvóta zůstávají nepoužité a nemění se. Platí vlastní větev, kontrola/testy, ochrana skutečných dat a Draft PR bez merge/deploy; tento pokyn nepovoluje živý import/DDL/grant nebo aktivaci.

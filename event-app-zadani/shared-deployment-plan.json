@@ -74,6 +74,20 @@
         "202611050002_crew_import.sql"
       ],
       "autoApply": false
+    },
+    {
+      "name": "202611280001_crew_import_expiry_guard.sql",
+      "sha256": "213bb60170d4f1edb6aaddc637594c3491245a27948894e56af8cc407c2316b4",
+      "dependsOn": [
+        "202609280001_partners.sql",
+        "202609290001_partner_history.sql",
+        "202611020001_crew.sql",
+        "202611020002_operations.sql",
+        "202611050001_crew_transfer.sql",
+        "202611050002_crew_import.sql",
+        "202611120001_crew_history.sql"
+      ],
+      "autoApply": false
     }
   ],
   "requiredBeforeDdl": [
@@ -93,7 +107,8 @@
     "private_provenance_schema_and_mapping_review",
     "operator_bound_crew_import_approval",
     "read_committed_cutover_window",
-    "explicit_crew_import_activation"
+    "explicit_crew_import_activation",
+    "crew_import_expiry_after_lock_acceptance"
   ],
   "preflightScript": "event-app/supabase/preflight-readonly.sql"
 }

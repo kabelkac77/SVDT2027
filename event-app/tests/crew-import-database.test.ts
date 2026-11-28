@@ -68,7 +68,7 @@ const payload = (): any[] => [
 ];
 const text = () => JSON.stringify(payload(), null, 2) + "\n";
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
-async function setup() {
+async function setup(withExpiryGuard = true) {
   const db = new PGlite();
   await db.exec(
     "create schema auth;create table auth.users(id uuid primary key,email text);create role anon nologin;create role authenticated nologin;grant usage on schema public,auth to authenticated;create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;",
@@ -80,6 +80,8 @@ async function setup() {
     "202611020002_operations.sql",
     "202611050001_crew_transfer.sql",
     "202611050002_crew_import.sql",
+    "202611120001_crew_history.sql",
+    ...(withExpiryGuard ? ["202611280001_crew_import_expiry_guard.sql"] : []),
   ])
     await db.exec(
       await readFile(
@@ -683,7 +685,73 @@ test("expired approvals reject new writes while an expired successful request ca
     await client(db);
     const result = await apply(db, a, plan, source, id);
     await db.exec("select pg_sleep(1.01)");
+    await owner(db);
+    const beforeReplay = await snapshotCounts(db);
+    await client(db);
     assert.deepEqual(await apply(db, a, plan, source, id), result);
+    await owner(db);
+    assert.deepEqual(await snapshotCounts(db), beforeReplay);
+  } finally {
+    await db.close();
+  }
+});
+test("additive expiry upgrade preserves function identity, owner, security, search path and ACL", async () => {
+  const db = await setup(false);
+  try {
+    const metadata = async () =>
+      (
+        await db.query(`
+      select p.oid::text, r.rolname as owner, p.prosecdef, p.provolatile, p.proconfig, p.proacl::text
+      from pg_proc p join pg_roles r on r.oid=p.proowner
+      where p.oid='public.crew_import_apply(uuid,uuid,uuid,text,text)'::regprocedure
+    `)
+      ).rows;
+    const before = await metadata();
+    const rows = await snapshotCounts(db);
+    await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/202611280001_crew_import_expiry_guard.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
+    assert.deepEqual(await metadata(), before);
+    assert.deepEqual(await snapshotCounts(db), rows);
+    const access = (
+      await db.query<any>(`select
+      has_function_privilege('authenticated','public.crew_import_apply(uuid,uuid,uuid,text,text)','execute') as authenticated,
+      has_function_privilege('anon','public.crew_import_apply(uuid,uuid,uuid,text,text)','execute') as anon
+    `)
+    ).rows[0];
+    assert.deepEqual(access, { authenticated: true, anon: false });
+  } finally {
+    await db.close();
+  }
+});
+test("expiry during source validation rejects before the first new write", async () => {
+  const db = await setup();
+  try {
+    await owner(db);
+    const source = await sourceFixture(),
+      plan = await planFor(db, source);
+    const a = (
+      await db.query<any>(
+        "select crew_import_stage_approval($1,$2,$3,clock_timestamp()+interval '300 milliseconds') id",
+        [e1, plan, "b".repeat(64)],
+      )
+    ).rows[0].id;
+    // Only the synthetic test DB receives this latency wrapper.
+    await db.exec(`alter function public.crew_import_source(text) rename to synthetic_original_source;
+      create function public.crew_import_source(text) returns jsonb language plpgsql volatile set search_path='' as $$
+      declare parsed jsonb;begin parsed:=public.synthetic_original_source($1);perform pg_sleep(0.4);return parsed;end;$$;
+      revoke all on function public.crew_import_source(text) from public,anon,authenticated;`);
+    const before = await snapshotCounts(db);
+    await client(db);
+    await reject(apply(db, a, plan, source), "CREW_IMPORT_APPROVAL_EXPIRED");
+    await owner(db);
+    assert.deepEqual(await snapshotCounts(db), before);
   } finally {
     await db.close();
   }
