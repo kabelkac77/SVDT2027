@@ -23,7 +23,7 @@ APP = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(APP / 'tests'), str(APP / 'tools')]
 from crew_import_preview_test import fixture, encode
 from crew_import_plan import build_import_plan
-from postgres_test_recovery import recover_checkpoint
+from postgres_test_recovery import recover_checkpoint, read_checkpoint, persist_report
 
 IMAGE = 'postgres@sha256:f1ea2a1a4fb7b68d4836be1fdcb8a6466a89b072158bf9d97663600538c294c5'
 OWNER = 'svdt_synthetic_owner'
@@ -94,14 +94,34 @@ class SyntheticServer:
 
     @staticmethod
     def private_write(path, text):
-        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-        with os.fdopen(fd, 'w') as out:
-            out.write(text)
+        # Publish a complete private file without replacing existing evidence.
+        fd, name = tempfile.mkstemp(prefix='.private-', dir=path.parent)
+        temporary = Path(name)
+        try:
+            with os.fdopen(fd, 'w') as out:
+                out.write(text)
+                out.flush()
+                os.fsync(out.fileno())
+            os.link(temporary, path)
+        finally:
+            temporary.unlink(missing_ok=True)
+
+    def report_writer(self, path, text):
+        if getattr(self.args, 'probe_evidence_failure', None) == 'report':
+            raise OSError('Controlled synthetic report publication failure')
+        self.private_write(path, text)
 
     def checkpoint(self, phase):
         """Private data-only receipt, never an input that authorizes deletion."""
         target = self.folder / 'checkpoint.json'
         require(not target.is_symlink(), 'Checkpoint cannot be a symlink')
+        if target.exists():
+            _, previous, _ = read_checkpoint(target, IMAGE)
+            require(previous['token'] == self.token and previous['name'] == self.name
+                    and (previous['containerId'] is None or (previous['containerId'] == self.container
+                         and previous['anonymousVolumes'] == self.volumes)), 'Checkpoint does not match owned server')
+        else:
+            require(phase == 'prepared', 'Missing checkpoint needs manual review')
         payload = {'version': 2, 'phase': phase, 'token': self.token,
                    'name': self.name, 'containerId': self.container,
                    'anonymousVolumes': self.volumes, 'image': IMAGE}
@@ -113,6 +133,8 @@ class SyntheticServer:
                 out.write('\n')
                 out.flush()
                 os.fsync(out.fileno())
+            if getattr(getattr(self, 'args', None), 'probe_evidence_failure', None) == 'checkpoint-' + phase:
+                raise OSError('Controlled synthetic checkpoint publication failure')
             os.replace(temporary, target)
         finally:
             temporary.unlink(missing_ok=True)
@@ -559,9 +581,9 @@ def verify_sigterm(args, hard_kill=False):
                   'childExitCode': child.returncode, 'checkpointCleaned': True,
                   'containerRemoved': True, 'anonymousVolumesRemoved': True, 'disposableCredentialsRemoved': True,
                   'liveImportRun': False, 'forcedKillRecoveryVerified': hard_kill, 'repeatedRecoveryVerified': hard_kill}
-        SyntheticServer.private_write(directory / 'report.json', json.dumps(result, indent=2) + '\n')
+        persist_report(result, directory / 'report.json', SyntheticServer.private_write)
         print(json.dumps(result), flush=True)
-        return 0
+        return 0 if result['successful'] else 1
     finally:
         if child.poll() is None:
             child.terminate()
@@ -634,9 +656,81 @@ def verify_startup_failures(args):
                     raise RuntimeError('Startup probe interrupted; preserve checkpoint for owned recovery')
     result = {'version': 1, 'mode': 'controlled_startup_failure_probe', 'successful': True,
               'casesVerified': len(cases), 'cases': cases, 'cutoverReady': False, 'liveImportRun': False}
-    SyntheticServer.private_write(directory / 'report.json', json.dumps(result, indent=2) + '\n')
+    persist_report(result, directory / 'report.json', SyntheticServer.private_write)
     print(json.dumps(result), flush=True)
-    return 0
+    return 0 if result['successful'] else 1
+
+
+def verify_evidence_failures(args):
+    root = Path(args.output_root).resolve()
+    require(root.is_dir() and root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0,
+            'Evidence probe requires a private owned output root')
+    directory = Path(tempfile.mkdtemp(prefix='evidence-failure-probe-', dir=root))
+    cases = []
+    for stage in ('checkpoint-created', 'checkpoint-cleaning', 'report'):
+        case_root = directory / stage
+        case_root.mkdir(mode=0o700)
+        common = []
+        for key in ('docker', 'docker_socket', 'pg_bin', 'node'):
+            common.extend(['--' + key.replace('_', '-'), getattr(args, key)])
+        common.extend(['--output-root', str(case_root)])
+        prefix = [sys.executable, '-B', str(Path(__file__).resolve()), '--run-synthetic']
+        child = subprocess.Popen(prefix + ['--probe-evidence-failure', stage] + common,
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        try:
+            stdout, stderr = child.communicate(timeout=50)
+            require(child.returncode == 1, 'Evidence I/O failure must not report success')
+            report = json.loads(stdout)
+            require(not report['successful'] and report['casesRun'] == 0, 'Invalid evidence fault result')
+            checkpoints = list(case_root.glob('postgres-synthetic-*/checkpoint.json'))
+            require(len(checkpoints) == 1, 'Evidence fault checkpoint missing')
+            checkpoint = checkpoints[0]
+            _, state, _ = read_checkpoint(checkpoint, IMAGE)
+            deferred = stage == 'checkpoint-cleaning'
+            require(state['phase'] == ('ready' if deferred else 'cleaned'), 'Previous complete checkpoint lost')
+            require(report['containerRemoved'] == (not deferred), 'Cleanup incorrectly claimed')
+            require(report['reportPersisted'] == (stage != 'report'), 'Report persistence incorrectly claimed')
+            require((checkpoint.parent / 'report.json').exists() == (stage != 'report'), 'Partial report published')
+            require(not list(checkpoint.parent.glob('.checkpoint-*'))
+                    and not list(checkpoint.parent.glob('.private-*')), 'Temporary evidence remains')
+            if deferred:
+                require(report['cleanupErrorCategory'] == 'OSError' and report['manualReviewRequired'], 'Missing checkpoint write diagnosis')
+                require((checkpoint.parent / 'password').is_file(), 'Credentials lost before verified cleanup')
+            if stage == 'report':
+                require(report['reportFailure'] == 'REPORT_WRITE_FAILED' and report['manualReviewRequired'], 'Missing report failure diagnosis')
+            for attempt in range(2):
+                recovered = subprocess.run(prefix + ['--recover-owned-test', str(checkpoint)] + common,
+                                           capture_output=True, text=True, timeout=40, check=True)
+                receipt = json.loads(recovered.stdout)
+                require(receipt['successful'] and receipt['reportPersisted'] and not receipt['testSuiteSuccessful']
+                        and receipt['alreadyAbsent'] == (not deferred or attempt == 1), 'Evidence recovery receipt mismatch')
+            _, final, _ = read_checkpoint(checkpoint, IMAGE)
+            require(final['phase'] == 'cleaned', 'Evidence recovery incomplete')
+            observer = object.__new__(SyntheticServer)
+            observer.args, observer.docker_config = args, checkpoint.parent / 'docker-client'
+            require(confirmed_absence(observer.docker('inspect', '--format', '{{.Id}}', final['containerId'], check=False), 'object'),
+                    'Evidence container absence unconfirmed')
+            for name in final['anonymousVolumes']:
+                require(confirmed_absence(observer.docker('volume', 'inspect', '--format', '{{.Name}}', name, check=False), 'volume'),
+                        'Evidence volume absence unconfirmed')
+            require(all(not (checkpoint.parent / name).exists() for name in ('password', 'pgpass', 'services')), 'Evidence credential remains')
+            cases.append({'stage': stage, 'childExitCode': 1, 'cleanupInitiallyDeferred': deferred,
+                          'reportInitiallyPersisted': report['reportPersisted'], 'freshRecoveryVerified': True,
+                          'repeatedRecoveryVerified': True, 'finalCleanupVerified': True})
+        finally:
+            if child.poll() is None:
+                child.terminate()
+                try:
+                    child.communicate(timeout=25)
+                except subprocess.TimeoutExpired:
+                    child.kill()
+                    child.communicate(timeout=5)
+                    raise RuntimeError('Evidence probe interrupted; preserve checkpoint for owned recovery')
+    result = {'version': 1, 'mode': 'controlled_evidence_failure_probe', 'successful': True,
+              'casesVerified': len(cases), 'cases': cases, 'cutoverReady': False, 'liveImportRun': False}
+    persist_report(result, directory / 'report.json', SyntheticServer.private_write)
+    print(json.dumps(result), flush=True)
+    return 0 if result['successful'] else 1
 
 
 def main():
@@ -655,19 +749,39 @@ def main():
     mode.add_argument('--recover-owned-test', metavar='CHECKPOINT', help='Explicit recovery after independent live ownership/storage verification')
     mode.add_argument('--probe-startup-failure', choices=['prepared', 'receipt', 'start', 'readiness'], help='Controlled fault in the owned disposable server startup')
     mode.add_argument('--verify-startup-failures', action='store_true', help='Verify four controlled startup faults and their cleanup')
+    mode.add_argument('--probe-evidence-failure', choices=['checkpoint-created', 'checkpoint-cleaning', 'report'], help='Controlled private evidence publication fault')
+    mode.add_argument('--verify-evidence-failures', action='store_true', help='Verify controlled evidence I/O faults and fresh recovery')
     args = parser.parse_args()
     if args.verify_sigterm:
         return verify_sigterm(args)
     if args.verify_hard_kill:
         return verify_sigterm(args, hard_kill=True)
     if args.recover_owned_test:
-        report = recover_checkpoint(args, args.recover_owned_test, SyntheticServer, IMAGE, confirmed_absence)
+        try:
+            report = recover_checkpoint(args, args.recover_owned_test, SyntheticServer, IMAGE, confirmed_absence)
+        except Exception as error:
+            report = {'mode': 'owned_synthetic_test_recovery', 'successful': False, 'testSuiteSuccessful': False,
+                      'failureCategory': 'RECOVERY_FAILED', 'recoveryErrorCategory': type(error).__name__,
+                      'containerRemoved': False, 'anonymousVolumesRemoved': False, 'reportPersisted': False,
+                      'manualReviewRequired': True, 'cutoverReady': False, 'liveImportRun': False}
         print(json.dumps(report), flush=True)
-        return 0
+        return 0 if report['successful'] else 1
     if args.verify_startup_failures:
         return verify_startup_failures(args)
+    if args.verify_evidence_failures:
+        return verify_evidence_failures(args)
     global RUN
-    RUN = SyntheticServer(args)
+    RUN = None
+    try:
+        RUN = SyntheticServer(args)
+    except Exception as error:
+        # No Docker create is reachable before construction completes.
+        report = {'mode': 'isolated_synthetic_postgres', 'successful': False, 'casesRun': 0,
+                  'failureCategory': 'PREPARATION_FAILED', 'preparationErrorCategory': type(error).__name__,
+                  'reportPersisted': False, 'manualReviewRequired': True, 'containerCreationAttempted': False,
+                  'cutoverReady': False, 'liveImportRun': False}
+        print(json.dumps(report), flush=True)
+        return 1
     result = None
     removed = False
     interrupted = None
@@ -679,7 +793,9 @@ def main():
     try:
         RUN.start()
         started = True
-        if args.probe_interruption:
+        if args.probe_evidence_failure:
+            failure = 'CONTROLLED_IO_PROBE'
+        elif args.probe_interruption:
             time.sleep(30)
             raise RuntimeError('Interruption probe did not receive a signal')
         else:
@@ -707,14 +823,15 @@ def main():
               'casesPassed': result.testsRun - len(result.failures) - len(result.errors) if result else 0,
               'successful': bool(result and result.wasSuccessful() and not failure and not cleanup_error),
               'interruptedBy': interrupted, 'containerRemoved': removed,
-              'failureCategory': failure, 'cleanupErrorCategory': cleanup_error, 'manualReviewRequired': cleanup_error is not None,
+              'failureCategory': failure, 'cleanupErrorCategory': cleanup_error,
+              'manualReviewRequired': cleanup_error is not None or bool(cleanup_receipt and cleanup_receipt.get('manualReviewRequired')),
               'startupFailureStage': args.probe_startup_failure, 'startupRecovery': cleanup_receipt,
               'expiryDiagnostic': getattr(RUN, 'expiry_diagnostic', None), 'cutoverReady': False,
               'anonymousVolumesRemoved': cleanup_receipt['anonymousVolumesRemoved'] if cleanup_receipt else removed and bool(RUN.volumes),
               'applicationRuntimeChanged': False, 'realSourceOpened': False, 'liveImportRun': False,
               'liveAuthProviderVerified': False, 'storageBytesRestored': False, 'offsiteBackupActivated': False}
     path = RUN.folder / 'report.json'
-    RUN.private_write(path, json.dumps(report, indent=2) + '\n')
+    persist_report(report, path, RUN.report_writer)
     print(json.dumps(report), flush=True)
     if interrupted is not None:
         return 128 + interrupted

@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — poškozená evidence a chyby zápisu51
+
+Pokyn pokračovat samostatně se uplatňuje na hostitelské testy51, bez převzetí native implementace nebo živých oprávnění. Cleanup nesmí automaticky přepsat poškozenou evidenci ani odhadnout chybějící checkpoint. Před aktualizací musí souhlasit validní původní stav a vlastní identita.
+
+Dokončený úklid a uložený report jsou samostatné skutečnosti. Nepotvrzené uložení reportu znamená neúspěšný příkaz a pozdější posouzení i po ověřeném odstranění prostředků; raw zprávy výjimek se nevypisují. Řízené I/O chyby nejsou souhlas s fyzickým výpadkem hostitele ani důkaz úplné odolnosti disku. Žádná produktová volba nebo aktivační souhlas se nepředpokládá;48/61 dál blokuje aktivaci.
+
 ## 2026-11-28 — chyby startu a neúplné checkpointy50
 
 Pokyn pokračovat bez dotazů je uplatněný na hostitelské testy50. Nezavádí produktové oprávnění ani provozní aktivaci. Checkpoint v2 musí odlišit stav před pokusem o create a možný nejasný výsledek. Creating+absence není důkaz, že žádné prostředky nevznikly: úklid se zastaví a důkazy zůstanou. Ztracené ID se přebírá pouze po úplné nezávislé kontrole živého vlastního prostředku, nikoli pouze z JSON/labelu.

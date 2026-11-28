@@ -13,6 +13,18 @@ def require(condition, message):
         raise RuntimeError(message)
 
 
+def persist_report(report, path, writer):
+    """Publication failure must not turn verified cleanup into suite success."""
+    report['reportPersisted'] = True
+    try:
+        writer(path, json.dumps(report, indent=2) + '\n')
+    except Exception as error:
+        report.update(successful=False, reportPersisted=False,
+                      reportFailure='REPORT_WRITE_FAILED', reportErrorCategory=type(error).__name__,
+                      manualReviewRequired=True)
+    return report['reportPersisted']
+
+
 def private_regular(path):
     info = path.lstat()
     require(stat.S_ISREG(info.st_mode) and info.st_uid == os.getuid() and info.st_mode & 0o077 == 0,
@@ -134,5 +146,5 @@ def recover_checkpoint(args, path, server_type, image, confirmed_absence):
               'anonymousVolumesRemoved': True, 'disposableCredentialsRemoved': True,
               'identityRecoveredFromLive': not absent and data['containerId'] is None,
               'cutoverReady': False, 'liveImportRun': False}
-    server.private_write(folder / ('recovery-' + uuid.uuid4().hex + '.json'), json.dumps(report, indent=2) + '\n')
+    persist_report(report, folder / ('recovery-' + uuid.uuid4().hex + '.json'), server.private_write)
     return report

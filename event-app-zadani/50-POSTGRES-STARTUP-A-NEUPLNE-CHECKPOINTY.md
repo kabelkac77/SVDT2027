@@ -53,3 +53,7 @@ Znovu prošlo10 standardních skutečných PostgreSQL případů, řízený SIGT
 - Dále bez přihlášení: doplnit cílené neinvazivní zkoušky poškozených/truncated checkpointů a selhání jejich zápisu; odlišit nemožnost zapsat report od úspěchu úklidu. Výpadek hostitele provádět až v dohodnutém prostředí.
 - V nativním implementačním toku má přednost oprava48/61, potom parser43 → checker39 → UI44.18+26 pending scénářů zůstává nespouštěných. Native auth/model/usage se v tomto bloku nezkoušelo.
 - Projekt/účty/OAuth/scopes, skutečné Storage bajty a provider secrets, úplný vzdálený cíl/klíč/obnova/plánovač, browser a samostatný aktivační pokyn zůstávají odložené v31/45. Žádný skutečný import, provozní DDL/grant, deploy nebo aktivace záloh.
+
+## 2026-11-28 — doplnění51 pro poškození a I/O
+
+[51](51-POSTGRES-POSKOZENA-EVIDENCE-A-CHYBY-ZAPISU.md) uzavírá dílčí otevřenou kontrolu poškozených checkpointů a řízených chyb zápisu. Před aktualizací se znovu validuje předchozí soukromá evidence a vlastní identita; chybějící/poškozený soubor se při cleanup nepřepíše. Report má atomickou publikaci a oddělené reportPersisted/fakta úklidu. Chyba constructoru nebo explicitní recovery má bezpečnou odpověď.3 skutečné řízené I/O chyby s novou/opakovanou recovery a13 nových unit případů prošly. Neřeší univerzálně power loss/disk full, pozdní chyby a souběžnou recovery.48/61 dál blokuje aktivaci.
