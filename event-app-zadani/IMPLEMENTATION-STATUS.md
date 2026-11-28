@@ -1,5 +1,13 @@
 # Stav implementace
 
+## 2026-11-28 — SIGTERM/checkpoint hotové, chyba expirace blokuje aktivaci
+
+[47](47-POSTGRES-PRERUSENI-A-SCHVALENI.md): atomický soukromý checkpoint a řízený SIGTERM skutečně ověřené; přerušený child vrací143/successful:false, vlastní kontejner/volumes/přístupy odstraněné a nezávisle potvrzené. Šest běžných skutečných PG scénářů prošlo (včetně odvolání/expirace při čekání na edition lock).174 hostitelských kontrol prošlo,10 bezpečnostních i při Python -O.
+
+**Nová neopravená chyba48 / issue61:** při pozdějším čekání přímo na ShareRowExclusiveLock může schválení mezitím vypršet a RPC přesto zapíše. Samostatný striktní RX01 reproducer selhal (0 prošlých/1 selhání), SQL exit0 a1 balíček/roster/odměna/request; serverově doložená expirace. Není expectedFailure a nepočítá se do zelených kontrol. Připravené [zadání opravy48](48-CREW-EXPIRACE-PO-ZAMKU.md); aktivace je blokovaná i při zeleném běžném CI. [Oddělená evidence](postgres-interruption-verification.json).
+
+Aplikační runtime a všech7 migrací beze změny; žádný native auth/model/usage, skutečná crew/SQLite, provozní import/DDL/grant/deploy nebo aktivace záloh. Oprava má přednost před pokračováním parser43/checker39/UI44 v nativním toku;18+26 scénářů zůstává pending. SIGKILL/power loss a automatická obnova z checkpointu jsou další neprovedené případy, nikoli hotový recovery proces. Přístupy a potvrzení zůstávají na později podle31/45 bez dotazů uživateli.
+
 ## 2026-11-27 — skutečný izolovaný PostgreSQL: souběh a obnova
 
 Bez Claude dokončené [4 skutečné PostgreSQL zkoušky46](46-IZOLOVANY-POSTGRES-SOUBEH-A-OBNOVA.md): souběžný stejný request s pozorovaným zámkem a jediným zápisem; timeout55P03 s úplným rollbackem a přesným retry; odebrání role během čekání s odmítnutím42501; skutečný PostgreSQL kolektor/dump/obnova do nové DB. Obnova zachovala30 tabulek, původní zdroj/historii/NULL0, RLS/politiky a vybrané zákazy RPC. [Sanitizovaná evidence](isolated-postgres-verification.json).

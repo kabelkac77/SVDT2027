@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — nezávislé ověření a chybu nezakrývat zelenými testy
+
+Pokračování backlogu zachovává rozdělení práce: zde se doplňují hostitelské testy/checkpoint a review, bez runtime náhrady nativního vývoje a bez dalšího auth/model/usage pokusu. SIGTERM je řízené přerušení se samostatným výsledkem, nikoli úspěšně dokončená sada. Checkpoint slouží pouze jako soukromá evidence vlastních prostředků.
+
+RX01 prokázal rozpor implementace s37: po čekání na zápisový tabulkový zámek může vzniknout nový zápis po expiraci schválení. Samostatný striktní reproducer zůstává červený, nikoli expectedFailure nebo změněné očekávání. Runtime se v tomto bloku neopravuje;48/issue61 má přednost a blokuje aktivaci. Žádné nové uživatelské oprávnění nebo produktové potvrzení se tím nepředpokládá.
+
 ## 2026-11-27 — rozsah skutečné izolované zkoušky
 
 Pokyn pokračovat bez Claude využit pro nezávislé skutečné PostgreSQL testy46. Nový server/kontejner a všechny jeho databáze/role/řádky jsou pouze testovací, vytvořené ze sledovaných syntetických fixture. Použití skutečného importního RPC zde není uživatelský převod provozní crew a nezmírňuje dosavadní zákaz skutečného importu. Žádné existující provozní přístupy se nepřebírají a nativní přihlášení/účet/kvóta se nemění.

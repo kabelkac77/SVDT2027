@@ -65,3 +65,7 @@ Zaznamenat přesný schválený seznam requiredRelations a jeho vazbu na skuteč
 ## Dílčí izolovaný důkaz G03/G06 — 2026-11-27
 
 Podle46 prošly4 skutečné PostgreSQL18.6 případy: tři souběhy s pozorovanými zámky a obnova skutečného custom dumpu přes stávající kolektor do nové DB.30 tabulek, původní zdroj/historie/NULL0, aplikační RLS/politiky a vybrané zákazy RPC zachované. Živé stavy v tabulce výše se tím nemění: Auth/Storage jsou minimální fixture, role jsou předem vytvořené na témže syntetickém serveru, nikoli obnovené z dumpu; chybí reálný provider/OAuth/Storage bajty/vzdálená obnova/klíč/browser a další souběhy. Sanitizovaný důkaz viz [46](46-IZOLOVANY-POSTGRES-SOUBEH-A-OBNOVA.md).
+
+## Dodatečná překážka G05/G06/G09 — 2026-11-28
+
+Oprava48 / issue61 musí předcházet aktivaci. Samostatný RX01 reproducer po tabulkovém čekání selhal: RPC vytvořilo nový syntetický import po expiraci. Šest běžných PG scénářů a SIGTERM47 prošly, ale chybu nezneplatňují. Vyžadovat opravený commit/migrační hash a úspěšný stejný striktní ShareRowExclusiveLock reproducer; teprve potom dále posuzovat ostatní živé brány. Žádný souhlas nebo skutečný import tímto zápisem nevzniká.

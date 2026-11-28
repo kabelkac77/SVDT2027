@@ -39,3 +39,7 @@ Stage/revoke/apply vyžadují read committed; starý opakovatelný transakční 
 16 DB scénářů skutečně prošlo v PGlite včetně rollbacku druhého řádku, změn otisků/obsahu, revokace/expirace/replay, přímých zákazů, exact keep se zachováním existujícího Person/účtu/verzí/požadavků kategorie a zkoušky460 smyšlených lidí/9 kategorií. Integrační test použil čistý Python builder se skutečným serverovým fingerprintem ze syntetického DB snapshotu.14 samostatných Python scénářů ověřuje generování i blokování plánu. Úplné počty a hashe [evidence](crew-import-verification.json).
 
 Nové RPC není nyní zapojené do UI ani do spouštěcího CLI. Skutečný PostgreSQL ve více připojeních, hostované limity a nejistý síťový výsledek zůstávají akceptace na později; nic v této sadě neslibuje aktivní vzdálené zálohy nebo živé sdílení.
+
+## Zjištěná mezera2026-11-28 — aktivaci blokuje48
+
+Striktní skutečný PG reproducer RX01 podle47 ukázal, že po čekání na ShareRowExclusiveLock vznikne nový zápis i po expiraci schválení. Stávající kód kontroluje platnost před tímto čekáním; znovu před prvním INSERT ji nekontroluje. Původní specifikace výše se nemění: expirace má bránit novému zápisu, úspěšný identický replay je samostatný případ. Oprava48/issue61 je připravená, nikoli implementovaná. Dosavadní úspěšné testy tento pozdější interval nepokrývaly.
