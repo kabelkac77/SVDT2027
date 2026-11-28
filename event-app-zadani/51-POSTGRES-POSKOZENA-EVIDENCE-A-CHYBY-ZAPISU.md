@@ -56,3 +56,7 @@ Celkem203 hostitelských a39 bezpečnostních pod Python -O prošlo. Znovu proš
 - Dále bez přístupů: koordinace dvou recovery procesů nad stejným checkpointem a cílené chyby po zveřejnění souboru/odstranění kontejneru; ověřit rozlišení již provedeného zásahu od neuložené závěrečné evidence. Rozšíření skutečných výpadků hostitele až v dohodnutém prostředí.
 - Native implementace:48/61 → parser43 → checker39 → UI44. Přihlášení, model ani usage se zde nezkoušely;18+26 pending scénářů se nespouštělo.
 - Přístupy a schválení31/45 zůstávají na později: živé účty/OAuth/scopes, Storage/provider secrets, úplné vzdálené zálohy/klíč/obnova/plánovač, browser a samostatná aktivace. Žádný skutečný import, provozní DDL/grant/deploy/merge ani aktivace záloh.
+
+## 2026-11-28 — navazující52 pro souběh a pozdní chyby
+
+[52](52-POSTGRES-SOUBEZNA-RECOVERY-A-POZDNI-CHYBY.md) ověřuje společný flock běžícího testu a recovery; další proces se odmítne bez zásahu. I/O sada má6 bodů včetně skutečných řízených chyb po odstranění kontejneru/publikaci checkpointu/reportu. Pozdní report rozlišuje reportPersisted:true od successful:false/REPORT_FINALIZATION_FAILED a zachovává původní bytes. Samotný soubor není konečný výsledek procesu.215 hostitelských a51 optimalizovaných prošlo. Fyzický disk/power loss, síťový filesystem a SIGKILL přímo v jednotlivých recovery krocích zůstávají otevřené.48/61 dál blokuje aktivaci.

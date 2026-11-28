@@ -1,5 +1,6 @@
 """Recovery boundaries without Docker, database access or operational data."""
 import copy
+import contextlib
 import importlib.util
 import json
 import os
@@ -227,6 +228,61 @@ class RecoveryScopeTests(unittest.TestCase):
         self.assertTrue(report['manualReviewRequired'])
         self.assertNotIn('synthetic-sensitive-message', json.dumps(report))
         server.checkpoint.assert_called_once_with('cleaned')
+
+    def test_operation_lock_excludes_second_holder_and_keeps_same_inode(self):
+        with recovery.operation_lock(self.folder):
+            lock = self.folder / 'operation.lock'
+            inode = lock.stat().st_ino
+            self.assertEqual(lock.stat().st_mode & 0o777, 0o600)
+            with self.assertRaises(recovery.RecoveryBusy):
+                with recovery.operation_lock(self.folder):
+                    self.fail('Second holder admitted')
+        with recovery.operation_lock(self.folder):
+            self.assertEqual(lock.stat().st_ino, inode)
+
+    def test_operation_lock_releases_after_exception(self):
+        with self.assertRaisesRegex(RuntimeError, 'synthetic interruption'):
+            with recovery.operation_lock(self.folder):
+                raise RuntimeError('synthetic interruption')
+        with recovery.operation_lock(self.folder):
+            pass
+
+    def test_symlink_hardlink_and_public_lock_are_refused(self):
+        path = self.folder / 'operation.lock'
+        foreign = self.folder / 'foreign'
+        foreign.write_text('synthetic previous evidence')
+        foreign.chmod(0o600)
+        for kind in ['symlink', 'hardlink', 'public']:
+            if kind == 'symlink':path.symlink_to(foreign)
+            elif kind == 'hardlink':os.link(foreign, path)
+            else:
+                path.write_text('synthetic lock')
+                path.chmod(0o644)
+            with self.subTest(kind=kind), self.assertRaises((OSError, RuntimeError)):
+                with recovery.operation_lock(self.folder):
+                    self.fail('Unsafe lock admitted')
+            self.assertEqual(foreign.read_text(), 'synthetic previous evidence')
+            path.unlink()
+
+    def test_busy_recovery_stops_before_docker_and_preserves_checkpoint(self):
+        original = self.path.read_bytes()
+        server = self.fake_type([])
+        with recovery.operation_lock(self.folder), self.assertRaises(recovery.RecoveryBusy):
+            recovery.recover_checkpoint(self.args, self.path, server, IMAGE, self.absent)
+        server.docker.assert_not_called()
+        self.assertEqual(self.path.read_bytes(), original)
+        self.assertTrue((self.folder / 'password').exists())
+
+    def test_checkpoint_is_read_again_after_lock_acquisition(self):
+        @contextlib.contextmanager
+        def acquire(folder):
+            self.write(dict(self.data, token='d' * 32, name='svdt-synthetic-' + 'd' * 32))
+            yield
+        server = self.fake_type([SimpleNamespace(returncode=0, stdout='\n'.join(json.dumps(v) for v in self.metadata()))])
+        with patch.object(recovery, 'operation_lock', side_effect=acquire), patch.object(Path, 'is_socket', return_value=True), \
+             self.assertRaisesRegex(RuntimeError, 'foreign'):
+            recovery.recover_checkpoint(self.args, self.path, server, IMAGE, self.absent)
+        server.cleanup.assert_not_called()
 
 
 if __name__ == '__main__':

@@ -81,3 +81,7 @@ RP07–RP10 rozšiřují izolovaný důkaz o různé requesty, ztrátu klientsk�
 ## Dílčí důkaz ochrany evidence51 — 2026-11-28
 
 Poškozené/chybějící checkpointy a změna během inspekce zastaví testovací cleanup bez přepsání důkazů. Prošly3 skutečné řízené chyby publikace checkpointu/reportu a následná/opakovaná recovery;13 nových unit případů odlišuje ověřený úklid od neuloženého výsledku. Viz [51](51-POSTGRES-POSKOZENA-EVIDENCE-A-CHYBY-ZAPISU.md). Živé stavy G03/G06 ani souhlas s výpadkem hostitele/aktivací se nemění. Fyzický disk/power loss, provider/Auth/Storage/vzdálená obnova nejsou ověřené;48/61 zůstává blokátor.
+
+## Dílčí důkaz koordinace recovery52 — 2026-11-28
+
+Společný flock ochránil aktivní syntetický test i souběh dvou recovery procesů. Pozdní chyby po odstranění/publikaci byly samostatně ověřené, včetně nového nezávislého potvrzení již provedených kroků a opakování. [52](52-POSTGRES-SOUBEZNA-RECOVERY-A-POZDNI-CHYBY.md) je technický dílčí důkaz, nikoli změna živých stavů G03/G06 nebo souhlas s výpadkem hostitele. Uložený report může být dřívější snapshot; vyžadovat finální odpověď a exit, při ztrátě nové ověření.48/61 i ostatní živé účty/backup/Auth/Storage/browser brány zůstávají otevřené.

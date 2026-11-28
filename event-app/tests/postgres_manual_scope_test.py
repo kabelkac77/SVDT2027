@@ -318,6 +318,83 @@ class PostgresManualScopeTests(unittest.TestCase):
         self.assertTrue(report['manualReviewRequired'])
         self.assertNotIn('synthetic-sensitive-message', output.getvalue())
 
+    def test_published_file_is_preserved_when_temporary_unlink_fails(self):
+        original_unlink = Path.unlink
+        def unlink(path, *args, **kwargs):
+            if path.name.startswith('.private-'):
+                raise OSError('synthetic temporary cleanup failure')
+            return original_unlink(path, *args, **kwargs)
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / 'report.json'
+            with patch.object(Path, 'unlink', unlink), self.assertRaises(manual.PublicationError):
+                manual.SyntheticServer.private_write(target, 'complete synthetic evidence')
+            self.assertEqual(target.read_text(), 'complete synthetic evidence')
+            self.assertEqual(target.stat().st_mode & 0o777, 0o600)
+            self.assertEqual(len(list(Path(folder).glob('.private-*'))), 1)
+
+    def test_late_report_error_retains_complete_evidence_but_fails_result(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / 'report.json'
+            def writer(path, text):
+                manual.SyntheticServer.private_write(path, text)
+                raise manual.PublicationError('synthetic after publication')
+            report = {'successful': True, 'containerRemoved': True}
+            manual.persist_report(report, target, writer)
+            self.assertFalse(report['successful'])
+            self.assertTrue(report['reportPersisted'])
+            self.assertEqual(report['reportFailure'], 'REPORT_FINALIZATION_FAILED')
+            self.assertTrue(report['manualReviewRequired'])
+            # The earlier snapshot is preserved; only final stdout + exit proves completion.
+            self.assertTrue(json.loads(target.read_text())['successful'])
+
+    def test_constructor_failure_releases_its_operation_lock(self):
+        with tempfile.TemporaryDirectory() as folder:
+            args = SimpleNamespace(output_root=folder, docker_socket='/synthetic/socket')
+            server = object.__new__(manual.SyntheticServer)
+            with patch.object(Path, 'is_socket', return_value=True), patch.object(manual.SyntheticServer, 'prepare', side_effect=OSError('synthetic preparation')), \
+                 self.assertRaises(OSError):
+                server.__init__(args)
+            with manual.operation_lock(server.folder):
+                pass
+
+    def test_owned_run_releases_lease_on_unhandled_output_error(self):
+        lease = SimpleNamespace(__exit__=Mock())
+        server = SimpleNamespace(lease=lease)
+        with patch.object(sys, 'argv', self.arguments()+['--run-synthetic']), patch.object(manual, 'SyntheticServer', return_value=server), \
+             patch.object(manual, 'run_owned', side_effect=BrokenPipeError('synthetic output')), self.assertRaises(BrokenPipeError):
+            manual.main()
+        lease.__exit__.assert_called_once_with(None, None, None)
+
+    def test_post_remove_failure_preserves_cleaning_receipt_and_credentials(self):
+        with tempfile.TemporaryDirectory(prefix='postgres-synthetic-') as folder:
+            server = self.evidence_server(folder)
+            server.args = SimpleNamespace(probe_evidence_failure='after-remove')
+            server.docker.side_effect = [SimpleNamespace(stdout=server.token), SimpleNamespace(stdout='')]
+            with self.assertRaises(OSError):
+                server.cleanup()
+            self.assertEqual([c.args[0] for c in server.docker.call_args_list], ['inspect', 'rm'])
+            self.assertEqual(json.loads((server.folder / 'checkpoint.json').read_text())['phase'], 'cleaning')
+            self.assertTrue(server.password_file.exists())
+
+    def test_checkpoint_publication_is_not_undone_after_late_error(self):
+        with tempfile.TemporaryDirectory(prefix='postgres-synthetic-') as folder:
+            server = self.evidence_server(folder)
+            server.args = SimpleNamespace(probe_evidence_failure='after-checkpoint')
+            with self.assertRaises(manual.PublicationError):
+                server.checkpoint('cleaned')
+            self.assertEqual(manual.read_checkpoint(server.folder / 'checkpoint.json', manual.IMAGE)[1]['phase'], 'cleaned')
+            self.assertEqual(list(server.folder.glob('.checkpoint-*')), [])
+
+    def test_recovery_busy_is_safe_nonzero_without_requesting_manual_approval(self):
+        with patch.object(sys, 'argv', self.arguments()+['--run-synthetic', '--recover-owned-test', '/synthetic/checkpoint.json']), \
+             patch.object(manual, 'recover_checkpoint', side_effect=manual.RecoveryBusy('synthetic busy')), \
+             contextlib.redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(manual.main(), 1)
+        report = json.loads(output.getvalue())
+        self.assertEqual(report['failureCategory'], 'RECOVERY_BUSY')
+        self.assertFalse(report['manualReviewRequired'])
+        self.assertFalse(report['containerRemoved'])
+
 
 if __name__ == '__main__':
     unittest.main()

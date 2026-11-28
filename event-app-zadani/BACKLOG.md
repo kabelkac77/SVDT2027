@@ -1,5 +1,15 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — souběžná recovery a pozdní chyby52
+
+- [x] Společný soukromý POSIX flock pro běžící test i explicitní recovery, CLOEXEC, stejný trvalý inode a znovunačtení checkpointu po získání lease. Busy proces žádný zásah neprovede.
+- [x] Skutečná ochrana aktivního vlastníka a dva souběžné recovery procesy: jeden držitel, druhý RECOVERY_BUSY, následný úklid a dvě idempotentní recovery ověřené. [52](52-POSTGRES-SOUBEZNA-RECOVERY-A-POZDNI-CHYBY.md).
+- [x]3 nové skutečné pozdní chyby po Docker rm, publikaci cleaned checkpointu a reportu; celkem6 I/O bodů s fresh/repeated recovery. Úplné soubory zachované, pozdní report má samostatné potvrzení publikace a neúspěšnou finalizaci.
+- [x]12 nových unit případů; celkem215 hostitelských a51 optimalizovaných prošlo.10 standardních PG,4 startup chyby a SIGTERM/SIGKILL regresně prošly. [Evidence](postgres-recovery-lock-verification.json).
+- [ ] **Aktivace stále blokovaná48/issue61.** RX01 opět selhal0/1; native oprava má přednost před43/39/44.18+26 pending nespouštěno, auth/model/usage nezkoušeno.
+- [ ] Další neblokovaná práce: SIGKILL přímo držitele recovery během jednotlivých kroků, navázání novým procesem; metadata-only inventář soukromých dočasných zbytků bez čtení obsahu a bez automatického mazání.
+- [ ] Na později31/45: nejasné/orphan prostředky a ztracené finální odpovědi posoudit; fyzický disk/power loss/obnova v dohodnutém prostředí. Živé účty/OAuth/Storage/provider/backup klíč/browser/aktivace stále otevřené, bez dotazů nyní a bez skutečného importu.
+
 ## 2026-11-28 — poškozená evidence a chyby zápisu51
 
 - [x] Před každou aktualizací kontrolovat původní checkpoint a vlastní identitu; poškozený/cizí/chybějící soubor nepřepsat ani nerekonstruovat při cleanup.

@@ -1,10 +1,13 @@
 """Opt-in recovery of a single disposable synthetic test server, never production."""
+import contextlib
+import fcntl
 import json
 import os
 from pathlib import Path
 import re
 import stat
 import tempfile
+import time
 import uuid
 
 
@@ -13,14 +16,43 @@ def require(condition, message):
         raise RuntimeError(message)
 
 
+class RecoveryBusy(RuntimeError):
+    pass
+
+
+class PublicationError(OSError):
+    """The complete file was published before finalization failed."""
+
+
+@contextlib.contextmanager
+def operation_lock(folder):
+    # Keep this inode forever; unlinking a lock permits two independent holders.
+    path = folder / 'operation.lock'
+    fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600)
+    try:
+        info = os.fstat(fd)
+        require(stat.S_ISREG(info.st_mode) and info.st_uid == os.getuid()
+                and info.st_mode & 0o077 == 0 and info.st_nlink == 1, 'Invalid operation lock')
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            raise RecoveryBusy('Owned test operation already running') from None
+        current = path.lstat()
+        require((current.st_dev, current.st_ino) == (info.st_dev, info.st_ino), 'Operation lock changed')
+        yield
+    finally:
+        os.close(fd)
+
+
 def persist_report(report, path, writer):
     """Publication failure must not turn verified cleanup into suite success."""
     report['reportPersisted'] = True
     try:
         writer(path, json.dumps(report, indent=2) + '\n')
     except Exception as error:
-        report.update(successful=False, reportPersisted=False,
-                      reportFailure='REPORT_WRITE_FAILED', reportErrorCategory=type(error).__name__,
+        published = isinstance(error, PublicationError)
+        report.update(successful=False, reportPersisted=published,
+                      reportFailure='REPORT_FINALIZATION_FAILED' if published else 'REPORT_WRITE_FAILED', reportErrorCategory=type(error).__name__,
                       manualReviewRequired=True)
     return report['reportPersisted']
 
@@ -99,11 +131,26 @@ def validate_live_identity(data, folder, metadata):
 
 
 def recover_checkpoint(args, path, server_type, image, confirmed_absence):
+    folder, _, _ = read_checkpoint(path, image)
+    root = Path(args.output_root).resolve()
+    require(root.is_dir() and root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0
+            and folder.is_relative_to(root), 'Checkpoint outside the explicit private output root')
+    with operation_lock(folder):
+        return _recover_locked(args, path, server_type, image, confirmed_absence)
+
+
+def _recover_locked(args, path, server_type, image, confirmed_absence):
     folder, data, original = read_checkpoint(path, image)
     root = Path(args.output_root).resolve()
     require(root.is_dir() and root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0
             and folder.is_relative_to(root), 'Checkpoint outside the explicit private output root')
     require(Path(args.docker_socket).is_socket(), 'A local Unix Docker socket is required')
+    if getattr(args, 'probe_recovery_contention', None):
+        server_type.private_write(folder / 'recovery-held.json', '{"held":true}\n')
+        deadline = time.monotonic() + 15
+        while not (folder / 'recovery-release.json').exists() and time.monotonic() < deadline:
+            time.sleep(0.05)
+        private_regular(folder / 'recovery-release.json')
     for name in ('password', 'pgpass', 'services'):
         file = folder / name
         if file.exists() or file.is_symlink():

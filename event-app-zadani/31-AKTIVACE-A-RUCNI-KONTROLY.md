@@ -1,5 +1,12 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — souběžná recovery a pozdní chyby52
+
+- [x] Dílčí52: ochrana aktivního testu a souběh dvou recovery procesů skutečně ověřené; druhý busy bez změny. Šest řízených I/O bodů včetně3 pozdních s novou/opakovanou recovery prošlo.215 hostitelských/51 optimalizovaných kontrol prošlo.
+- [ ] Nejasné finální výsledky nebo soukromé dočasné hardlinky později bezpečně posoudit; uložený report sám neprokazuje dokončení. Zámkový soubor nemažte podle domněnky, nepoužívat PID/stáří jako autorizaci.
+- [ ] Síťový filesystem, fyzický disk/power loss a úplnou vzdálenou obnovu ověřit v dohodnutém prostředí. Společný flock je pro spolupracující procesy na stejném podporovaném hostu.
+- [ ] Před aktivací dál48/issue61 a živé brány45. RX01 selhává; přístupy a potvrzení na později, bez dotazů nyní a bez skutečného importu.
+
 ## 2026-11-28 — poškozená evidence a chyby zápisu51
 
 - [x] Dílčí důkaz51: poškozené checkpointy se neinterpretují ani nepřepisují při cleanup;203 hostitelských/39 optimalizovaných kontrol a3 skutečné řízené I/O chyby s novou/opakovanou recovery prošly.
