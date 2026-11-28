@@ -60,3 +60,7 @@ Stejné explicitní lokální argumenty/soukromý root jako46–51. Nové režim
 - Dále bez přístupů: SIGKILL přímo držitele recovery během jednotlivých kroků a navazující nový proces; metadata-only inventář zbylých soukromých dočasných souborů bez čtení obsahu, bez automatického mazání. Nezaměňovat persistentní operation.lock za stale PID zámek.
 - Fyzický disk full/power loss, fsync adresáře a úplná vzdálená obnova zůstávají na dohodnuté prostředí a ruční brány31/45. Ztracené závěrečné odpovědi a nejasné/orphan prostředky bezpečně posoudit, žádný slepý retry/prune.
 - Native48/61 →43 →39 →44;18+26 pending neprovedeno. Přihlášení/model/usage nezkoušeno. Živé účty/OAuth/Storage/provider/backup klíč/browser/aktivace zůstávají na později bez dotazů. Žádný skutečný import/DDL/grant/deploy/merge ani aktivace záloh.
+
+## 2026-11-28 — návaznost53 pro pád držitele a inventář
+
+[53](53-POSTGRES-PRERUSENI-RECOVERY-A-INVENTAR.md) skutečně ověřil5 SIGKILL držitele recovery na dokončených bodech, nové převzetí lease/úklid a opakování. Samostatný inventář používá jen metadata známého testovacího rozsahu, neotevírá soubory, nezamyká/nevolá Docker a nemaže.226 hostitelských/62 optimalizovaných prošlo. Přerušení uvnitř atomického zápisu, fyzický disk/power loss a živá obnova stále nejsou ověřené.48/61 dál blokuje aktivaci.

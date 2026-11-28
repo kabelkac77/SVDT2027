@@ -1,5 +1,11 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## 2026-11-28 — přerušení recovery a inventář53
+
+[53](53-POSTGRES-PRERUSENI-RECOVERY-A-INVENTAR.md): skutečný SIGKILL pouze vlastního recovery procesu v5 bodech (verified/removed/credentials/checkpoint/report), převzetí lease novým procesem, dokončení a opakovaná recovery prošly. Inventář používá pouze metadata známého testovacího rozsahu: žádný obsah souborů, Docker, flock nebo mazání. Vyhrazený root:642 položek, bez známých credentials/.private/.checkpoint temporaries; persistentní evidence zachovaná. Podrobný JSON je soukromý, veřejný jen souhrn.
+
+226 hostitelských a62 bezpečnostních pod Python -O prošlo,11 nových unit případů. Regrese10 standardních PG,4 startup chyby,6 I/O bodů, souběžná recovery a SIGTERM/SIGKILL prošly. [Evidence](postgres-recovery-interruption-verification.json). **RX01 opět selhal0/1 a48/issue61 dál blokuje aktivaci.** Runtime/kolektor/7 migrací/CI beze změny;18+26 pending neprovedeno, native auth/model/usage nezkoušeno. Další neblokované kroky: přerušení uvnitř atomického zápisu a změna adresáře během inventáře. Živé přístupy/obnova/aktivace na později31/45, skutečný import zakázaný.
+
 ## 2026-11-28 — souběžná recovery a pozdní chyby52
 
 [52](52-POSTGRES-SOUBEZNA-RECOVERY-A-POZDNI-CHYBY.md): běžící test i recovery drží tentýž soukromý neblokující flock. Druhý proces vrátí RECOVERY_BUSY/exit1 bez Docker zásahu nebo změny checkpointu; soubor zámku se nemaže. Checkpoint se po získání lease čte znovu. Pozdní chyba zachová už zveřejněný soubor či provedené odstranění a nové ověření tyto kroky neopakuje naslepo.

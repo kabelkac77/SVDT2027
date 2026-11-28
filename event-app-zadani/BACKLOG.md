@@ -1,5 +1,15 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — přerušení recovery a inventář53
+
+- [x] Pět skutečných SIGKILL přímo držitele recovery na dokončených bodech verified/removed/credentials/checkpoint/report; busy před pádem, převzetí lease novým procesem a idempotentní opakování ověřené. [53](53-POSTGRES-PRERUSENI-RECOVERY-A-INVENTAR.md).
+- [x] Samostatný metadata-only inventář bez čtení obsahu/Dockeru/flock/mazání; bezpečné adresářové FD a nofollow, rozsah/limity/chyby explicitní. Podrobné relativní cesty jen soukromě, zámek není odpad ani PID důkaz.
+- [x] Skutečný inventář642 položek v deklarovaném testovacím rozsahu: žádné známé credentials/.private/.checkpoint temporaries;193 adresářů mimo rozsah přeskočeno,186 reports/74 checkpointů/35 zámků/9 značek zachované.
+- [x]11 nových unit případů;226 hostitelských/62 optimalizovaných,10 standardních PG,4 startup chyby,6 I/O bodů, souběžná recovery a SIGTERM/SIGKILL prošly. [Evidence](postgres-recovery-interruption-verification.json).
+- [ ] **Aktivace dál blokovaná48/issue61.** RX01 selhal0/1; native oprava má přednost před43/39/44.18+26 pending neprovedeno, auth/model/usage nezkoušeno.
+- [ ] Další neblokovaná práce: přerušení uvnitř atomického zápisu před zveřejněním a inventář při souběžné změně/zmizení adresáře. Případné zbytky pouze evidovat, nic automaticky nemazat.
+- [ ] Později31/45: nejasné/orphan prostředky a ztracené odpovědi bezpečně posoudit; fyzický disk/power loss/síťový filesystem/úplná obnova v dohodnutém prostředí. Živé účty/OAuth/Storage/provider/backup klíč/browser/aktivace stále otevřené. Bez dotazů nyní, bez skutečného importu.
+
 ## 2026-11-28 — souběžná recovery a pozdní chyby52
 
 - [x] Společný soukromý POSIX flock pro běžící test i explicitní recovery, CLOEXEC, stejný trvalý inode a znovunačtení checkpointu po získání lease. Busy proces žádný zásah neprovede.

@@ -1,5 +1,12 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — přerušení recovery a inventář53
+
+- [x] Dílčí53:5 skutečných SIGKILL držitele recovery a nové/opakované převzetí ověřené;226 hostitelských/62 optimalizovaných kontrol prošlo. Řízené body nejsou power loss nebo přerušení uprostřed zápisu.
+- [x] Metadatový inventář deklarovaného testovacího rozsahu642 položek bez čtení obsahu/mazání/Dockeru/flock; podrobné nálezy soukromě. Známé credentials a publikační temporaries nenalezené, evidence/zámky/značky zachované.
+- [ ] Případné budoucí soukromé zbytky nebo nejasný/orphan stav bezpečně posoudit; inventář nepovoluje mazání, zámek není stale PID a uložený report neprokazuje finální úspěch.
+- [ ] Fyzický disk/power loss/síťový filesystem a skutečnou vzdálenou obnovu ověřit až v dohodnutém prostředí. Před aktivací dál48/issue61 a živé brány45; RX01 stále selhává. Přístupy a potvrzení na později, bez dotazů nyní a bez skutečného importu.
+
 ## 2026-11-28 — souběžná recovery a pozdní chyby52
 
 - [x] Dílčí52: ochrana aktivního testu a souběh dvou recovery procesů skutečně ověřené; druhý busy bez změny. Šest řízených I/O bodů včetně3 pozdních s novou/opakovanou recovery prošlo.215 hostitelských/51 optimalizovaných kontrol prošlo.

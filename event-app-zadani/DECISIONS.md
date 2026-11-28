@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — přerušení recovery a inventář53
+
+Samostatné pokračování53 je pouze hostitelská syntetická akceptace, nikoli provozní import nebo nové živé oprávnění. SIGKILL míří jen na vlastní známé Popen procesy, ne PID ze souboru. Uložený report před pádem není dokončená recovery; nový proces nezávisle ověří stav a nepošle destructive krok naslepo.
+
+Inventář je přítomnostní metadata snapshot vymezených testovacích složek, ne čtení jejich souborů a ne autorizace k mazání. Nezískává lease, netestuje stale/živost, nevaliduje obsah checkpointů a netvrdí nic o přeskočených adresářích. Podrobné cesty patří jen soukromě; veřejný je sanitizovaný souhrn. Přístupy/potvrzení31/45 zůstávají odložené a48/61 stále blokuje aktivaci.
+
 ## 2026-11-28 — souběžná recovery a pozdní chyby52
 
 Pokračování bez dotazů rozšiřuje pouze testovací hostitelskou vrstvu52. Spolupracující procesy téhož POSIX hostu se koordinují kernelovým flock nad jediným trvalým soukromým inode; soubor zámku se nemaže, jeho existence ani PID není doklad obsazení. Druhý držitel nemá oprávnění úklid obejít. Busy je bezpečné odmítnutí, nikoli potřeba dalšího uživatelského souhlasu.

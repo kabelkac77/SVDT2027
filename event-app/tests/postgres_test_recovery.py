@@ -24,6 +24,90 @@ class PublicationError(OSError):
     """The complete file was published before finalization failed."""
 
 
+RECOVERY_STAGES = ('verified', 'removed', 'credentials', 'checkpoint', 'report')
+
+
+def recovery_pause(server, stage):
+    if getattr(server.args, 'probe_recovery_stage', None) == stage:
+        require(stage in RECOVERY_STAGES, 'Invalid recovery probe stage')
+        server.private_write(server.folder / ('recovery-paused-' + stage + '.json'), json.dumps({'stage': stage}) + '\n')
+        time.sleep(15)
+        raise RuntimeError('Recovery interruption probe was not interrupted')
+
+
+def inventory_residues(root, max_entries=10000, max_findings=2000, max_depth=6):
+    """Names and lstat only. No regular-file open, lock, Docker call or deletion."""
+    require(all(type(n) is int and n > 0 for n in (max_entries, max_findings, max_depth)), 'Invalid inventory limit')
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+    result = {'mode': 'synthetic_residue_inventory', 'successful': True, 'complete': True,
+              'entriesExamined': 0, 'directoriesSkipped': 0, 'summary': {}, 'findings': [], 'errors': [],
+              'contentRead': False, 'filesDeleted': False, 'locksAcquired': False, 'dockerContacted': False,
+              'cutoverReady': False, 'liveImportRun': False}
+    stages = {'prepared', 'receipt', 'start', 'readiness', 'checkpoint-created', 'checkpoint-cleaning', 'report',
+              'after-remove', 'after-checkpoint', 'after-report', *RECOVERY_STAGES}
+    groups = ('sigterm-probe-', 'sigkill-probe-', 'startup-failure-probe-', 'evidence-failure-probe-', 'recovery-interruption-probe-')
+    def private_directory(info):
+        return stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid() and info.st_mode & 0o077 == 0
+    def issue(category):
+        result['successful'] = result['complete'] = False
+        if category not in result['errors']:
+            result['errors'].append(category)
+    def scan(fd, relative, context, depth):
+        with os.scandir(fd) as entries:
+            for entry in entries:
+                if result['entriesExamined'] >= max_entries or len(result['findings']) >= max_findings:
+                    issue('SCAN_LIMIT')
+                    return
+                result['entriesExamined'] += 1
+                try:
+                    info = os.stat(entry.name, dir_fd=fd, follow_symlinks=False)
+                    kind = 'directory' if stat.S_ISDIR(info.st_mode) else 'file' if stat.S_ISREG(info.st_mode) else 'symlink' if stat.S_ISLNK(info.st_mode) else 'special'
+                    rel = relative + [entry.name]
+                    category = ('temporaryPrivate' if entry.name.startswith('.private-') else
+                                'temporaryCheckpoint' if entry.name.startswith('.checkpoint-') else
+                                'credential' if entry.name in ('password', 'pgpass', 'services') else
+                                'operationLock' if entry.name == 'operation.lock' else
+                                'checkpoint' if entry.name == 'checkpoint.json' else
+                                'report' if entry.name == 'report.json' or re.fullmatch(r'recovery-[0-9a-f]{32}\.json', entry.name) else
+                                'probeMarker' if entry.name in ('recovery-held.json', 'recovery-release.json') or entry.name.startswith('recovery-paused-') else
+                                'skippedLink' if kind == 'symlink' else None)
+                    if category:
+                        result['summary'][category] = result['summary'].get(category, 0) + 1
+                        result['findings'].append({'relativePath': '/'.join(rel), 'category': category, 'kind': kind,
+                                                   'bytes': info.st_size, 'permissions': oct(stat.S_IMODE(info.st_mode)),
+                                                   'owned': info.st_uid == os.getuid(), 'links': info.st_nlink})
+                    if kind == 'directory':
+                        next_context = ('run' if context != 'run' and entry.name.startswith('postgres-synthetic-') else
+                                        'group' if context == 'root' and entry.name.startswith(groups) else
+                                        'stage' if context == 'group' and entry.name in stages else None)
+                        if next_context is None:
+                            result['directoriesSkipped'] += 1
+                            continue
+                        if not private_directory(info):
+                            result['directoriesSkipped'] += 1
+                            issue('DIRECTORY_UNVERIFIED')
+                            continue
+                        if depth >= max_depth:
+                            issue('DEPTH_LIMIT')
+                            continue
+                        child = os.open(entry.name, flags, dir_fd=fd)
+                        try:
+                            actual = os.fstat(child)
+                            require(private_directory(actual) and (actual.st_dev, actual.st_ino) == (info.st_dev, info.st_ino), 'Inventory directory changed')
+                            scan(child, rel, next_context, depth + 1)
+                        finally:
+                            os.close(child)
+                except (OSError, RuntimeError):
+                    issue('ENTRY_UNVERIFIED')
+    fd = os.open(root, flags)
+    try:
+        require(private_directory(os.fstat(fd)), 'Inventory requires a private owned directory')
+        scan(fd, [], 'root', 0)
+    finally:
+        os.close(fd)
+    return result
+
+
 @contextlib.contextmanager
 def operation_lock(folder):
     # Keep this inode forever; unlinking a lock permits two independent holders.
@@ -182,6 +266,7 @@ def _recover_locked(args, path, server_type, image, confirmed_absence):
             require(confirmed_absence(server.docker('volume', 'inspect', '--format', '{{.Name}}', name, check=False), 'volume'),
                     'Orphan or unverifiable volume needs manual review; it will not be deleted')
     require(read_checkpoint(path, image)[2] == original, 'Checkpoint changed during verification')
+    recovery_pause(server, 'verified')
     if absent:
         for file in (server.password_file, server.pass_file, server.service_file):
             file.unlink(missing_ok=True)
@@ -194,4 +279,5 @@ def _recover_locked(args, path, server_type, image, confirmed_absence):
               'identityRecoveredFromLive': not absent and data['containerId'] is None,
               'cutoverReady': False, 'liveImportRun': False}
     persist_report(report, folder / ('recovery-' + uuid.uuid4().hex + '.json'), server.private_write)
+    recovery_pause(server, 'report')
     return report
