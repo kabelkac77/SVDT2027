@@ -1,5 +1,11 @@
 # SVDT — Codex a místní Claude Code
 
+## Aktuální výslovná změna — 2026-11-28
+
+Uživatel: „Programuj teď ty a ne Claude.“ Implementaci a opravy nyní provádí přímo Codex; nečeká na přihlášení Claude, nespouští jeho auth/model/usage ani modelové předání. Starší rozdělení implementátor Claude / revizor Codex níže je historické a není aktuální podmínkou práce. Runner/účet/kvóta/guard iNice ani SVDT se nepřepínají či neobcházejí, jednoduše se nepoužívají.
+
+Pokračují konkrétní zadání a skutečné testy, cílené změny v čisté vlastní větvi, kontrola diffu/indexu/citlivých dat a Draft PR bez merge/nasazení. Zákaz skutečného crew importu a oddělené živé brány31/45 zůstávají platné. Po rozpracovaném bloku54 je nejbližší implementace oprava48/issue61 přímo Codexem, potom43/39/44. Přihlášení Claude lze řešit pouze jako volitelnou pozdější věc, ne blokátor tohoto pořadí.
+
 2026-10-28. Výslovně zadaný postup z uživatelem určeného zahajovacího promptu. Nezadává novou funkci aplikace, produkční import/migraci, platbu, nasazení, odesílání zpráv ani pravidelnou automatizaci.
 
 ## Úložiště a zdroje pravdy

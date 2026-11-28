@@ -62,3 +62,7 @@ python3 -B event-app/tests/postgres-acceptance.manual.py --run-synthetic \
 - Dále bez přístupů: řízené přerušení uprostřed atomického zápisu před zveřejněním a inventář při souběžné změně/zmizení adresáře. Případné soukromé zbytky pouze evidovat bez čtení obsahu a bez automatického mazání.
 - Nejasné/orphan prostředky a ztracené finální odpovědi posoudit později podle31/45. Inventář sám neuděluje oprávnění k úklidu; žádné globální prune nebo rekonstrukce identity podle názvu.
 - Native48/61 →43 →39 →44,18+26 pending nespouštěno, auth/model/usage nezkoušeno. Živé účty/OAuth/Storage/provider/backup klíč/obnova/browser a samostatná aktivace na později bez dotazů. Žádný skutečný import/DDL/grant/deploy/merge ani aktivace záloh.
+
+## 2026-11-28 — navazující54 a přímý vývoj Codexem
+
+[54](54-POSTGRES-CASTECNY-ZAPIS-A-ZMENY-ADRESARU.md) ověřil4 SIGKILL při částečném/předpublikačním zápisu;4 soukromé syntetické temporaries zůstávají záměrně evidované, nikoli automaticky smazané. Inventář nově detekuje změny jména/inode/rootu a adresářových položek, nevrací zavádějící cesty jako úplný výsledek.234 hostitelských/70 optimalizovaných prošlo. Uživatel převedl implementaci přímo na Codex (22/AGENTS); přihlášení Claude není blokátor opravy48/61. Živé brány a zákaz skutečného importu beze změny.

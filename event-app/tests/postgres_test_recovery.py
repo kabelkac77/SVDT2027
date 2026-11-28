@@ -44,15 +44,25 @@ def inventory_residues(root, max_entries=10000, max_findings=2000, max_depth=6):
               'contentRead': False, 'filesDeleted': False, 'locksAcquired': False, 'dockerContacted': False,
               'cutoverReady': False, 'liveImportRun': False}
     stages = {'prepared', 'receipt', 'start', 'readiness', 'checkpoint-created', 'checkpoint-cleaning', 'report',
-              'after-remove', 'after-checkpoint', 'after-report', *RECOVERY_STAGES}
-    groups = ('sigterm-probe-', 'sigkill-probe-', 'startup-failure-probe-', 'evidence-failure-probe-', 'recovery-interruption-probe-')
+              'after-remove', 'after-checkpoint', 'after-report', 'checkpoint-partial', 'checkpoint-before-publish',
+              'report-partial', 'report-before-publish', *RECOVERY_STAGES}
+    groups = ('sigterm-probe-', 'sigkill-probe-', 'startup-failure-probe-', 'evidence-failure-probe-', 'recovery-interruption-probe-', 'partial-write-probe-')
     def private_directory(info):
         return stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid() and info.st_mode & 0o077 == 0
     def issue(category):
         result['successful'] = result['complete'] = False
         if category not in result['errors']:
             result['errors'].append(category)
+    def signature(info):
+        return (info.st_dev, info.st_ino, info.st_mode, info.st_uid, info.st_mtime_ns, info.st_ctime_ns)
     def scan(fd, relative, context, depth):
+        before = signature(os.fstat(fd))
+        try:
+            scan_entries(fd, relative, context, depth)
+        finally:
+            if signature(os.fstat(fd)) != before:
+                issue('DIRECTORY_CHANGED')
+    def scan_entries(fd, relative, context, depth):
         with os.scandir(fd) as entries:
             for entry in entries:
                 if result['entriesExamined'] >= max_entries or len(result['findings']) >= max_findings:
@@ -69,7 +79,7 @@ def inventory_residues(root, max_entries=10000, max_findings=2000, max_depth=6):
                                 'operationLock' if entry.name == 'operation.lock' else
                                 'checkpoint' if entry.name == 'checkpoint.json' else
                                 'report' if entry.name == 'report.json' or re.fullmatch(r'recovery-[0-9a-f]{32}\.json', entry.name) else
-                                'probeMarker' if entry.name in ('recovery-held.json', 'recovery-release.json') or entry.name.startswith('recovery-paused-') else
+                                'probeMarker' if entry.name in ('recovery-held.json', 'recovery-release.json') or entry.name.startswith(('recovery-paused-', 'write-paused-')) else
                                 'skippedLink' if kind == 'symlink' else None)
                     if category:
                         result['summary'][category] = result['summary'].get(category, 0) + 1
@@ -91,10 +101,19 @@ def inventory_residues(root, max_entries=10000, max_findings=2000, max_depth=6):
                             issue('DEPTH_LIMIT')
                             continue
                         child = os.open(entry.name, flags, dir_fd=fd)
+                        start = len(result['findings'])
+                        previous_summary = result['summary'].copy()
                         try:
                             actual = os.fstat(child)
                             require(private_directory(actual) and (actual.st_dev, actual.st_ino) == (info.st_dev, info.st_ino), 'Inventory directory changed')
                             scan(child, rel, next_context, depth + 1)
+                            current = os.stat(entry.name, dir_fd=fd, follow_symlinks=False)
+                            require(private_directory(current) and (current.st_dev, current.st_ino) == (actual.st_dev, actual.st_ino), 'Inventory directory detached')
+                        except (OSError, RuntimeError):
+                            # Do not retain paths beneath a directory whose name no longer identifies the scanned inode.
+                            del result['findings'][start:]
+                            result['summary'] = previous_summary
+                            raise
                         finally:
                             os.close(child)
                 except (OSError, RuntimeError):
@@ -103,6 +122,14 @@ def inventory_residues(root, max_entries=10000, max_findings=2000, max_depth=6):
     try:
         require(private_directory(os.fstat(fd)), 'Inventory requires a private owned directory')
         scan(fd, [], 'root', 0)
+        try:
+            current = os.stat(root, follow_symlinks=False)
+            original = os.fstat(fd)
+            require(private_directory(current) and (current.st_dev, current.st_ino) == (original.st_dev, original.st_ino), 'Inventory root detached')
+        except (OSError, RuntimeError):
+            result['findings'].clear()
+            result['summary'].clear()
+            issue('ROOT_CHANGED')
     finally:
         os.close(fd)
     return result

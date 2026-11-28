@@ -1,5 +1,11 @@
 # Spolupráce při vývoji a denní zálohy
 
+## 2026-11-28 — přímý Codex a přerušení zápisu54
+
+Uživatel výslovně změnil postup: „Programuj teď ty a ne Claude.“ Implementuje přímo Codex, bez předání/auth/model/usage Claude; jeho přihlášení už není blokátor. Aktuální22/AGENTS nahrazují historickou povinnost native handoffu. Zachovaná ochrana dat, cílené testy/vlastní větev/Draft PR a zákaz skutečného importu/živé aktivace.
+
+[54](54-POSTGRES-CASTECNY-ZAPIS-A-ZMENY-ADRESARU.md):4 skutečné SIGKILL během rozpracovaného/předpublikačního zápisu checkpointu/reportu bez Dockeru. Původní checkpoint zachovaný, finální report chybí,4 soukromé syntetické temporaries ponechané bez čtení obsahu/mazání. Inventář navíc odmítá zmizení/náhradu/detach adresáře i rootu a změnu položek; zavádějící nálezy vyřadí jen ze zprávy.234 hostitelských/70 optimalizovaných,10 skutečných PG a5 přerušení recovery prošlo. [Evidence](postgres-partial-write-verification.json). **RX01 stále selhává0/1; nejbližší přímá implementace Codexem je48/issue61, potom43/39/44.** Runtime/kolektor/7 migrací/CI beze změny,18+26 pending neprovedeno. Přístupy a živé brány31/45 na později bez dotazů.
+
 ## 2026-11-28 — přerušení recovery a inventář53
 
 [53](53-POSTGRES-PRERUSENI-RECOVERY-A-INVENTAR.md): skutečný SIGKILL pouze vlastního recovery procesu v5 bodech (verified/removed/credentials/checkpoint/report), převzetí lease novým procesem, dokončení a opakovaná recovery prošly. Inventář používá pouze metadata známého testovacího rozsahu: žádný obsah souborů, Docker, flock nebo mazání. Vyhrazený root:642 položek, bez známých credentials/.private/.checkpoint temporaries; persistentní evidence zachovaná. Podrobný JSON je soukromý, veřejný jen souhrn.

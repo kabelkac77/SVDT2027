@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — přímý Codex a přerušení zápisu54
+
+Uživatel výslovně zadal: „Programuj teď ty a ne Claude.“ Od tohoto pokynu implementuje i opravuje přímo Codex; native Claude auth/model/usage ani přihlášení nejsou podmínkou pokračování. Historické rozdělení implementátor Claude / Codex review je pro aktuální práci nahrazené. Runner/účtový guard/účet/kvóta zůstávají nepoužité a nemění se. Platí vlastní větev, kontrola/testy, ochrana skutečných dat a Draft PR bez merge/deploy; tento pokyn nepovoluje živý import/DDL/grant nebo aktivaci.
+
+Blok54 úmyslně ponechá4 soukromé syntetické nepublikované soubory po SIGKILL jako důkazy. Jejich obsah se pro inventář nečte a žádný nález se automaticky nemaže. Inventář při změně vazby jméno→inode vrací neúplnost a vyřadí zavádějící cesty pouze z paměťové zprávy. Není to atomická konzistentní autorita k mazání. Po tomto bloku má přednost přímá oprava48/61 Codexem; živé brány31/45 zůstávají odložené.
+
 ## 2026-11-28 — přerušení recovery a inventář53
 
 Samostatné pokračování53 je pouze hostitelská syntetická akceptace, nikoli provozní import nebo nové živé oprávnění. SIGKILL míří jen na vlastní známé Popen procesy, ne PID ze souboru. Uložený report před pádem není dokončená recovery; nový proces nezávisle ověří stav a nepošle destructive krok naslepo.

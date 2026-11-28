@@ -1,0 +1,314 @@
+{
+  "date": "2026-11-28",
+  "baseHead": "0b4e07f4c45fb6deafa38dd166c10a8965e3cd2d",
+  "implementationBy": "Codex directly",
+  "directImplementationAuthorizedByUser": true,
+  "claudeAuthenticationRequiredForImplementation": false,
+  "status": "partial_with_known_runtime_defect",
+  "activationBlocked": true,
+  "runtimeFixImplemented": false,
+  "expiryDefectIssue": 61,
+  "nextDirectImplementation": "48 / issue61 before43/39/44",
+  "controlledPartialWrites": {
+    "version": 1,
+    "mode": "controlled_partial_write_probe",
+    "successful": true,
+    "casesVerified": 4,
+    "cases": [
+      {
+        "stage": "checkpoint-partial",
+        "childExitCode": -9,
+        "checkpointUnchanged": true,
+        "finalReportAbsent": true,
+        "leaseReleased": true,
+        "temporaryPreserved": true,
+        "temporaryCategory": "temporaryCheckpoint",
+        "temporaryBytes": 11,
+        "inventoryContentRead": false,
+        "inventoryDeletedFiles": false
+      },
+      {
+        "stage": "checkpoint-before-publish",
+        "childExitCode": -9,
+        "checkpointUnchanged": true,
+        "finalReportAbsent": true,
+        "leaseReleased": true,
+        "temporaryPreserved": true,
+        "temporaryCategory": "temporaryCheckpoint",
+        "temporaryBytes": 278,
+        "inventoryContentRead": false,
+        "inventoryDeletedFiles": false
+      },
+      {
+        "stage": "report-partial",
+        "childExitCode": -9,
+        "checkpointUnchanged": true,
+        "finalReportAbsent": true,
+        "leaseReleased": true,
+        "temporaryPreserved": true,
+        "temporaryCategory": "temporaryPrivate",
+        "temporaryBytes": 167,
+        "inventoryContentRead": false,
+        "inventoryDeletedFiles": false
+      },
+      {
+        "stage": "report-before-publish",
+        "childExitCode": -9,
+        "checkpointUnchanged": true,
+        "finalReportAbsent": true,
+        "leaseReleased": true,
+        "temporaryPreserved": true,
+        "temporaryCategory": "temporaryPrivate",
+        "temporaryBytes": 335,
+        "inventoryContentRead": false,
+        "inventoryDeletedFiles": false
+      }
+    ],
+    "dockerContacted": false,
+    "resourcesCreated": false,
+    "preservedTemporaryFiles": 4,
+    "automaticResidueDeletionAllowed": false,
+    "cutoverReady": false,
+    "liveImportRun": false,
+    "reportPersisted": true
+  },
+  "inventoryAfterPartialWrites": {
+    "mode": "synthetic_residue_inventory",
+    "successful": true,
+    "complete": true,
+    "entriesExamined": 737,
+    "directoriesSkipped": 216,
+    "summary": {
+      "report": 201,
+      "checkpoint": 85,
+      "operationLock": 46,
+      "probeMarker": 18,
+      "temporaryCheckpoint": 2,
+      "temporaryPrivate": 2
+    },
+    "errors": [],
+    "contentRead": false,
+    "filesDeleted": false,
+    "locksAcquired": false,
+    "dockerContacted": false,
+    "declaredScopeOnly": true
+  },
+  "normalRealPostgresSuite": {
+    "version": 1,
+    "mode": "isolated_synthetic_postgres",
+    "image": "postgres@sha256:f1ea2a1a4fb7b68d4836be1fdcb8a6466a89b072158bf9d97663600538c294c5",
+    "serverVersion": "18.6 (Debian 18.6-1.pgdg12+2)",
+    "casesRun": 10,
+    "casesPassed": 10,
+    "successful": true,
+    "interruptedBy": null,
+    "containerRemoved": true,
+    "failureCategory": null,
+    "cleanupErrorCategory": null,
+    "manualReviewRequired": false,
+    "startupFailureStage": null,
+    "startupRecovery": null,
+    "expiryDiagnostic": null,
+    "cutoverReady": false,
+    "anonymousVolumesRemoved": true,
+    "applicationRuntimeChanged": false,
+    "realSourceOpened": false,
+    "liveImportRun": false,
+    "liveAuthProviderVerified": false,
+    "storageBytesRestored": false,
+    "offsiteBackupActivated": false,
+    "reportPersisted": true
+  },
+  "controlledRecoveryInterruption": {
+    "version": 1,
+    "mode": "controlled_recovery_interruption_probe",
+    "successful": true,
+    "casesVerified": 5,
+    "cases": [
+      {
+        "stage": "verified",
+        "recoveryExitCode": -9,
+        "checkpointPhaseAtKill": "ready",
+        "exclusiveLeaseVerified": true,
+        "freshRecoveryVerified": true,
+        "repeatedRecoveryVerified": true,
+        "finalCleanupVerified": true,
+        "inventoryBefore": {
+          "credential": 3,
+          "probeMarker": 1,
+          "checkpoint": 1,
+          "operationLock": 1
+        },
+        "inventoryAfter": {
+          "probeMarker": 1,
+          "checkpoint": 1,
+          "report": 2,
+          "operationLock": 1
+        }
+      },
+      {
+        "stage": "removed",
+        "recoveryExitCode": -9,
+        "checkpointPhaseAtKill": "cleaning",
+        "exclusiveLeaseVerified": true,
+        "freshRecoveryVerified": true,
+        "repeatedRecoveryVerified": true,
+        "finalCleanupVerified": true,
+        "inventoryBefore": {
+          "credential": 3,
+          "checkpoint": 1,
+          "operationLock": 1,
+          "probeMarker": 1
+        },
+        "inventoryAfter": {
+          "checkpoint": 1,
+          "operationLock": 1,
+          "probeMarker": 1,
+          "report": 2
+        }
+      },
+      {
+        "stage": "credentials",
+        "recoveryExitCode": -9,
+        "checkpointPhaseAtKill": "cleaning",
+        "exclusiveLeaseVerified": true,
+        "freshRecoveryVerified": true,
+        "repeatedRecoveryVerified": true,
+        "finalCleanupVerified": true,
+        "inventoryBefore": {
+          "checkpoint": 1,
+          "operationLock": 1,
+          "probeMarker": 1
+        },
+        "inventoryAfter": {
+          "checkpoint": 1,
+          "operationLock": 1,
+          "report": 2,
+          "probeMarker": 1
+        }
+      },
+      {
+        "stage": "checkpoint",
+        "recoveryExitCode": -9,
+        "checkpointPhaseAtKill": "cleaned",
+        "exclusiveLeaseVerified": true,
+        "freshRecoveryVerified": true,
+        "repeatedRecoveryVerified": true,
+        "finalCleanupVerified": true,
+        "inventoryBefore": {
+          "probeMarker": 1,
+          "checkpoint": 1,
+          "operationLock": 1
+        },
+        "inventoryAfter": {
+          "probeMarker": 1,
+          "checkpoint": 1,
+          "operationLock": 1,
+          "report": 2
+        }
+      },
+      {
+        "stage": "report",
+        "recoveryExitCode": -9,
+        "checkpointPhaseAtKill": "cleaned",
+        "exclusiveLeaseVerified": true,
+        "freshRecoveryVerified": true,
+        "repeatedRecoveryVerified": true,
+        "finalCleanupVerified": true,
+        "inventoryBefore": {
+          "report": 1,
+          "checkpoint": 1,
+          "operationLock": 1,
+          "probeMarker": 1
+        },
+        "inventoryAfter": {
+          "report": 3,
+          "checkpoint": 1,
+          "operationLock": 1,
+          "probeMarker": 1
+        }
+      }
+    ],
+    "cutoverReady": false,
+    "liveImportRun": false,
+    "reportPersisted": true
+  },
+  "strictExpiryReproducer": {
+    "version": 1,
+    "mode": "isolated_synthetic_postgres",
+    "image": "postgres@sha256:f1ea2a1a4fb7b68d4836be1fdcb8a6466a89b072158bf9d97663600538c294c5",
+    "serverVersion": "18.6 (Debian 18.6-1.pgdg12+2)",
+    "casesRun": 1,
+    "casesPassed": 0,
+    "successful": false,
+    "interruptedBy": null,
+    "containerRemoved": true,
+    "failureCategory": null,
+    "cleanupErrorCategory": null,
+    "manualReviewRequired": false,
+    "startupFailureStage": null,
+    "startupRecovery": null,
+    "expiryDiagnostic": {
+      "observedWaitMode": "ShareRowExclusiveLock",
+      "approvalExpiredAtCompletion": true,
+      "sqlExitCode": 0,
+      "counts": {
+        "users": 2,
+        "people": 0,
+        "roster": 1,
+        "packages": 1,
+        "requests": 1,
+        "compensation": 1
+      }
+    },
+    "cutoverReady": false,
+    "anonymousVolumesRemoved": true,
+    "applicationRuntimeChanged": false,
+    "realSourceOpened": false,
+    "liveImportRun": false,
+    "liveAuthProviderVerified": false,
+    "storageBytesRestored": false,
+    "offsiteBackupActivated": false,
+    "reportPersisted": true
+  },
+  "strictExpiryProbeCountedAsPassed": false,
+  "hostTestsPassed": 234,
+  "optimizedSafetyTestsPassed": 70,
+  "newSafetyTests": 8,
+  "fixtureDirectoryRaceCases": 6,
+  "separateInventoryMutatorProcessVerified": false,
+  "olderStartupIoConcurrentSignalBaseline": "postgres-recovery-interruption-verification.json at baseHead; not rerun in this block",
+  "inventoryDetailedPathsPublished": false,
+  "inventoryAuthorizesDeletion": false,
+  "preservedSyntheticTemporaries": 4,
+  "runtimeAndSqlChanged": false,
+  "nativeAuthOrUsageChecked": false,
+  "nativeModelCalled": false,
+  "realSourceOpened": false,
+  "liveImportRun": false,
+  "powerLossRecoveryVerified": false,
+  "realDiskFullVerified": false,
+  "networkFilesystemVerified": false,
+  "liveAuthStorageOrOffsiteVerified": false,
+  "pendingParserScenarios": 18,
+  "pendingCheckerScenarios": 26,
+  "pendingExecuted": false,
+  "migrationSha256": {
+    "202609280001_partners.sql": "81a9398c6732da3fb47d0b46601d315891c42861b22e3447d55172a6c1e97b22",
+    "202609290001_partner_history.sql": "26ffb68380b8d4cbc22fdfc2d4a8b5497a6c69acab69001548f42a27b15e9e18",
+    "202611020001_crew.sql": "c71f68b0bdb2af14839bf82922c92cecc6cbff687353a1ffed44513c41b3770c",
+    "202611020002_operations.sql": "8b73cac12d98faf8f4d3a97be3cebe7d9bfd3c62b93a8ede03f043428edf7d46",
+    "202611050001_crew_transfer.sql": "3f34d5f5e7bb755843109b64bdb75eec678633b4a5a2ada39e569c90ee715a71",
+    "202611050002_crew_import.sql": "3193d56460ada463e7a888a3c2401e99d4f924909de6776392eb2c27d9dbc47c",
+    "202611120001_crew_history.sql": "f6fa021e20d3eb63e3498666befc895981d32df5e83f51c2b9fa357567a91238"
+  },
+  "fileSha256": {
+    "event-app/tests/postgres-acceptance.manual.py": "779c96dd7e8dd18f4e1a623985f062a6056116b6129224a0d1e53ee821197f6d",
+    "event-app/tests/postgres_test_recovery.py": "4866d4fc5c7464e2c30acd17559e4e134ae1fd7e4e2fb37ad1fa5019e8ccd488",
+    "event-app/tests/postgres_manual_scope_test.py": "7d8bb0593c91ebe7d0f5309a5670952eb17fa30b90ba17bbea67a0fc88d1ecf0",
+    "event-app/tests/postgres_recovery_scope_test.py": "ea7e1b85e57a808e76221422979134ad02baade139f8400bd7d2ce3042bd18ae",
+    "event-app/AGENTS.md": "d905897e40524021abf1409dfaebb0149ec026e59dc512132c0c9234b915ff08",
+    "event-app-zadani/22-CODEX-CLAUDE-SPOLUPRACE.md": "f32ee54ac300b77c97e4c179b5fe0b7e4a5a6790a8e574faee95ccbe39c36b40",
+    "event-app-zadani/54-POSTGRES-CASTECNY-ZAPIS-A-ZMENY-ADRESARU.md": "55010240f0f5c1b48e8656330af3c613430d80a74ffd8650f859aa77834ad5e7"
+  }
+}
