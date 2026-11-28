@@ -1,5 +1,13 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — inline historie44 dokončená59
+
+- [x] Sdílená2027 aplikace: samostatná sbalená historie pouze u uloženého admin řádku; explicitní výběr podkladu, původní readonly sloupce/content a zachování NULL/0/false. Žádný prefetch/zápis/převzetí hodnot nebo demo fallback. [59](59-CREW-HISTORIE-POD-RADKEM-A-OVERENI.md).
+- [x] Typovaný read adapter, plný scope/metadata binding, generace i při ignorovaném abort, vyčištění při zavření/změně kontextu/denial, bezpečný text a oddělené stavy.293 app/DB,12 nových unit/adapter/SSR a12 syntetických browser HUI01–12/typecheck/build prošly; desktop/mobil vizuálně zkontrolované. [Evidence](crew-inline-history-verification.json). Osm migrací neměněno.
+- [ ] **Další neblokovaná práce: browser akceptace stávajících provozních modulů30** se syntetickými účty/podklady: Moje služba, úkoly/harmonogram, registrace a zóny/mapa, zejména přepnutí kontextu, role, archiv a rozepsané údaje. Nová provozní pravidla z41/42 zůstávají otevřená, neodvozovat souhlas.
+- [ ]31/45 později: společně projít UI texty/umístění/desktop/mobil a Draft55–59, skutečné oddělené účty/JWT/RLS/HUI v potvrzeném projektu.12 syntetických scénářů není živá akceptace; politika reautorizace dlouho otevřené historie stále otevřená.
+- [ ] Dále skutečné cílové přístupy/TLS/privátní exporty/OAuth/Storage/provider, aplikovaná8. migrace, úplná vzdálená záloha/klíč/obnova a výslovná aktivace.4 temporaries54 a případné soukromé zbytky se automaticky nemažou. Bez dotazů nyní a bez skutečného importu.
+
 ## 2026-11-28 — soukromý export dokončený58; další UI44
 
 - [x] Úplný read-only export pro39: source_history_id ze skutečných link metadat, metadata balíčků bez hromadného source_text, po konkrétním request/actor i původní plán/receipt/source bytes ve stejném konzistentním snapshotu. [58](58-CREW-SOUKROMY-EXPORT-A-OVERENI.md).

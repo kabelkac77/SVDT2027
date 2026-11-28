@@ -1,6 +1,12 @@
 # Crew — historie pod řádkem a její akceptace
 
-Stav 2026-11-27: příprava další implementace a testů, UI není implementované ani nově odsouhlasené. Navazuje na existující čtecí DB rozhraní [40](40-CREW-CTENI-HISTORIE.md), uživatelem potvrzený detail přímo pod řádkem a zachování historie. Zachovat barvy kategorií, Exo a současné ovládání. Backendové testy nenahrazují níže uvedený browser průchod.
+## Aktuální implementace a omezená akceptace — 2026-11-28
+
+UI a typovaný adapter implementoval přímo Codex v59.293 app/DB testů včetně12 nových unit/adapter/SSR, všech12 syntetických browser scénářů HUI01–12, typecheck/build a desktop/mobil vizuální kontrola prošly. Nové testy používají fiktivní HTTP/Auth odpovědi, nikoli živé účty; existující13 DB history scénářů prošlo v rámci celé aplikační sady. [59](59-CREW-HISTORIE-POD-RADKEM-A-OVERENI.md), [evidence](crew-inline-history-verification.json).
+
+**Živá část každého HUI zůstává NEPROVEDENO** a stejně jako finální UX potvrzení patří do31/45. Texty/umístění níže zůstávají pracovním návrhem. Původní věta o neimplementovaném UI popisuje stav před59. RPC40 a8 migrací neměněno, skutečný import/neveřejné podklady/deploy nepoužité.
+
+Původní stav 2026-11-27: příprava další implementace a testů, UI není implementované ani nově odsouhlasené. Navazuje na existující čtecí DB rozhraní [40](40-CREW-CTENI-HISTORIE.md), uživatelem potvrzený detail přímo pod řádkem a zachování historie. Zachovat barvy kategorií, Exo a současné ovládání. Backendové testy nenahrazují níže uvedený browser průchod.
 
 ## Pracovní průchod
 
@@ -35,21 +41,21 @@ Chyba oprávnění vymaže metadata i původní obsah a nabídne bezpečnou zpr�
 
 Stávající komponenty: `crew-workspace.tsx` drží identitu, ročník a generace; `crew-roster-view.tsx` vykresluje inline editor; `crew-backend.ts` zatím nemá history adapter. Přidat typovaný read adapter a lokální stav historie až v samostatném úkolu. Neměnit zápisové payloady editoru, RPC40 nebo přímé zákazy čtení privátních parserů. První iterace pouze sdílená aplikace; starý místní prototyp ani demo nejsou druhým klientem privátního RPC. Žádné nové účty/role/granty či migrace nejsou součástí tohoto UI úkolu.
 
-## Browser akceptace — zatím vše NEPROVEDENO
+## Browser scénáře — synteticky prošlé59, živě stále NEPROVEDENO
 
-| ID | Situace | Očekávaný důkaz |
-| --- | --- | --- |
-| HUI01 | Zavřený seznam/detail | Síť neobsahuje history RPC ani celé source payloady. |
-| HUI02 | Rozbalit historii uloženého záznamu | Jen index konkrétního ročníku/řádku; content až po explicitním zdroji. |
-| HUI03 | Dva zdroje jednoho člověka | Každý zobrazí svůj text; metadata ani detail neprozradí jiný řádek. |
-| HUI04 | Bez historie / bez navázaného2026 | Dva odlišné prázdné stavy, bez domýšlení2025 nebo nulových financí. |
-| HUI05 | Přepnout zdroj, odpovědi v opačném pořadí | Pozdní odpověď nepřepíše právě vybraný podklad. |
-| HUI06 | Přepnout řádek/ročník/uživatele při načítání | Předchozí obsah zmizí, odpověď se zahodí; žádná cache jiné identity. |
-| HUI07 | Odhlášení / odebrání role při dalším volání | Server odmítne, citlivý obsah i metadata se odstraní; žádný demo fallback. |
-| HUI08 | Koordinátor i s finance grantem, člen, viewer, cizí správce | Zákaz v UI i přímém RPC; běžná editace neuděluje přístup k historii. |
-| HUI09 | NULL/0/false/blob, HTML text, dlouhá čeština | Odlišné hodnoty a původní text; žádné vykonané HTML/odkazy nebo logy. |
-| HUI10 | Archiv2027 a jiný ročník | Správce archivu pouze čte; jiný ročník se automaticky nezamění za2027. |
-| HUI11 | Síťová chyba, chybějící RPC, limit1001 | Viditelná chyba, žádný prázdný úspěch nebo částečný seznam. |
-| HUI12 | Rozepsaný editor, úzký mobil, klávesnice | Historie nic neuloží/nepřepíše; detail zůstane pod řádkem, funguje fokus. |
+| ID | Situace | Očekávaný důkaz | Výsledek59 |
+| --- | --- | --- | --- |
+| HUI01 | Zavřený seznam/detail | Síť neobsahuje history RPC ani celé source payloady. | Syntetický browser prošel; živé účty otevřené |
+| HUI02 | Rozbalit historii uloženého záznamu | Jen index konkrétního ročníku/řádku; content až po explicitním zdroji. | Syntetický browser prošel; živé účty otevřené |
+| HUI03 | Dva zdroje jednoho člověka | Každý zobrazí svůj text; metadata ani detail neprozradí jiný řádek. | Syntetický browser prošel; živé účty otevřené |
+| HUI04 | Bez historie / bez navázaného2026 | Dva odlišné prázdné stavy, bez domýšlení2025 nebo nulových financí. | Syntetický browser prošel; živé účty otevřené |
+| HUI05 | Přepnout zdroj, odpovědi v opačném pořadí | Pozdní odpověď nepřepíše právě vybraný podklad. | Syntetický browser prošel; živé účty otevřené |
+| HUI06 | Přepnout řádek/ročník/uživatele při načítání | Předchozí obsah zmizí, odpověď se zahodí; žádná cache jiné identity. | Syntetický browser prošel; živé účty otevřené |
+| HUI07 | Odhlášení / odebrání role při dalším volání | Server odmítne, citlivý obsah i metadata se odstraní; žádný demo fallback. | Syntetický browser prošel; živé účty otevřené |
+| HUI08 | Koordinátor i s finance grantem, člen, viewer, cizí správce | Zákaz v UI i přímém RPC; běžná editace neuděluje přístup k historii. | Syntetický browser prošel; živé účty otevřené |
+| HUI09 | NULL/0/false/blob, HTML text, dlouhá čeština | Odlišné hodnoty a původní text; žádné vykonané HTML/odkazy nebo logy. | Syntetický browser prošel; živé účty otevřené |
+| HUI10 | Archiv2027 a jiný ročník | Správce archivu pouze čte; jiný ročník se automaticky nezamění za2027. | Syntetický browser prošel; živé účty otevřené |
+| HUI11 | Síťová chyba, chybějící RPC, limit1001 | Viditelná chyba, žádný prázdný úspěch nebo částečný seznam. | Syntetický browser prošel; živé účty otevřené |
+| HUI12 | Rozepsaný editor, úzký mobil, klávesnice | Historie nic neuloží/nepřepíše; detail zůstane pod řádkem, funguje fokus. | Syntetický browser prošel; živé účty otevřené |
 
-Testovat se syntetickými podklady a skutečnými oddělenými testovacími účty až v povoleném prostředí. DB testy40 a dnešní rozšíření pokrývají serverovou část, nikoli tyto UI scénáře. Kontrolu dokončení a přístupy evidovat soukromě podle [45](45-PREDPROVOZNI-PROTOKOL.md).
+Syntetická browser akceptace59 používá fiktivní Auth/HTTP odpovědi. Serverové13 DB history scénáře prošly v rámci293 app/DB kontrol; nejsou živé OAuth/JWT. Průchod se skutečnými oddělenými testovacími účty až v povoleném prostředí zůstává NEPROVEDENO. Kontrolu dokončení a přístupy evidovat soukromě podle [45](45-PREDPROVOZNI-PROTOKOL.md).

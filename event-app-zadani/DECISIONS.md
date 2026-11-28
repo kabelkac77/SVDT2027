@@ -1,5 +1,13 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — historie59 zůstává soukromý readonly pohled
+
+Implementace44 používá stávající RPC40 beze změny schématu/práv. Jen správce2027 a skutečně uložený řádek, včetně readonly archivu; finanční grant sám přístup neuděluje. Metadata se načítají po rozbalení a obsah až po explicitním zdroji, nikdy ani jediný podklad automaticky. Obsah jsou data, ne HTML/odkazy/instrukce a ne návrh k hromadnému převzetí do aktuální evidence.
+
+Platnost odpovědi je vázaná na identitu/kontekst komponenty, generaci a přesná metadata zdroje. Abort je pouze doplňkový, nikoli jediná ochrana. Token refresh stejného uživatele není změna účtu; role se znovu ověří serverem při dalším načtení. Okamžité vzdálené odvolání již přečteného obsahu se neslibuje, politika dlouho otevřeného pohledu zůstává31.
+
+12 syntetických HUI scénářů včetně skutečného browseru/prohozených odpovědí/mobilu prošlo. Skutečné účty/JWT/živé HUI a konečné UX potvrzení jsou stále na později31/45, ne potvrzené mlčením. Technické dokončení neaktivuje sdílený projekt nebo import. Nové produktové názvy/texty z44 jsou pracovní návrh k pozdějšímu společnému projití.
+
 ## 2026-11-28 — soukromý export58 jako samostatný čtecí nástroj
 
 Exportér je operátorský CLI mimo browser, ne veřejný RPC nebo nové aplikační oprávnění. Explicitně vyžaduje vybranou databázi/DB uživatele/službu a po převodu dvojici requestId+requestActorId; tyto hodnoty pouze omezují čtení a nikdy nenastavují JWT/SET ROLE. Předem potvrzená admin session a privilegovaná čtecí služba se řeší později31/45. Samotný běžný authenticated nemá přímý přístup k request cache a nástroj tento zákaz nemění.

@@ -2,6 +2,14 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { supabase } from "./backend";
 import { Edition } from "./model";
 import {
+  historyError,
+  historyUuid,
+  CrewHistoryError,
+  parseHistoryIndex,
+  parseHistoryRow,
+  type HistorySource,
+} from "./crew-history";
+import {
   CrewCategory,
   CrewCompensation,
   CrewData,
@@ -15,6 +23,62 @@ function requireClient(): SupabaseClient {
   const client = supabase();
   if (!client) throw Error("CREW_CONFIG_MISSING");
   return client;
+}
+
+export async function loadCrewHistoryIndex(
+  editionId: string,
+  rosterId: string,
+  signal?: AbortSignal,
+) {
+  try {
+    if (!historyUuid(editionId) || !historyUuid(rosterId))
+      throw new CrewHistoryError("invalid");
+    const request = requireClient().rpc("crew_transfer_history_index", {
+      e: editionId,
+      r: rosterId,
+    });
+    const { data, error, status } = await (signal
+      ? request.abortSignal(signal)
+      : request);
+    if (error)
+      throw status === 401 || status === 403
+        ? new CrewHistoryError("denied")
+        : error;
+    return parseHistoryIndex(data, editionId, rosterId);
+  } catch (error) {
+    throw historyError(error);
+  }
+}
+
+export async function loadCrewHistoryRow(
+  editionId: string,
+  rosterId: string,
+  source: HistorySource,
+  signal?: AbortSignal,
+) {
+  try {
+    if (
+      !historyUuid(editionId) ||
+      !historyUuid(rosterId) ||
+      !historyUuid(source.packageId)
+    )
+      throw new CrewHistoryError("invalid");
+    const request = requireClient().rpc("crew_transfer_history_row", {
+      e: editionId,
+      r: rosterId,
+      p_id: source.packageId,
+    });
+    const { data, error, status } = await (signal
+      ? request.abortSignal(signal)
+      : request);
+    if (error)
+      throw status === 401 || status === 403
+        ? new CrewHistoryError("denied")
+        : error;
+    return parseHistoryRow(data, editionId, rosterId, source);
+  } catch (error) {
+    throw historyError(error);
+  }
 }
 
 async function loadAllEditions(client: SupabaseClient): Promise<Edition[]> {
@@ -89,20 +153,35 @@ export async function loadCrew(editionId: string): Promise<CrewData> {
     "crew_categories",
     editionId,
   );
-  const entries = await allCrewRows<CrewEntry>(client, "crew_roster", editionId);
+  const entries = await allCrewRows<CrewEntry>(
+    client,
+    "crew_roster",
+    editionId,
+  );
   let members: CrewMembership[];
   if (role === "admin") {
     members = [];
     for (let from = 0; ; from += 500) {
-      const result = await client.rpc("crew_member_directory", { e: editionId })
-        .order("user_id").range(from, from + 499);
+      const result = await client
+        .rpc("crew_member_directory", { e: editionId })
+        .order("user_id")
+        .range(from, from + 499);
       if (result.error) throw result.error;
       members.push(...((result.data ?? []) as CrewMembership[]));
       if (!result.data || result.data.length < 500) break;
     }
-  } else members = await allCrewRows<CrewMembership>(client, "crew_members", editionId);
+  } else
+    members = await allCrewRows<CrewMembership>(
+      client,
+      "crew_members",
+      editionId,
+    );
   const compensation = canFinance
-    ? await allCrewRows<CrewCompensation>(client, "crew_compensation", editionId)
+    ? await allCrewRows<CrewCompensation>(
+        client,
+        "crew_compensation",
+        editionId,
+      )
     : [];
   return { role, canFinance, categories, entries, compensation, members };
 }

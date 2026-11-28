@@ -1,5 +1,9 @@
 # SVDT — Codex a místní Claude Code
 
+## 2026-11-28 — historie pod řádkem implementovaná přímo Codexem59
+
+Dokončená44 UI/typed adapter,293 app/DB/typecheck/build,12 nových unit/adapter/SSR a12 syntetických browser scénářů prošly;8 migrací neměněno. CI přidává history browser testy na fiktivních podkladech, WhatsApp vypnutý. Další neblokovaná práce browser akceptace existujících modulů30. Uživatelské UX/živé HUI účty/JWT/RLS/provozní přístupy/aktivace31/45 na později bez dotazů; žádné Claude auth/model/usage nebo skutečný import/nasazení.
+
 ## 2026-11-28 — soukromý export implementovaný přímo Codexem58
 
 Dokončený čtecí operátorský export/readback58,19 nových scénářů,313 hostitelských a281 app/DB/typecheck/build; skutečný psql/PG export před/po + checker1/1 prošel. Kontejner/volumes/jednorázové přístupy uklizené,8 migrací neměněno. Další neblokovaná práce44 UI historie. Přístupy/provozní potvrzení později31/45 bez dotazů; žádné skutečné podklady/import/DDL/grant/deploy/merge a žádné Claude auth/model/usage.

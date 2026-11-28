@@ -101,3 +101,21 @@
 .crew-app .ops-toolbar > label:has(input[type=search]) { flex:1 1 220px; }
 .crew-app .ops-panel svg { overflow:visible; }
 @media(max-width:760px) { .crew-app .ops-row > span { display:block; margin:6px 0 0; } }
+
+/* Private history stays inside the existing inline detail. */
+.crew-app .crew-history { margin-top:24px; padding-top:20px; border-top:1px solid var(--svdt-border); min-width:0; max-width:100%; }
+.crew-app .crew-history h3 { margin:0 0 12px; }
+.crew-app .crew-history h3 button { width:100%; text-align:left; min-height:44px; }
+.crew-app .crew-history-sources { list-style:none; padding:0; }
+.crew-app .crew-history-sources li { padding:8px 0; }
+.crew-app .crew-history-sources li > span { display:block; margin-bottom:8px; color:var(--svdt-text-mid); }
+.crew-app .crew-history button { min-height:44px; white-space:normal; }
+.crew-app .crew-history-sources button[aria-pressed=true] { border-color:var(--svdt-brand); color:inherit; }
+.crew-app .crew-history-fields { margin:16px 0 24px; min-width:0; }
+.crew-app .crew-history-fields > div { display:grid; grid-template-columns:minmax(0,180px) minmax(0,1fr); gap:12px; padding:10px 0; border-bottom:1px solid var(--svdt-border); }
+.crew-app .crew-history-fields dt { color:var(--svdt-text-mid); overflow-wrap:anywhere; text-transform:none; letter-spacing:normal; }
+.crew-app .crew-history-fields dd { margin:0; min-width:0; }
+.crew-app .crew-history-fields pre { margin:0; max-height:20rem; max-width:100%; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; font:inherit; font-size:13px; tab-size:2; }
+.crew-app .crew-history-fields summary { cursor:pointer; min-height:44px; padding:10px 0; }
+.crew-app .crew-history :focus-visible { outline:2px solid var(--svdt-brand); outline-offset:3px; }
+@media(max-width:760px) { .crew-app .crew-history-fields > div { grid-template-columns:minmax(0,1fr); gap:6px; } }

@@ -17,3 +17,8 @@ Ověření i meze se zapisují do crew-history-verification.json. Živé RLS/ú�
 Přidaných7 syntetických DB scénářů (celkem13 pro historii) ověřilo více původů a stabilní pořadí, přesný obsah/typy neznámých sloupců, ztrátu identity, cizí ročník, všech26 aplikačních tabulek a auth.users bez změny, odolnost proti podstrčenému search_path a úplnost1000/odmítnutí1001. Platformní Auth identities/Storage ani živé účty tato fixture netestuje. Původních7 migrací beze změny; nové testy nepřidávají runtime funkci nebo grant.
 
 Budoucí UI má samostatné zadání a12 dosud neprovedených browser scénářů v [44](44-CREW-HISTORIE-UI-AKCEPTACE.md). Soukromé důkazy živé akceptace se později vyplní podle [45](45-PREDPROVOZNI-PROTOKOL.md). Tento krok nic z toho neaktivuje.
+
+
+## UI navázané v59 — 2026-11-28
+
+Sdílená aplikace nyní nabízí historii přímo pod uloženým řádkem správce2027: nejprve index, potom explicitní podklad, vše readonly. RPC/schema/práva zůstávají beze změny.12 syntetických browser HUI scénářů prošlo, skutečné oddělené účty/JWT/živé UI a finální UX nadále31/45. Viz59; starší poznámka o budoucím UI popisuje předchozí stav.
