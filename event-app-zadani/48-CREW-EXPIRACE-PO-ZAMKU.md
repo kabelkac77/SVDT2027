@@ -1,5 +1,11 @@
 # Crew — expirace schválení po čekání na zápisový zámek
 
+## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
+
+Přímo Codexem implementovaná a synteticky ověřená oprava v [55](55-CREW-OPRAVA-EXPIRACE-A-OVERENI.md). Nová8. migrace, původních7 beze změny. Stejný RX01 prošel1/1, rollback všech30 relací; replay/ACL a dump/restore ověřené. Připraveno k review, nikoli merge/deploy/živá aktivace. Aktuální implementační postup22/AGENTS je přímý Codex; níže uvedený native postup je původní historické zadání.
+
+### Původní záznam chyby před opravou
+
 Stav2026-11-28: **reprodukovaná chyba, runtime oprava není implementovaná; blokuje aktivaci**. Zjištěno nezávislou skutečnou PostgreSQL zkouškou RX01 podle [47](47-POSTGRES-PRERUSENI-A-SCHVALENI.md). Žádný provozní import nebo změna dat neproběhly. Původních7 migrací se nesmí zpětně přepisovat.
 
 ## Přesný spouštěč a výsledek

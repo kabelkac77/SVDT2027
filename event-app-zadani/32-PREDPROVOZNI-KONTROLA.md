@@ -33,3 +33,7 @@ Aktuální katalogový preflight očekává26tabulek a12funkcí;3interní transf
 ## Aktuální návaznost2026-11-27
 
 Aktuální inventář má7 migrací,26 aplikačních a4 platformní katalogové tabulky a27 kontrolovaných funkcí. Starší počty i diagnostika2026-11-04 výše jsou historický záznam, nikoli dnešní stav připojení. Tento nezávislý blok živé přístupy ani nativní přihlášení znovu nezkoušel. Vyplnitelný soukromý provozní protokol a pořadí důkazů jsou v [45](45-PREDPROVOZNI-PROTOKOL.md); žádná živá brána tím není splněná.
+
+## 2026-11-28 —8. migrace a kontrola těla importeru
+
+Inventář nyní obsahuje8 additive migrací s autoApply:false. [55](55-CREW-OPRAVA-EXPIRACE-A-OVERENI.md) opravuje61 při zachování původní signatury; read-only katalog30 relací/27 funkcí sám nerozliší staré a opravené tělo. Před aktivací navíc doložit skutečnou migrační historii a shodu prosrc SHA/config/owner/ACL plus předepsanou akceptaci. Nová brána crew_import_expiry_after_lock_acceptance nevykonává SQL automaticky. Živý target zůstává unknown a žádné DDL/grant/import se zde nespustilo.

@@ -93,3 +93,7 @@ Pět řízených SIGKILL přímo držitele syntetické recovery a nové/opakovan
 ## Dílčí54 a změna implementátora — 2026-11-28
 
 Přímo Codexem ověřené4 filesystem SIGKILL před zveřejněním a6 skutečných adresářových fixture závodů. Zachované syntetické zbytky pouze evidované, inventář není autorita k mazání/živé aktivaci. [54](54-POSTGRES-CASTECNY-ZAPIS-A-ZMENY-ADRESARU.md). Přihlášení Claude už neblokuje implementaci; uživatel výslovně určil přímý Codex.48/61 stále neopravena a přednostní, živé stavy G03/G06/projektové účty/backup/Auth/Storage/browser i samostatný aktivační pokyn zůstávají otevřené.
+
+## 2026-11-28 — technická oprava61 ověřená, živé brány otevřené
+
+[55](55-CREW-OPRAVA-EXPIRACE-A-OVERENI.md): původní RX01 selhání0/1 je po additive8. migraci skutečně1/1 prošlé, se stejným ShareRowExclusiveLock a úplným rollbackem.12 standardních PG včetně replay a dump/restore opravené funkce také prošlo. To je technická akceptace opravy k review; živé stavy G02/G03/G05/G06/G09 se nepřepisují na hotové. Doložit skutečně aplikovanou migraci/tělo (schema presence nestačí), projekt/účty/Auth/Storage/backup/obnovu/browser a výslovnou aktivaci. Žádný živý import/DDL/grant/deploy/merge neproběhl.

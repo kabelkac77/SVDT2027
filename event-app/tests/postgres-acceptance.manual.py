@@ -324,7 +324,16 @@ create function auth.uid() returns uuid language sql stable as $$select nullif(c
         for migration in manifest['migrations']:
             path = APP / 'supabase/migrations' / migration['name']
             require(hashlib.sha256(path.read_bytes()).hexdigest() == migration['sha256'], 'Migration hash mismatch')
+            upgrade = migration['name'] == '202611280001_crew_import_expiry_guard.sql'
+            metadata_sql = """select jsonb_build_object('oid',p.oid::text,'owner',pg_get_userbyid(p.proowner),'definer',p.prosecdef,'volatility',p.provolatile,'config',p.proconfig,'acl',p.proacl)
+from pg_proc p where p.oid='public.crew_import_apply(uuid,uuid,uuid,text,text)'::regprocedure"""
+            if upgrade:
+                before_upgrade = RUN.value(self.db, metadata_sql)
             RUN.sql(self.db, path.read_text())
+            if upgrade:
+                self.assertEqual(RUN.value(self.db, metadata_sql), before_upgrade)
+                RUN.expiry_guard_identity_preserved = True
+        RUN.expiry_guard_applied = any(m['name'] == '202611280001_crew_import_expiry_guard.sql' for m in manifest['migrations'])
         RUN.sql(self.db, f"""insert into auth.users values('{uid(1)}','admin@example.invalid'),('{uid(2)}','finance@example.invalid');
 insert into auth.identities values('{uid(901)}','{uid(1)}','synthetic');
 insert into storage.buckets values('synthetic',false);
@@ -416,6 +425,9 @@ insert into public.crew_members values('{uid(101)}','{uid(2)}','coordinator',tru
         self.assertEqual(RUN.value(self.db, 'select to_json(source_text) from crew_transfer_packages'), self.source)
         catalog_sql = """select jsonb_build_object('tables',(select jsonb_agg(jsonb_build_object('table',relname,'rls',relrowsecurity,'force',relforcerowsecurity) order by relname) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and relkind='r'),'policies',(select jsonb_agg(to_jsonb(p) order by schemaname,tablename,policyname) from pg_policies p where schemaname='public'))"""
         catalog = RUN.value(self.db, catalog_sql)
+        function_sql = """select jsonb_build_object('definition',pg_get_functiondef(p.oid),'owner',pg_get_userbyid(p.proowner),'acl',p.proacl,'config',p.proconfig)
+from pg_proc p where p.oid='public.crew_import_apply(uuid,uuid,uuid,text,text)'::regprocedure"""
+        function = RUN.value(self.db, function_sql)
         directory = RUN.folder / 'dump'
         directory.mkdir(mode=0o700)
         config = dict(pgDumpExecutable=str(Path(RUN.args.pg_bin) / 'pg_dump'), pgRestoreExecutable=str(Path(RUN.args.pg_bin) / 'pg_restore'),
@@ -439,6 +451,7 @@ insert into public.crew_members values('{uid(101)}','{uid(2)}','coordinator',tru
                        env=RUN.env, capture_output=True, text=True, timeout=40, check=True)
         self.assertEqual(self.snapshot(restored), before)
         self.assertEqual(RUN.value(restored, catalog_sql), catalog)
+        self.assertEqual(RUN.value(restored, function_sql), function)
         history = RUN.value(restored, self.actor(client=True) + f"select public.crew_transfer_history_row('{uid(101)}','{uid(601)}',(select id from public.crew_transfer_packages limit 1))")
         self.assertEqual(history['historyRow']['year'], '2026')
         self.assertEqual(json.loads(history['sourceRow']['content'])['money']['agreed'], 0)
@@ -557,6 +570,7 @@ insert into public.crew_members values('{uid(101)}','{uid(2)}','coordinator',tru
     def probe_expiry_after_table_lock_must_deny_the_write(self):
         """Separate strict diagnostic, not an expected-failure or a passing test."""
         self.approval = RUN.scalar(self.db, self.actor() + f"select public.crew_import_stage_approval('{uid(101)}',{literal(self.plan)},'{('b' * 64)}',clock_timestamp()+interval '2 seconds')")
+        before = self.snapshot(self.db)
         # SHARE permits earlier reads/plan preparation, unlike ACCESS EXCLUSIVE.
         # Require the actual importer SHARE ROW EXCLUSIVE wait after its first expiry check.
         holder = RUN.worker(self.db, 'svdt_expiry_holder', 'begin;lock table public.crew_roster in share mode;select pg_sleep(4);commit;')
@@ -574,7 +588,40 @@ insert into public.crew_members values('{uid(101)}','{uid(2)}','coordinator',tru
         self.assertTrue(RUN.expiry_diagnostic['approvalExpiredAtCompletion'])
         self.assertNotEqual(code, 0)
         self.assertIn('42501', error)
+        self.assertIn('CREW_IMPORT_APPROVAL_EXPIRED', error)
         self.assertEqual(self.counts(), dict(packages=0, requests=0, roster=0, compensation=0, people=0, users=2))
+        self.assertEqual(self.snapshot(self.db), before)
+
+    def test_11_live_approval_survives_short_table_wait_and_replays_after_expiry(self):
+        self.approval = RUN.scalar(self.db, self.actor() + f"select public.crew_import_stage_approval('{uid(101)}',{literal(self.plan)},'{('b' * 64)}',clock_timestamp()+interval '5 seconds')")
+        holder = RUN.worker(self.db, 'svdt_valid_holder', 'begin;lock table public.crew_roster in share mode;select pg_sleep(1);commit;')
+        self.assertTrue(RUN.observed(self.db, 'svdt_valid_holder', "wait_event='PgSleep'"))
+        waiting = RUN.worker(self.db, 'svdt_valid_client', self.actor(client=True) + "set lock_timeout='8s';" + self.apply_sql())
+        self.assertTrue(RUN.observed(self.db, 'svdt_valid_client', "wait_event_type='Lock' and exists(select 1 from pg_locks l where l.pid=pg_stat_activity.pid and l.relation='public.crew_roster'::regclass and l.mode='ShareRowExclusiveLock' and not l.granted)"))
+        self.assertEqual(RUN.finish(holder)[0], 0)
+        code, output, _ = RUN.finish(waiting)
+        self.assertEqual(code, 0)
+        result = json.loads(output)
+        self.assertEqual(self.counts()['requests'], 1)
+        RUN.sql(self.db, f"select pg_sleep(greatest(0,extract(epoch from(expires_at-clock_timestamp())))+0.02) from crew_import_approvals where id='{self.approval}'")
+        self.assertEqual(RUN.scalar(self.db, f"select expires_at<=clock_timestamp() from crew_import_approvals where id='{self.approval}'"), 't')
+        before = self.snapshot(self.db)
+        self.assertEqual(RUN.value(self.db, self.actor(client=True) + self.apply_sql()), result)
+        self.assertEqual(self.snapshot(self.db), before)
+
+    def test_12_expiry_during_source_validation_prevents_first_insert(self):
+        self.approval = RUN.scalar(self.db, self.actor() + f"select public.crew_import_stage_approval('{uid(101)}',{literal(self.plan)},'{('b' * 64)}',clock_timestamp()+interval '2 seconds')")
+        # Synthetic latency wrapper only, never part of any application migration.
+        RUN.sql(self.db, """alter function public.crew_import_source(text) rename to synthetic_original_source;
+create function public.crew_import_source(text) returns jsonb language plpgsql volatile set search_path='' as $$
+declare parsed jsonb;begin parsed:=public.synthetic_original_source($1);perform pg_sleep(3);return parsed;end;$$;
+revoke all on function public.crew_import_source(text) from public,anon,authenticated;""")
+        before = self.snapshot(self.db)
+        failed = RUN.sql(self.db, self.actor(client=True) + self.apply_sql(), check=False)
+        self.assertNotEqual(failed.returncode, 0)
+        self.assertIn('42501', failed.stderr)
+        self.assertIn('CREW_IMPORT_APPROVAL_EXPIRED', failed.stderr)
+        self.assertEqual(self.snapshot(self.db), before)
 
 
 def verify_sigterm(args, hard_kill=False, concurrent=False):
@@ -1139,7 +1186,10 @@ def run_owned(args):
               'startupFailureStage': args.probe_startup_failure, 'startupRecovery': cleanup_receipt,
               'expiryDiagnostic': getattr(RUN, 'expiry_diagnostic', None), 'cutoverReady': False,
               'anonymousVolumesRemoved': cleanup_receipt['anonymousVolumesRemoved'] if cleanup_receipt else removed and bool(RUN.volumes),
-              'applicationRuntimeChanged': False, 'realSourceOpened': False, 'liveImportRun': False,
+              'applicationRuntimeChanged': bool(getattr(RUN, 'expiry_guard_applied', False)),
+              'expiryGuardMigrationApplied': bool(getattr(RUN, 'expiry_guard_applied', False)),
+              'expiryGuardIdentityAndAclPreserved': bool(getattr(RUN, 'expiry_guard_identity_preserved', False)),
+              'realSourceOpened': False, 'liveImportRun': False,
               'liveAuthProviderVerified': False, 'storageBytesRestored': False, 'offsiteBackupActivated': False}
     path = RUN.folder / 'report.json'
     persist_report(report, path, RUN.report_writer)

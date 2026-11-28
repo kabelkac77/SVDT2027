@@ -50,6 +50,7 @@ test("review-only deployment plan pins every checked-in migration in dependency 
     "existing_account_uuids_and_scopes",
     "approved_private_import_mapping",
     "two_account_negative_access_checks",
+    "crew_import_expiry_after_lock_acceptance",
   ])
     assert.ok(plan.requiredBeforeLive.includes(gate));
 });
