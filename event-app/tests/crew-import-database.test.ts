@@ -639,10 +639,8 @@ test("Python plan builder uses the exact server fingerprint and imports only syn
     assert.equal(out.targetFingerprint, target.targetFingerprint);
     const approval = await approve(db, out.planText);
     await client(db);
-    assert.equal(
-      (await apply(db, approval, out.planText, source)).createdEntries,
-      1,
-    );
+    const receipt = await apply(db, approval, out.planText, source);
+    assert.equal(receipt.createdEntries, 1);
     await owner(db);
     const counts = await snapshotCounts(db);
     const t = (
@@ -651,6 +649,63 @@ test("Python plan builder uses the exact server fingerprint and imports only syn
     assert.equal(t.sourceLinks.length, 1);
     assert.equal(counts.people, 0);
     assert.equal(counts["auth.users"], 7);
+    const verify = (after: any, originalSource: string) =>
+      JSON.parse(
+        execFileSync(
+          "python3",
+          [
+            "-I",
+            "-c",
+            "import sys,json;sys.path.insert(0,sys.argv[1]);from crew_import_verify import verify_import;d=json.load(sys.stdin);print(json.dumps(verify_import(d['source'].encode(),d['plan'],d['before'],d['after'],d['receipt'],d['stored'])))",
+            tools,
+          ],
+          {
+            input: JSON.stringify({
+              source,
+              plan: out.planText,
+              before: target,
+              after,
+              receipt,
+              stored: originalSource,
+            }),
+            encoding: "utf8",
+            stdio: ["pipe", "pipe", "pipe"],
+          },
+        ),
+      );
+    // The existing preview omits source_history_id. Do not fill that missing
+    // evidence from our input plan: the checker must reject the partial export.
+    assert.throws(() => verify(t, source), /CREW_IMPORT_VERIFY_FAILED/);
+    // An operator's complete private export reads link metadata in the same
+    // statement snapshot. Keep the PostgreSQL fingerprint exactly as supplied.
+    const complete = (
+      await db.query<any>(
+        "select crew_import_target_preview($1) || jsonb_build_object('sourceLinks',coalesce((select jsonb_agg(to_jsonb(l) order by l.package_id,l.source_row_id) from crew_transfer_links l where l.edition_id=$1),'[]'::jsonb)) data",
+        [e1],
+      )
+    ).rows[0].data;
+    const stored = (
+      await db.query<any>(
+        "select source_text from crew_transfer_packages where id=$1 and edition_id=$2",
+        [receipt.packageId, e1],
+      )
+    ).rows[0].source_text;
+    const checked = verify(complete, stored);
+    assert.equal(checked.comparisonMatches, true);
+    assert.equal(checked.authorityVerified, false);
+    assert.equal(checked.applyReady, false);
+    assert.equal(checked.cutoverReady, false);
+    assert.deepEqual(checked.findings, []);
+    assert.equal(checked.blockers.length, 3);
+    const altered = structuredClone(complete);
+    altered.compensation.find((row: any) => row.roster_id === uid(601)).estimate =
+      0;
+    assert.equal(verify(altered, stored).comparisonMatches, false);
+    const missingHistory = structuredClone(complete);
+    missingHistory.sourceLinks[0].source_history_id = "h2";
+    assert.equal(verify(missingHistory, stored).comparisonMatches, false);
+    assert.equal(verify(complete, stored + "\n").comparisonMatches, false);
+    assert.deepEqual(await snapshotCounts(db), counts);
   } finally {
     await db.close();
   }

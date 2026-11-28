@@ -1,5 +1,11 @@
 # Čistý kontrolní protokol po počátečním převodu crew
 
+## Aktuální implementace — 2026-11-28
+
+Čistý helper `event-app/tools/crew_import_verify.py` implementoval přímo Codex podle aktuálního22/AGENTS. Používá parse_import_plan43, build_import_plan a reconcile_preview, bez kopírování parseru. Původních26 scénářů přesunuto byte-for-byte do tests/ a skutečně prošlo;9 dalších hranic a propojení se syntetickým PGlite importerem prošly také.294 hostitelských/60 optimalizovaných,281 app/DB/typecheck/build prošly. [57](57-CREW-KONTROLA-PREVODU-A-OVERENI.md), [evidence](crew-verify-import-verification.json). Původní nativní postup a timeout/pending záznamy níže jsou historické.
+
+Úplný provozní exportér dosud není implementovaný: standardní crew_import_target_preview neobsahuje source_history_id; helper jeho vynechání správně odmítá. Zkušební export získává link metadata z DB v jednom SQL snapshotu, nic nedoplňuje z plánu ani neodvozuje serverový otisk. Živé31/45 brány zůstávají otevřené, comparisonMatches není aktivace.
+
 Navazující vývoj2026-11-12, bez skutečného importu, DDL, grantů nebo aktivace. V časově omezeném pracovním bloku implementovat jediný čistý Python modul `event-app/tools/crew_import_verify.py`. Nativní Claude dodává návrh modulu, host nezávislé testy a review. Žádné skutečné údaje v modelu nebo testech.
 
 ## Rozhraní a bezpečnost
@@ -40,11 +46,11 @@ Provenance: before nesmí mít stejnýsourceSHA (builder to odmítne). After mus
 
 Nevyhodnocovat změny globálních Person/Auth/grantů jako ověřené — tyto exporty je neobsahují. Živé účty/oprávnění, autorita exportů, DB souběh, úplná záloha/obnova a ruční aktivační krok zůstávají samostatné kontroly31. Nový kód nesmí tvrdit 'import úspěšně proběhl' jen podle podvrženého souboru.
 
-## Stav pracovního bloku2026-11-12
+## Historický stav pracovního bloku2026-11-12
 
 Nativní běh issue54 byl ukončen vlastní420s hranicí jako CLAUDE_TIMEOUT_NO_RETRY, bez použitelného návrhu a bez opakování/modelového fallbacku. Modul crew_import_verify.py NENÍ implementovaný. Nezávisle připravených26 scénářů je uložených jako `event-app/tests/pending/crew_import_verify_test.py.pending`; nejsou součástí spuštěných/prošlých testů. Propojení checkeru s PGlite zůstává budoucí práce. Čtecí rozhraní40 je samostatná dokončovaná část, nikoli náhrada nebo nepravdivé dokončení tohoto protokolu.
 
 
-## Návaznost po dokončení parseru — 2026-11-28
+## Historická návaznost po dokončení parseru — před57
 
 Strukturální načtení plánu nyní poskytuje čistý `parse_import_plan` z43/56. Celý checker39 má tento helper znovu použít, bez kopírování validace. Implementace nyní přímo Codexem dle22/AGENTS, nativní požadavek v původním zadání je historický.26 scénářů celého checkeru zůstává pending; jejich syntaxe ani25 skutečně prošlých parserových kontrol nejsou důkazem celého checkeru nebo živé autority. Ostatní pravidla39 včetně přesného planSha256, before/after, receipt, provenance a permanentních bran zůstávají platná.

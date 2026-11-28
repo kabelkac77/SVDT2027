@@ -1,5 +1,13 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — checker39 dokončený57; další úplný export a UI44
+
+- [x] Čistý verify_import podle39: reuse parser43, přesné hashe/receipt, before/after, identity/NULL0, celá sada řádků a provenance bez mutací/I/O. Shoda není autorita/aktivace. [57](57-CREW-KONTROLA-PREVODU-A-OVERENI.md).
+- [x]26 původních scénářů přesunuto beze změny a prošlo,9 dalších hraničních.294 hostitelských,60 parser/checker pod Python -O,281 app/DB, typecheck/build a propojení se syntetickým importerem prošlo. [Evidence](crew-verify-import-verification.json). Žádné parser/checker pending scénáře již nezbývají.
+- [ ] **Další technický krok: úplný soukromý čtecí export pro39**, v jednom konzistentním snapshotu, explicitně včetně source_history_id a bezpečného readbacku. Běžný RPC přehled tuto vazbu nevydává; nevymýšlet ji z plánu. Zkušební SQL není hotový provozní exportér, serverový otisk nesmí změnit nebo domýšlet Python.
+- [ ] Potom44 inline historie a12 browser scénářů; vzhled/ovládání projít společně později. Další funkční moduly podle priorit níže.
+- [ ]31/45 později: review Draft změn55–57, skutečné účty/scopes/OAuth/Storage/provider, potvrzený projekt/aplikovaná8. migrace, úplná vzdálená záloha/klíč/obnova/browser a výslovný souhlas s importem. Čtyři soukromé syntetické temporaries54 zachované, nemažou se. Bez dotazů nyní; skutečný import zakázaný.
+
 ## 2026-11-28 — parser plánu dokončený56; další checker39
 
 - [x] Přímá implementace43 Codexem: čistý parser přesných bytes/JSON, úplné mapování, canonical ID/hash, verze a identity bez I/O. [56](56-CREW-PARSER-PLANU-A-OVERENI.md).

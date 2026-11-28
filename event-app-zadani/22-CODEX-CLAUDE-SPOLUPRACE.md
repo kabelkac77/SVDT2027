@@ -1,5 +1,9 @@
 # SVDT — Codex a místní Claude Code
 
+## 2026-11-28 — checker39 implementovaný přímo Codexem57
+
+Dokončený čistý checker39 s reuse parseru43 a syntetickým DB propojením;26 původních scénářů přesunuto a prošlo,9 nových hranic také.294 hostitelských/60 optimalizovaných,281 app/DB/typecheck/build prošly. Další technicky úplný privátní exportér (běžný RPC postrádá source_history_id), potom44 UI historie. Claude auth/model/usage nepoužité; přístupy a potvrzení nadále později31/45, bez skutečného importu nebo nasazení.
+
 ## 2026-11-28 — parser43 implementovaný přímo Codexem56
 
 Přímá implementace56 dokončuje pouze parser přesného plánu:18 původních a7 hraničních scénářů,259 hostitelských/25 optimalizovaných prošlo. Claude auth/model/usage se nespouští. Následuje39 checker (26 pending), potom44 UI historie; živé brány31/45 zůstávají otevřené bez dotazů. Starší nativní zadání níže jsou historická.
