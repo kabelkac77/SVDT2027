@@ -1,5 +1,11 @@
 # Stav implementace
 
+## 2026-11-28 — souběžná recovery a pozdní chyby52
+
+[52](52-POSTGRES-SOUBEZNA-RECOVERY-A-POZDNI-CHYBY.md): běžící test i recovery drží tentýž soukromý neblokující flock. Druhý proces vrátí RECOVERY_BUSY/exit1 bez Docker zásahu nebo změny checkpointu; soubor zámku se nemaže. Checkpoint se po získání lease čte znovu. Pozdní chyba zachová už zveřejněný soubor či provedené odstranění a nové ověření tyto kroky neopakuje naslepo.
+
+Skutečně prošla ochrana aktivního testu i souběh dvou recovery procesů,6 řízených I/O bodů (3 nové po odstranění/publikaci),10 standardních PG,4 startup chyby a SIGTERM/SIGKILL.215 hostitelských a51 bezpečnostních pod Python -O prošlo;12 nových unit případů. [Evidence](postgres-recovery-lock-verification.json). **RX01 znovu selhal a48/issue61 dál blokuje aktivaci.** Runtime/kolektor/7 migrací/CI beze změny,18+26 pending neprovedeno, native auth/model/usage nezkoušeno. Přístupy a živé brány31/45 zůstávají na později; skutečný import zakázaný.
+
 ## 2026-11-28 — poškozená evidence a chyby zápisu51
 
 [51](51-POSTGRES-POSKOZENA-EVIDENCE-A-CHYBY-ZAPISU.md): poškozený/cizí nebo ztracený checkpoint se během cleanup nepřepíše; zásah se zastaví před Docker příkazem. Jednorázové soubory se zveřejní celé až po fsync, bez nahrazení existující evidence. Chyba reportu vrací neúspěch i při ověřeném úklidu; reportPersisted a fakta úklidu jsou oddělená. Constructor/recovery CLI má bezpečnou chybovou odpověď bez raw výjimky.

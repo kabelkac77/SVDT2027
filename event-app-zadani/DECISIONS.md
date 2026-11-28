@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — souběžná recovery a pozdní chyby52
+
+Pokračování bez dotazů rozšiřuje pouze testovací hostitelskou vrstvu52. Spolupracující procesy téhož POSIX hostu se koordinují kernelovým flock nad jediným trvalým soukromým inode; soubor zámku se nemaže, jeho existence ani PID není doklad obsazení. Druhý držitel nemá oprávnění úklid obejít. Busy je bezpečné odmítnutí, nikoli potřeba dalšího uživatelského souhlasu.
+
+Dokončená publikace souboru a dokončení celého příkazu jsou rozdílné skutečnosti. Pozdní chyba zachová původní úplný snapshot; finální stdout/exit může správně hlásit neúspěch. Samotný uložený report se nesmí používat jako důkaz dokončeného procesu. Při ztracené odpovědi je další krok nové nezávislé ověření skutečného stavu, ne slepé opakování rm/publikace. Žádná nová živá oprávnění nebo aktivace;48/61 zůstává blokátor.
+
 ## 2026-11-28 — poškozená evidence a chyby zápisu51
 
 Pokyn pokračovat samostatně se uplatňuje na hostitelské testy51, bez převzetí native implementace nebo živých oprávnění. Cleanup nesmí automaticky přepsat poškozenou evidenci ani odhadnout chybějící checkpoint. Před aktualizací musí souhlasit validní původní stav a vlastní identita.

@@ -23,7 +23,7 @@ APP = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(APP / 'tests'), str(APP / 'tools')]
 from crew_import_preview_test import fixture, encode
 from crew_import_plan import build_import_plan
-from postgres_test_recovery import recover_checkpoint, read_checkpoint, persist_report
+from postgres_test_recovery import recover_checkpoint, read_checkpoint, persist_report, operation_lock, RecoveryBusy, PublicationError
 
 IMAGE = 'postgres@sha256:f1ea2a1a4fb7b68d4836be1fdcb8a6466a89b072158bf9d97663600538c294c5'
 OWNER = 'svdt_synthetic_owner'
@@ -75,6 +75,15 @@ class SyntheticServer:
         require(root.stat().st_mode & 0o077 == 0, 'Output root must be private')
         require(Path(args.docker_socket).is_socket(), 'A local Unix Docker socket is required')
         self.folder = Path(tempfile.mkdtemp(prefix='postgres-synthetic-', dir=root))
+        self.lease = operation_lock(self.folder)
+        self.lease.__enter__()
+        try:
+            self.prepare(args)
+        except BaseException:
+            self.lease.__exit__(*sys.exc_info())
+            raise
+
+    def prepare(self, args):
         self.docker_config = self.folder / 'docker-client'
         self.docker_config.mkdir(mode=0o700)
         self.token = uuid.uuid4().hex
@@ -97,19 +106,28 @@ class SyntheticServer:
         # Publish a complete private file without replacing existing evidence.
         fd, name = tempfile.mkstemp(prefix='.private-', dir=path.parent)
         temporary = Path(name)
+        published = False
         try:
             with os.fdopen(fd, 'w') as out:
                 out.write(text)
                 out.flush()
                 os.fsync(out.fileno())
             os.link(temporary, path)
+            published = True
         finally:
-            temporary.unlink(missing_ok=True)
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                if published:
+                    raise PublicationError('Private file published; temporary cleanup failed') from None
+                raise
 
     def report_writer(self, path, text):
         if getattr(self.args, 'probe_evidence_failure', None) == 'report':
             raise OSError('Controlled synthetic report publication failure')
         self.private_write(path, text)
+        if getattr(self.args, 'probe_evidence_failure', None) == 'after-report':
+            raise PublicationError('Controlled failure after complete report publication')
 
     def checkpoint(self, phase):
         """Private data-only receipt, never an input that authorizes deletion."""
@@ -136,6 +154,8 @@ class SyntheticServer:
             if getattr(getattr(self, 'args', None), 'probe_evidence_failure', None) == 'checkpoint-' + phase:
                 raise OSError('Controlled synthetic checkpoint publication failure')
             os.replace(temporary, target)
+            if getattr(getattr(self, 'args', None), 'probe_evidence_failure', None) == 'after-checkpoint' and phase == 'cleaned':
+                raise PublicationError('Controlled failure after complete checkpoint publication')
         finally:
             temporary.unlink(missing_ok=True)
 
@@ -247,6 +267,8 @@ class SyntheticServer:
             actual = self.docker('inspect', '--format', '{{index .Config.Labels "svdt.acceptance.run"}}', self.container).stdout.strip()
             require(actual == self.token, 'Refuse cleanup of any other container')
             self.docker('rm', '--force', '--volumes', self.container)
+            if getattr(getattr(self, 'args', None), 'probe_evidence_failure', None) == 'after-remove':
+                raise OSError('Controlled failure after owned container removal')
             removed = confirmed_absence(self.docker('inspect', '--format', '{{.Id}}', self.container, check=False), 'object')
             require(removed, 'Owned container cleanup failed')
             for name in self.volumes:
@@ -526,7 +548,7 @@ insert into public.crew_members values('{uid(101)}','{uid(2)}','coordinator',tru
         self.assertEqual(self.counts(), dict(packages=0, requests=0, roster=0, compensation=0, people=0, users=2))
 
 
-def verify_sigterm(args, hard_kill=False):
+def verify_sigterm(args, hard_kill=False, concurrent=False):
     """Own child PID only; checkpoints are read as evidence, never deletion commands."""
     root = Path(args.output_root).resolve()
     require(root.is_dir() and root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0,
@@ -537,6 +559,7 @@ def verify_sigterm(args, hard_kill=False):
         command.extend(['--' + key.replace('_', '-'), getattr(args, key)])
     command.extend(['--output-root', str(directory)])
     child = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    contender = None
     try:
         deadline = time.monotonic() + 45
         checkpoint = None
@@ -548,18 +571,42 @@ def verify_sigterm(args, hard_kill=False):
                 break
             time.sleep(0.1)
         require(checkpoint is not None, 'Signal probe child did not become ready')
+        recovery_command = [arg for arg in command if arg != '--probe-interruption']
+        recovery_command.extend(['--recover-owned-test', str(checkpoint)])
+        def verify_busy():
+            before = checkpoint.read_bytes()
+            busy = subprocess.run(recovery_command, capture_output=True, text=True, timeout=15)
+            receipt = json.loads(busy.stdout)
+            require(busy.returncode == 1 and receipt['failureCategory'] == 'RECOVERY_BUSY'
+                    and not receipt['successful'] and not receipt['containerRemoved'], 'Concurrent recovery did not refuse work')
+            require(checkpoint.read_bytes() == before, 'Busy recovery changed checkpoint')
+        if concurrent:
+            verify_busy()
+            require(child.poll() is None, 'Active owner was interrupted by recovery')
         child.send_signal(signal.SIGKILL if hard_kill else signal.SIGTERM)
         stdout, stderr = child.communicate(timeout=25)
         if hard_kill:
             require(child.returncode == -signal.SIGKILL and not (checkpoint.parent / 'report.json').exists(),
                     'Hard kill cannot report successful test completion')
-            recovery_command = [arg for arg in command if arg != '--probe-interruption']
-            recovery_command.extend(['--recover-owned-test', str(checkpoint)])
+            if concurrent:
+                gated = [arg for arg in command if arg != '--probe-interruption']
+                gated.extend(['--probe-recovery-contention', str(checkpoint)])
+                contender = subprocess.Popen(gated, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                deadline = time.monotonic() + 10
+                while not (checkpoint.parent / 'recovery-held.json').exists() and time.monotonic() < deadline:
+                    require(contender.poll() is None, 'Recovery holder exited before contention probe')
+                    time.sleep(0.05)
+                require((checkpoint.parent / 'recovery-held.json').is_file(), 'Recovery holder did not acquire lock')
+                verify_busy()
+                SyntheticServer.private_write(checkpoint.parent / 'recovery-release.json', '{"release":true}\n')
+                out, err = contender.communicate(timeout=40)
+                receipt = json.loads(out)
+                require(contender.returncode == 0 and receipt['successful'] and not receipt['alreadyAbsent'], 'First recovery did not complete')
             for attempt in range(2):
                 recovered = subprocess.run(recovery_command, capture_output=True, text=True, timeout=40, check=True)
                 receipt = json.loads(recovered.stdout)
                 require(receipt['successful'] and not receipt['testSuiteSuccessful']
-                        and receipt['alreadyAbsent'] == (attempt == 1), 'Recovery/repeat receipt mismatch')
+                        and receipt['alreadyAbsent'] == (concurrent or attempt == 1), 'Recovery/repeat receipt mismatch')
         else:
             require(child.returncode == 128 + signal.SIGTERM, 'Interrupted test must not report normal success')
             report = json.loads((checkpoint.parent / 'report.json').read_text())
@@ -577,14 +624,23 @@ def verify_sigterm(args, hard_kill=False):
         for name in state['anonymousVolumes']:
             require(confirmed_absence(observer.docker('volume', 'inspect', '--format', '{{.Name}}', name, check=False), 'volume'), 'Removed volume not independently confirmed')
         require(all(not (checkpoint.parent / name).exists() for name in ('password', 'pgpass', 'services')), 'Disposable credential remains')
-        result = {'version': 1, 'mode': 'controlled_sigkill_recovery_probe' if hard_kill else 'controlled_sigterm_probe', 'successful': True,
+        result = {'version': 1, 'mode': 'controlled_concurrent_recovery_probe' if concurrent else 'controlled_sigkill_recovery_probe' if hard_kill else 'controlled_sigterm_probe', 'successful': True,
                   'childExitCode': child.returncode, 'checkpointCleaned': True,
                   'containerRemoved': True, 'anonymousVolumesRemoved': True, 'disposableCredentialsRemoved': True,
                   'liveImportRun': False, 'forcedKillRecoveryVerified': hard_kill, 'repeatedRecoveryVerified': hard_kill}
+        if concurrent:
+            result.update(activeRunProtectedVerified=True, secondRecoveryBusyVerified=True)
         persist_report(result, directory / 'report.json', SyntheticServer.private_write)
         print(json.dumps(result), flush=True)
         return 0 if result['successful'] else 1
     finally:
+        if contender is not None and contender.poll() is None:
+            contender.terminate()
+            try:
+                contender.communicate(timeout=5)
+            except subprocess.TimeoutExpired:
+                contender.kill()
+                contender.communicate(timeout=5)
         if child.poll() is None:
             child.terminate()
             try:
@@ -667,7 +723,7 @@ def verify_evidence_failures(args):
             'Evidence probe requires a private owned output root')
     directory = Path(tempfile.mkdtemp(prefix='evidence-failure-probe-', dir=root))
     cases = []
-    for stage in ('checkpoint-created', 'checkpoint-cleaning', 'report'):
+    for stage in ('checkpoint-created', 'checkpoint-cleaning', 'report', 'after-remove', 'after-checkpoint', 'after-report'):
         case_root = directory / stage
         case_root.mkdir(mode=0o700)
         common = []
@@ -687,8 +743,10 @@ def verify_evidence_failures(args):
             checkpoint = checkpoints[0]
             _, state, _ = read_checkpoint(checkpoint, IMAGE)
             deferred = stage == 'checkpoint-cleaning'
-            require(state['phase'] == ('ready' if deferred else 'cleaned'), 'Previous complete checkpoint lost')
-            require(report['containerRemoved'] == (not deferred), 'Cleanup incorrectly claimed')
+            uncertain = stage in ('after-remove', 'after-checkpoint')
+            expected_phase = 'ready' if deferred else 'cleaning' if stage == 'after-remove' else 'cleaned'
+            require(state['phase'] == expected_phase, 'Previous complete checkpoint lost')
+            require(report['containerRemoved'] == (not deferred and not uncertain), 'Cleanup incorrectly claimed')
             require(report['reportPersisted'] == (stage != 'report'), 'Report persistence incorrectly claimed')
             require((checkpoint.parent / 'report.json').exists() == (stage != 'report'), 'Partial report published')
             require(not list(checkpoint.parent.glob('.checkpoint-*'))
@@ -698,6 +756,8 @@ def verify_evidence_failures(args):
                 require((checkpoint.parent / 'password').is_file(), 'Credentials lost before verified cleanup')
             if stage == 'report':
                 require(report['reportFailure'] == 'REPORT_WRITE_FAILED' and report['manualReviewRequired'], 'Missing report failure diagnosis')
+            if stage == 'after-report':
+                require(report['reportFailure'] == 'REPORT_FINALIZATION_FAILED' and report['manualReviewRequired'], 'Missing post-publication diagnosis')
             for attempt in range(2):
                 recovered = subprocess.run(prefix + ['--recover-owned-test', str(checkpoint)] + common,
                                            capture_output=True, text=True, timeout=40, check=True)
@@ -716,6 +776,7 @@ def verify_evidence_failures(args):
             require(all(not (checkpoint.parent / name).exists() for name in ('password', 'pgpass', 'services')), 'Evidence credential remains')
             cases.append({'stage': stage, 'childExitCode': 1, 'cleanupInitiallyDeferred': deferred,
                           'reportInitiallyPersisted': report['reportPersisted'], 'freshRecoveryVerified': True,
+                          'initialCheckpointPhase': state['phase'],
                           'repeatedRecoveryVerified': True, 'finalCleanupVerified': True})
         finally:
             if child.poll() is None:
@@ -746,24 +807,28 @@ def main():
     mode.add_argument('--probe-expiry-after-lock', action='store_true', help='Strict isolated diagnostic of expiration after table-lock waiting')
     mode.add_argument('--verify-sigterm', action='store_true', help='Create an owned child and independently verify its SIGTERM cleanup')
     mode.add_argument('--verify-hard-kill', action='store_true', help='Kill only the owned child, recover in a new process and repeat safely')
+    mode.add_argument('--verify-concurrent-recovery', action='store_true', help='Verify active-owner and competing recovery exclusion')
     mode.add_argument('--recover-owned-test', metavar='CHECKPOINT', help='Explicit recovery after independent live ownership/storage verification')
+    mode.add_argument('--probe-recovery-contention', metavar='CHECKPOINT', help='Controlled recovery holder with a bounded private gate')
     mode.add_argument('--probe-startup-failure', choices=['prepared', 'receipt', 'start', 'readiness'], help='Controlled fault in the owned disposable server startup')
     mode.add_argument('--verify-startup-failures', action='store_true', help='Verify four controlled startup faults and their cleanup')
-    mode.add_argument('--probe-evidence-failure', choices=['checkpoint-created', 'checkpoint-cleaning', 'report'], help='Controlled private evidence publication fault')
+    mode.add_argument('--probe-evidence-failure', choices=['checkpoint-created', 'checkpoint-cleaning', 'report', 'after-remove', 'after-checkpoint', 'after-report'], help='Controlled private evidence publication fault')
     mode.add_argument('--verify-evidence-failures', action='store_true', help='Verify controlled evidence I/O faults and fresh recovery')
     args = parser.parse_args()
     if args.verify_sigterm:
         return verify_sigterm(args)
     if args.verify_hard_kill:
         return verify_sigterm(args, hard_kill=True)
-    if args.recover_owned_test:
+    if args.verify_concurrent_recovery:
+        return verify_sigterm(args, hard_kill=True, concurrent=True)
+    if args.recover_owned_test or args.probe_recovery_contention:
         try:
-            report = recover_checkpoint(args, args.recover_owned_test, SyntheticServer, IMAGE, confirmed_absence)
+            report = recover_checkpoint(args, args.recover_owned_test or args.probe_recovery_contention, SyntheticServer, IMAGE, confirmed_absence)
         except Exception as error:
             report = {'mode': 'owned_synthetic_test_recovery', 'successful': False, 'testSuiteSuccessful': False,
-                      'failureCategory': 'RECOVERY_FAILED', 'recoveryErrorCategory': type(error).__name__,
+                      'failureCategory': 'RECOVERY_BUSY' if isinstance(error, RecoveryBusy) else 'RECOVERY_FAILED', 'recoveryErrorCategory': type(error).__name__,
                       'containerRemoved': False, 'anonymousVolumesRemoved': False, 'reportPersisted': False,
-                      'manualReviewRequired': True, 'cutoverReady': False, 'liveImportRun': False}
+                      'manualReviewRequired': not isinstance(error, RecoveryBusy), 'cutoverReady': False, 'liveImportRun': False}
         print(json.dumps(report), flush=True)
         return 0 if report['successful'] else 1
     if args.verify_startup_failures:
@@ -782,6 +847,20 @@ def main():
                   'cutoverReady': False, 'liveImportRun': False}
         print(json.dumps(report), flush=True)
         return 1
+    try:
+        return run_owned(args)
+    finally:
+        release_lease(RUN)
+
+
+def release_lease(server):
+    lease = getattr(server, 'lease', None)
+    if lease is not None:
+        server.lease = None
+        lease.__exit__(None, None, None)
+
+
+def run_owned(args):
     result = None
     removed = False
     interrupted = None
@@ -811,6 +890,7 @@ def main():
             if started:
                 removed = RUN.cleanup()
             else:
+                release_lease(RUN)
                 cleanup_receipt = recover_checkpoint(args, RUN.folder / 'checkpoint.json', SyntheticServer, IMAGE, confirmed_absence)
                 removed = cleanup_receipt['containerRemoved']
         except Exception as error:
