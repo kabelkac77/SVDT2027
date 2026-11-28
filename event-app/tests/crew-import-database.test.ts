@@ -156,6 +156,56 @@ async function sourceFixture() {
     { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] },
   );
 }
+async function privateExport(db: PGlite, requestId: string | null = null) {
+  const context = (
+    await db.query<any>("select current_database() db,current_user db_user")
+  ).rows[0];
+  const tools = fileURLToPath(new URL("../tools/", import.meta.url));
+  const options = {
+    edition_id: e1,
+    database: context.db,
+    database_user: context.db_user,
+    request_id: requestId,
+    request_actor_id: requestId === null ? null : admin,
+  };
+  const sql = execFileSync(
+    "python3",
+    [
+      "-I",
+      "-c",
+      "import sys,json;sys.path.insert(0,sys.argv[1]);from crew_import_export import build_export_sql;print(build_export_sql(**json.load(sys.stdin)))",
+      tools,
+    ],
+    {
+      input: JSON.stringify(options),
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+    },
+  );
+  const statements = await db.exec(sql);
+  const raw = statements
+    .flatMap((statement: any) => statement.rows)
+    .find(
+      (row: any) => typeof row.export_document === "string",
+    )?.export_document;
+  assert.equal(typeof raw, "string");
+  return JSON.parse(
+    execFileSync(
+      "python3",
+      [
+        "-I",
+        "-c",
+        "import sys,json;sys.path.insert(0,sys.argv[1]);from crew_import_export import validate_export;d=json.load(sys.stdin);print(json.dumps(validate_export(d['raw'].encode(),**d['options'])))",
+        tools,
+      ],
+      {
+        input: JSON.stringify({ raw, options }),
+        encoding: "utf8",
+        stdio: ["pipe", "pipe", "pipe"],
+      },
+    ),
+  );
+}
 async function planFor(db: PGlite, source: string) {
   const target = (
     await db.query<any>("select crew_import_target_preview($1) data", [e1])
@@ -602,10 +652,9 @@ test("Python plan builder uses the exact server fingerprint and imports only syn
   const db = await setup();
   try {
     await owner(db);
-    const source = await sourceFixture(),
-      target = (
-        await db.query<any>("select crew_import_target_preview($1) data", [e1])
-      ).rows[0].data;
+    const source = await sourceFixture();
+    const beforeExport = await privateExport(db);
+    const target = beforeExport.target;
     const mapping = {
       editionId: e1,
       categories: { cat1: { id: uid(501), action: "create" } },
@@ -676,20 +725,17 @@ test("Python plan builder uses the exact server fingerprint and imports only syn
     // The existing preview omits source_history_id. Do not fill that missing
     // evidence from our input plan: the checker must reject the partial export.
     assert.throws(() => verify(t, source), /CREW_IMPORT_VERIFY_FAILED/);
-    // An operator's complete private export reads link metadata in the same
-    // statement snapshot. Keep the PostgreSQL fingerprint exactly as supplied.
-    const complete = (
-      await db.query<any>(
-        "select crew_import_target_preview($1) || jsonb_build_object('sourceLinks',coalesce((select jsonb_agg(to_jsonb(l) order by l.package_id,l.source_row_id) from crew_transfer_links l where l.edition_id=$1),'[]'::jsonb)) data",
-        [e1],
-      )
-    ).rows[0].data;
-    const stored = (
-      await db.query<any>(
-        "select source_text from crew_transfer_packages where id=$1 and edition_id=$2",
-        [receipt.packageId, e1],
-      )
-    ).rows[0].source_text;
+    // The actual exporter reads all metadata and readback in one read-only
+    // repeatable-read transaction, without changing the server fingerprint.
+    const afterExport = await privateExport(db, receipt.requestId);
+    const complete = afterExport.target;
+    const stored = afterExport.storedSourceText;
+    assert.deepEqual(afterExport.receipt, receipt);
+    assert.equal(afterExport.planText, out.planText);
+    assert.equal(stored, source);
+    assert.equal(afterExport.transactionReadOnly, true);
+    assert.equal(afterExport.isolationLevel, "repeatable read");
+    assert.equal(complete.targetFingerprint, t.targetFingerprint);
     const checked = verify(complete, stored);
     assert.equal(checked.comparisonMatches, true);
     assert.equal(checked.authorityVerified, false);
@@ -698,8 +744,9 @@ test("Python plan builder uses the exact server fingerprint and imports only syn
     assert.deepEqual(checked.findings, []);
     assert.equal(checked.blockers.length, 3);
     const altered = structuredClone(complete);
-    altered.compensation.find((row: any) => row.roster_id === uid(601)).estimate =
-      0;
+    altered.compensation.find(
+      (row: any) => row.roster_id === uid(601),
+    ).estimate = 0;
     assert.equal(verify(altered, stored).comparisonMatches, false);
     const missingHistory = structuredClone(complete);
     missingHistory.sourceLinks[0].source_history_id = "h2";

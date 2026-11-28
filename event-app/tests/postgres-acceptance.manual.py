@@ -23,6 +23,8 @@ APP = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(APP / 'tests'), str(APP / 'tools')]
 from crew_import_preview_test import fixture, encode
 from crew_import_plan import build_import_plan
+from crew_import_export import collect_export
+from crew_import_verify import verify_import
 from postgres_test_recovery import recover_checkpoint, read_checkpoint, persist_report, operation_lock, RecoveryBusy, PublicationError, recovery_pause, RECOVERY_STAGES, inventory_residues
 
 IMAGE = 'postgres@sha256:f1ea2a1a4fb7b68d4836be1fdcb8a6466a89b072158bf9d97663600538c294c5'
@@ -623,6 +625,43 @@ revoke all on function public.crew_import_source(text) from public,anon,authenti
         self.assertIn('CREW_IMPORT_APPROVAL_EXPIRED', failed.stderr)
         self.assertEqual(self.snapshot(self.db), before)
 
+    def probe_private_export_is_read_only_and_complete(self):
+        # Only our newly-created local fixture service; no operator/live config.
+        service = RUN.folder / 'export-service'
+        RUN.private_write(service, RUN.service_file.read_text().replace('dbname=postgres', 'dbname=' + self.db)
+                          + 'options=-c request.jwt.claim.sub=' + uid(1) + '\n')
+        options = dict(edition_id=uid(101), database=self.db, database_user=OWNER,
+                       service='synthetic', service_file=str(service), pass_file=str(RUN.pass_file),
+                       psql=str(Path(RUN.args.pg_bin) / 'psql'), output_parent=str(RUN.folder / 'private-exports'))
+        try:
+            initial = self.snapshot(self.db)
+            before_saved = collect_export(**options)
+            before = json.loads(Path(before_saved['path']).read_bytes())
+            self.assertEqual(self.snapshot(self.db), initial)
+            receipt = RUN.value(self.db, self.actor(client=True) + self.apply_sql())
+            committed = self.snapshot(self.db)
+            after_saved = collect_export(**options, request_id=self.request, request_actor_id=uid(1))
+            after = json.loads(Path(after_saved['path']).read_bytes())
+            self.assertEqual(self.snapshot(self.db), committed)
+            self.assertEqual(after['receipt'], receipt)
+            self.assertEqual(after['planText'], self.plan)
+            self.assertEqual(after['storedSourceText'].encode(), self.source.encode())
+            self.assertTrue(after['transactionReadOnly'])
+            self.assertEqual(after['isolationLevel'], 'repeatable read')
+            report = verify_import(self.source.encode(), after['planText'], before['target'],
+                                   after['target'], after['receipt'], after['storedSourceText'])
+            self.assertTrue(report['comparisonMatches'])
+            self.assertFalse(report['authorityVerified'])
+            self.assertFalse(report['applyReady'])
+            for saved in (before_saved, after_saved):
+                path = Path(saved['path'])
+                self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+                self.assertEqual(path.parent.stat().st_mode & 0o777, 0o700)
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), saved['sha256'])
+            RUN.private_export_verified = True
+        finally:
+            service.unlink()
+
 
 def verify_sigterm(args, hard_kill=False, concurrent=False):
     """Own child PID only; checkpoints are read as evidence, never deletion commands."""
@@ -1055,6 +1094,7 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('--probe-interruption', action='store_true', help='Only for the controlled signal probe; waits at most30 seconds')
     mode.add_argument('--probe-expiry-after-lock', action='store_true', help='Strict isolated diagnostic of expiration after table-lock waiting')
+    mode.add_argument('--probe-private-export', action='store_true', help='Read-only before/after export with our own fixture service and actual psql')
     mode.add_argument('--verify-sigterm', action='store_true', help='Create an owned child and independently verify its SIGTERM cleanup')
     mode.add_argument('--verify-hard-kill', action='store_true', help='Kill only the owned child, recover in a new process and repeat safely')
     mode.add_argument('--verify-concurrent-recovery', action='store_true', help='Verify active-owner and competing recovery exclusion')
@@ -1156,8 +1196,11 @@ def run_owned(args):
             time.sleep(30)
             raise RuntimeError('Interruption probe did not receive a signal')
         else:
-            suite = (unittest.TestSuite([PostgresAcceptance('probe_expiry_after_table_lock_must_deny_the_write')])
-                     if args.probe_expiry_after_lock else unittest.defaultTestLoader.loadTestsFromTestCase(PostgresAcceptance))
+            if getattr(args, 'probe_private_export', False):
+                suite = unittest.TestSuite([PostgresAcceptance('probe_private_export_is_read_only_and_complete')])
+            else:
+                suite = (unittest.TestSuite([PostgresAcceptance('probe_expiry_after_table_lock_must_deny_the_write')])
+                         if args.probe_expiry_after_lock else unittest.defaultTestLoader.loadTestsFromTestCase(PostgresAcceptance))
             result = unittest.TextTestRunner(verbosity=2).run(suite)
     except SyntheticInterrupted as error:
         interrupted = error.signum
@@ -1189,6 +1232,7 @@ def run_owned(args):
               'applicationRuntimeChanged': bool(getattr(RUN, 'expiry_guard_applied', False)),
               'expiryGuardMigrationApplied': bool(getattr(RUN, 'expiry_guard_applied', False)),
               'expiryGuardIdentityAndAclPreserved': bool(getattr(RUN, 'expiry_guard_identity_preserved', False)),
+              'privateExportVerified': bool(getattr(RUN, 'private_export_verified', False)),
               'realSourceOpened': False, 'liveImportRun': False,
               'liveAuthProviderVerified': False, 'storageBytesRestored': False, 'offsiteBackupActivated': False}
     path = RUN.folder / 'report.json'

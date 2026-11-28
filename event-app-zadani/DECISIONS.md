@@ -1,5 +1,13 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — soukromý export58 jako samostatný čtecí nástroj
+
+Exportér je operátorský CLI mimo browser, ne veřejný RPC nebo nové aplikační oprávnění. Explicitně vyžaduje vybranou databázi/DB uživatele/službu a po převodu dvojici requestId+requestActorId; tyto hodnoty pouze omezují čtení a nikdy nenastavují JWT/SET ROLE. Předem potvrzená admin session a privilegovaná čtecí služba se řeší později31/45. Samotný běžný authenticated nemá přímý přístup k request cache a nástroj tento zákaz nemění.
+
+Podklady včetně původního plánu/receipt/source a historických vazeb pocházejí z jednoho READ ONLY / REPEATABLE READ snapshotu. Serverový fingerprint se pouze přebírá, žádné odvozování historie z plánu. Výstup má authorityVerified/applyReady/cutoverReady:false i při úspěšném exportu. Není to vzdálená/úplná záloha ani povolení převodu.
+
+Artefakty jsou plaintext pouze v ignorované .local pod0700/0600, bez automatického přepsání/mazání. Chyba po publikaci může zachovat kompletní soubor, ale nehlásí úspěch; soukromé .partial zbytky nejsou hotový export. TLS/provozní přístup/retence/ruční kontrola a aktivace zůstávají na později, ne souhlas mlčením. Technická implementace a syntetické ověření neprokazují živé OAuth nebo autoritu serveru.
+
 ## 2026-11-28 — porovnání artefaktů39 a neúplný standardní export
 
 Čistý checker57 porovnává operátorem dodané artefakty, neprokazuje jejich serverovou autoritu nebo oprávnění. Při úplné shodě může comparisonMatches:true, ale authorityVerified/applyReady/cutoverReady vždy false a3 trvalé brány zůstávají. Report neobsahuje jména/kontakty/částky/rawsource, přesto patří mezi soukromé0600 artefakty kvůli ID. Čtení/zápis zajišťuje budoucí operátorský obal, samotný helper nemá I/O.

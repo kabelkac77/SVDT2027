@@ -1,5 +1,14 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — soukromý export dokončený58; další UI44
+
+- [x] Úplný read-only export pro39: source_history_id ze skutečných link metadat, metadata balíčků bez hromadného source_text, po konkrétním request/actor i původní plán/receipt/source bytes ve stejném konzistentním snapshotu. [58](58-CREW-SOUKROMY-EXPORT-A-OVERENI.md).
+- [x] Soukromý operátorský CLI s explicitním --collect, ověřením DB/uživatele/ročníku, bez impersonace/grantů/importu. Pinned config FD, omezené prostředí, .local/0700/0600, žádné přepisování, konstantní chyby a úklid vlastního procesu při timeoutu.
+- [x]19 exportních scénářů i pod Python -O,313 hostitelských,281 app/DB/typecheck/build. Skutečný psql/PG18.6 export před/po + checker1/1 a snapshot30 relací beze změny; PGlite generovaný SQL prošel,8 migrací neměněno. [Evidence](crew-private-export-verification.json).
+- [ ] **Další neblokovaná práce:44 inline historie a12 browser scénářů**, potom společná uživatelská kontrola. Další funkční moduly dle priorit níže.
+- [ ]31/45 později: review55–58, potvrdit projekt/službu/DB/uživatele/TLS a předem ověřenou admin session/privilegovaná čtecí oprávnění, postup pro soukromé exporty. Standardní authenticated nemá SELECT request cache, nic se mu automaticky neuděluje.
+- [ ] Později živé OAuth/Storage/provider/úplná vzdálená záloha/klíč/obnova/aplikovaná8. migrace/browser/aktivace. Případné soukromé neúplné exporty ručně posoudit, žádné automatické mazání;4 temporaries54 zachované. Bez dotazů nyní a bez skutečného importu.
+
 ## 2026-11-28 — checker39 dokončený57; další úplný export a UI44
 
 - [x] Čistý verify_import podle39: reuse parser43, přesné hashe/receipt, before/after, identity/NULL0, celá sada řádků a provenance bez mutací/I/O. Shoda není autorita/aktivace. [57](57-CREW-KONTROLA-PREVODU-A-OVERENI.md).
