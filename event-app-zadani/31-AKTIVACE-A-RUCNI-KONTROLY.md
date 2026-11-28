@@ -1,5 +1,12 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — historie44 implementovaná, živé účty a UX nadále otevřené
+
+- [x]59: historie přímo pod uloženým člověkem/skupinou, typovaný adapter a scope/generace;293 app/DB/typecheck/build,12 nových unit/adapter/SSR a12 syntetických browser HUI01–12 prošly. Soukromé náhledy desktop/mobil pouze s fiktivními údaji.
+- [ ] Později společně potvrdit UI texty/umístění, čitelnost původních sloupců a desktop/mobil průchod. Formulář/zápisová pravidla se nemění, historie nic automaticky nepřebírá.
+- [ ] V potvrzeném projektu se skutečnými oddělenými účty provést živé HUI01–12/JWT/RLS, odebrání role při dalším volání a archiv. Browser mock i PGlite Auth jsou pouze syntetické důkazy. Ujasnit pravidlo průběžné reautorizace dlouho otevřené historie; okamžitá vzdálená revokace se neslibuje.
+- [ ] Nadále review Draft55–59, skutečné cílové přístupy/privátní exporty/TLS/OAuth/Storage/provider, aplikovaná8. migrace, úplná vzdálená záloha/klíč/obnova a výslovná aktivace. Bez dotazů nyní, bez skutečného importu;4 temporaries54 se nemažou.
+
 ## 2026-11-28 — soukromý export implementovaný58, živé použití odložené
 
 - [x]58: úplný operátorský čtecí export,19 nových/313 hostitelských,281 app/DB/typecheck/build; skutečný izolovaný PostgreSQL/psql export před/po a checker1/1,30 relací čtením nezměněno, kontejner/volumes/jednorázové přístupy uklizené.

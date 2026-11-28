@@ -14,6 +14,7 @@ import {
   type CrewWriteKind,
 } from "../lib/crew-model";
 import { CrewEntryEditor, CrewCompensationForm } from "./crew-forms";
+import { CrewHistoryPanel } from "./crew-history-panel";
 
 export type CrewRosterProps = {
   edition: Edition;
@@ -212,6 +213,9 @@ export function CrewRosterView(props: CrewRosterProps) {
             <p>Nejdřív ulož záznam.</p>
           )
         ) : null}
+        {data.role === "admin" && edition.year === 2027 && entry.id && scope.entries.some(saved => saved.id === entry.id) && (
+          <CrewHistoryPanel key={`${userId}:${edition.id}:${entry.id}`} editionId={edition.id} rosterId={entry.id} />
+        )}
       </div>
     );
   }

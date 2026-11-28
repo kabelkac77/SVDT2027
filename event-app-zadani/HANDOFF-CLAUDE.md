@@ -1,5 +1,15 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## 2026-11-28 — historie crew pod řádkem implementovaná59
+
+Dokončená44: správce uloženého člověka/skupiny v2027 rozbalí „Původ a historie“ přímo v detailu pod stejným řádkem. Nejprve jen metadata, původní obsah až po explicitním zdroji; žádný prefetch, zápis nebo převzetí údajů. Zachované původní sloupce, přesný content text, NULL/0/false/prázdný řetězec a rozdíl mezi původním2027/navázaným2026. Jiný ročník/demo/nesprávce/neuložený řádek historii neodemkne.
+
+Typovaný adapter váže odpověď na přesný ročník/roster/package i zdrojová metadata. Abort i nezávislá generace chrání před pozdní odpovědí; zavření/změna účtu či kontextu/unmount vyčistí obsah. Denial včetně nestrukturovaného HTTP403 vymaže metadata i detail; error není prázdná historie a nic nepřepíná do dema. Žádné ukládání historických podkladů do storage/URL/logů, žádné vykonávání HTML nebo instrukcí.
+
+**Prošlo293 app/DB včetně12 nových unit/adapter/SSR kontrol,12 syntetických browser scénářů HUI01–12, typecheck/build a vizuální desktop/mobil kontrola.** Browser ověřil i nezrušitelnou starou odpověď, změnu účtu mezi okny, úzký mobil a rozepsaný formulář bez jediného write. CI nově zahrnuje12 history browser scénářů na fiktivních datech s WhatsApp vypnutým. [59](59-CREW-HISTORIE-POD-RADKEM-A-OVERENI.md), [evidence](crew-inline-history-verification.json).8 migračních SHA nezměněno. Python313 a skutečný PG export/RX01/obnova jsou baseline58/55, ne nové běhy tohoto UI bloku.
+
+Živé HUI účty/JWT/RLS v potvrzeném projektu stále **NEPROVEDENO**, zůstávají31/45; syntetický browser není živé přihlášení nebo aktivace. Texty/umístění a společný desktop/mobil průchod na později bez dotazů, stejně dlouho otevřená obrazovka/reautorizace, skutečné OAuth/Storage/backup/obnova/aplikovaná8. migrace a výslovný importní krok. Další neblokovaná práce: syntetická browser akceptace existujících provozních modulů30 (Moje služba/úkoly/harmonogram/registrace/zóny), bez vymýšlení nových pravidel. Žádné skutečné podklady/import/DDL/grant/deploy/merge nebo Claude.
+
 ## 2026-11-28 — úplný soukromý export připravený58
 
 Přímo Codexem dokončený operátorský exportér `crew_import_export.py`: předchozí stav nebo stav po explicitním requestId+actorId. V jedné READ ONLY / REPEATABLE READ transakci čte úplné link/package metadata včetně source_history_id a po převodu také skutečný uložený plán, receipt a přesný source_text. Původní serverový fingerprint nepřepočítává. Žádné SET ROLE/JWT/granty/importní RPC; připojení musí mít předem samostatně potvrzenou identitu a čtecí oprávnění.

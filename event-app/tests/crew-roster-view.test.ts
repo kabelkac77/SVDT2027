@@ -83,6 +83,42 @@ function base() {
 function render(props: any) {
   return renderToStaticMarkup(createElement(CrewRosterView, props));
 }
+
+test("history is a collapsed inline option only for a saved admin record", () => {
+  const props = base();
+  props.draft = own;
+  props.anchorCategoryId = category.id;
+  assert.match(render(props), /Původ a historie/);
+  assert.doesNotMatch(
+    render(props),
+    /Načítám seznam podkladů|Zobrazit podklad 1/,
+  );
+  props.draft = { ...own, id: "new-unsaved" };
+  assert.doesNotMatch(render(props), /Původ a historie/);
+});
+
+test("a financial grant or another year never unlocks private history", () => {
+  const props = base();
+  props.draft = own;
+  props.anchorCategoryId = category.id;
+  props.data.role = "coordinator";
+  assert.doesNotMatch(render(props), /Původ a historie/);
+  props.data.role = "admin";
+  props.edition = { ...edition, year: 2028 };
+  assert.doesNotMatch(render(props), /Původ a historie/);
+});
+
+test("admin history remains available in a read-only2027 archive without original payloads", () => {
+  const props = base();
+  props.draft = own;
+  props.anchorCategoryId = category.id;
+  props.edition = { ...edition, archived: true };
+  assert.match(render(props), /Původ a historie/);
+  assert.doesNotMatch(
+    render(props),
+    /Původní pracovní záznam 2027|Navázaná historie 2026/,
+  );
+});
 function noFinance(data: any) {
   Object.defineProperty(data, "compensation", {
     get() {

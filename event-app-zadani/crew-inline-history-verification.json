@@ -1,0 +1,118 @@
+{
+  "date": "2026-11-28",
+  "baseHead": "585a3f7b7ec76ba95bebe2c673d0145f65ed3ab2",
+  "implementationBy": "Codex directly",
+  "scope": "44 inline shared crew history using40 read RPC; no schema/grants/import",
+  "inlineHistoryImplemented": true,
+  "typedReadAdapterImplemented": true,
+  "sharedAdminSaved2027Only": true,
+  "explicitSourceSelectionRequired": true,
+  "originalTextAndUnknownColumnsPreserved": true,
+  "noHistoryPersistenceOrWrites": true,
+  "generationGuardVerifiedWithUncancellableTransport": true,
+  "identityChangeAcrossWindowsVerified": true,
+  "denialClearsIndexAndDetail": true,
+  "mobileDirtyDraftAndFocusVerified": true,
+  "historyMarkerAbsentFromBrowserStoresUrlAndConsole": true,
+  "newUnitAdapterSsrTestsPassed": 12,
+  "appDatabaseTestsPassed": 293,
+  "historyDbTestsIncluded": 13,
+  "typecheckPassed": true,
+  "buildPassed": true,
+  "syntheticBrowserTestsPassed": 12,
+  "browser": "local Chrome",
+  "desktopMobileVisualReviewCompleted": true,
+  "finalVisualScenariosRechecked": 2,
+  "ciHistoryBrowserConfigured": true,
+  "ciHistoryBrowserWhatsAppEnabled": false,
+  "browserCases": {
+    "HUI01": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI02": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI03": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI04": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI05": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI06": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI07": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI08": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI09": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI10": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI11": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    },
+    "HUI12": {
+      "syntheticBrowser": "passed",
+      "liveAccounts": "not_run"
+    }
+  },
+  "liveHuiScenariosVerified": false,
+  "liveJwtOrOauthVerified": false,
+  "liveAuthorityVerified": false,
+  "finalUxApprovedByUser": false,
+  "longOpenHistoryReauthorizationPolicyApproved": false,
+  "realSourceOpened": false,
+  "liveImportRun": false,
+  "liveDdlOrGrantsRun": false,
+  "liveDeploymentRun": false,
+  "offsiteBackupActivated": false,
+  "nativeAuthOrUsageChecked": false,
+  "nativeModelCalled": false,
+  "databaseRuntimeChanged": false,
+  "migrationCount": 8,
+  "migrationHashesUnchanged": true,
+  "migrationSha256": {
+    "202609290001_partner_history.sql": "26ffb68380b8d4cbc22fdfc2d4a8b5497a6c69acab69001548f42a27b15e9e18",
+    "202611020002_operations.sql": "8b73cac12d98faf8f4d3a97be3cebe7d9bfd3c62b93a8ede03f043428edf7d46",
+    "202611050002_crew_import.sql": "3193d56460ada463e7a888a3c2401e99d4f924909de6776392eb2c27d9dbc47c",
+    "202609280001_partners.sql": "81a9398c6732da3fb47d0b46601d315891c42861b22e3447d55172a6c1e97b22",
+    "202611050001_crew_transfer.sql": "3f34d5f5e7bb755843109b64bdb75eec678633b4a5a2ada39e569c90ee715a71",
+    "202611280001_crew_import_expiry_guard.sql": "213bb60170d4f1edb6aaddc637594c3491245a27948894e56af8cc407c2316b4",
+    "202611120001_crew_history.sql": "f6fa021e20d3eb63e3498666befc895981d32df5e83f51c2b9fa357567a91238",
+    "202611020001_crew.sql": "c71f68b0bdb2af14839bf82922c92cecc6cbff687353a1ffed44513c41b3770c"
+  },
+  "pythonAndRealPostgresEvidenceIsBaselineOnly": true,
+  "fileSha256": {
+    "event-app/src/lib/crew-history.ts": "e31e8b2d9103c29cac465dc6c287fbe066451644ade00cb61e818f78a7ebc33f",
+    "event-app/src/lib/crew-backend.ts": "bcaacf151c6a451db590b2324cbf7df8b803fe7448b4ea7e30c4fb6c08c74de6",
+    "event-app/src/components/crew-history-panel.tsx": "5ff674e5db9bbb36ad74cea91572f4069d11b30abc64cee2e8c0063ad7f2e7ce",
+    "event-app/src/components/crew-roster-view.tsx": "ee2be370822c815725f5f1e65cdc3093399a763d2f49dcc30951bfd7972d04e0",
+    "event-app/src/app/crew.css": "e97f2b970f9e652e345d793dec51e7eaefe17795d93f570868d0d69e69d118e2",
+    "event-app/tests/crew-history.test.ts": "c78490375a3a510ba6a6e3c2dd26396cd7a940ea8f36bb74d8f4653c221dd5f0",
+    "event-app/tests/crew-history-backend.test.ts": "726da73136b38d9799cd5b616d52300d17c9c1a9defed6f4f8ea41b120a67f2c",
+    "event-app/tests/crew-roster-view.test.ts": "d87f68578e60b7587214d2f3c806f7af9e9952c1a5ce75f24f609387a62d61fc",
+    "event-app/tests/browser/crew-history.spec.ts": "66d2d4dd5e5dded6fd7a42b4d20833f1ddcd57c758876d25f774aac0236ecaa1",
+    "event-app/playwright.crew-history.config.ts": "34b2b2449f5764977e0db57387d91831457ab9f605084b6d13db8bc09cb751ca",
+    ".github/workflows/svdt-app.yml": "9a92c31d1166f2d8f0a998dcdcf17ada1eccf016e6f948d4410f227257414edf"
+  },
+  "nextUnblockedWork": "synthetic browser acceptance of existing operational modules30;31/45 live accounts and UX later"
+}
