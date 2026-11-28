@@ -6,6 +6,8 @@ Fake Storage SDK a remote adapter neprokazují živé oprávnění, cloudovou ko
 
 ## Crew kontrola převodu
 
-`crew_import_verify_test.py.pending`:26 připravených scénářů celého checkeru39. Modul crew_import_verify.py chybí; scénáře nejsou spuštěné, syntaxe není úspěšný test. Po implementaci je přesunout do tests/. Používají jen syntetické podklady.
+Checker39/57 je od2026-11-28 implementovaný přímo Codexem. Původní `crew_import_verify_test.py.pending` byl přesunut byte-for-byte do `tests/crew_import_verify_test.py`:26 skutečně prošlých scénářů. Dalších9 hraničních scénářů v `tests/crew_import_verify_edges_test.py` také prošlo. Propojení s PGlite importerem/readbackem ověřené na syntetických datech. Žádné parser/checker pending testy nezbývají; report neověřuje živou autoritu/aktivaci. Úplný provozní export je samostatný backlog, standardní snapshot bez source_history_id nestačí.
 
-Parser43/56 je od2026-11-28 implementovaný přímo Codexem. Původní `crew_import_verify_plan_test.py.pending` byl přesunut byte-for-byte do `tests/crew_import_verify_plan_test.py`:18 skutečně prošlých scénářů. Dalších7 v `tests/crew_import_verify_plan_edges_test.py`; všech25 prošlo také pod Python -O a je součástí259 prošlých hostitelských kontrol. Parser nepotvrzuje autoritu/exporty ani výsledek skutečného převodu. Viz event-app-zadani/56-CREW-PARSER-PLANU-A-OVERENI.md.
+Parser43/56 je od2026-11-28 implementovaný přímo Codexem. Původní `crew_import_verify_plan_test.py.pending` byl přesunut byte-for-byte do `tests/crew_import_verify_plan_test.py`:18 skutečně prošlých scénářů. Dalších7 v `tests/crew_import_verify_plan_edges_test.py`; všech25 prošlo také pod Python -O a je součástí běžné hostitelské sady (aktuálně294 prošlých). Parser nepotvrzuje autoritu/exporty ani výsledek skutečného převodu. Viz event-app-zadani/56-CREW-PARSER-PLANU-A-OVERENI.md.
+
+Souhrn57:35 checkerových+25 parserových kontrol, všech60 prošlo i pod Python -O. Viz event-app-zadani/57-CREW-KONTROLA-PREVODU-A-OVERENI.md.

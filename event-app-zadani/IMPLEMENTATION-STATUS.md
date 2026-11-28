@@ -1,5 +1,13 @@
 # Stav implementace
 
+## 2026-11-28 — kontrola převodu crew implementovaná57
+
+Přímo Codexem dokončený čistý `verify_import` podle39 s parserem43. Porovnává přesný zdroj a plan hash, potvrzení importu, předchozí/následný stav lidí/odměn a původních vazeb, včetně nezměněnosti ostatních řádků a metadat. Výsledek obsahuje jen ID/názvy odlišných polí a trvalé ruční brány; **comparisonMatches nikdy neznamená authorityVerified/applyReady/cutoverReady**.
+
+Původních26 pending scénářů přesunuto beze změny a skutečně prošlo, dalších9 hraničních také. Celkem294 hostitelských testů,60 kontrol parseru/checkeru i při Python -O,281 app/DB, typecheck a build prošly. Propojený test používá skutečný syntetický PGlite import, serverový receipt/otisk a byte-for-byte readback uloženého zdroje; zachytí rozdíly NULL/0/historie i změnu bytes. [57](57-CREW-KONTROLA-PREVODU-A-OVERENI.md), [evidence](crew-verify-import-verification.json). Všech8 migrací beze změny, samostatný skutečný PG/RX01 je baseline55, ne nový běh.
+
+**Nově doložená mez exportu:** běžný crew_import_target_preview neobsahuje source_history_id a checker jej správně odmítne. Zkušební úplný export čte skutečné link metadata v jednom SQL snapshotu; nedoplňuje je z plánu a serverový otisk nepřepočítává. Samostatný provozní exportér je další technický backlog, nikoli hotová živá integrace. Potom44 inline historie a společná uživatelská kontrola. Přístupy/OAuth/Storage/úplná vzdálená obnova a aktivace nadále později31/45, bez dotazů. Žádný skutečný import/DDL/grant/deploy/merge, Claude nepoužitý.
+
 ## 2026-11-28 — parser přesného plánu dokončený56
 
 Přímo Codexem dokončený [parser43](43-CREW-KONTROLA-VALIDACE-PLANU.md): čistá funkce parse_import_plan načte přesný plán, zkontroluje vazbu na zdroj, úplnost mapování, verze a identity. Žádné I/O, nové účty, odvozování ID nebo změny dat. Odmítá duplicity, neplatné Unicode/JSON/typy a neplatné rozsahy s jedinou konstantní chybou bez hodnot zdroje.

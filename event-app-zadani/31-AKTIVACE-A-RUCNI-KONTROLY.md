@@ -1,5 +1,11 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — checker39 ověřený synteticky, úplný export ještě samostatně
+
+- [x]57: čisté porovnání podle39,26 původních+9 nových scénářů,294 hostitelských/60 optimalizovaných,281 app/DB a typecheck/build prošly; ověřený skutečný zkušební import/readback v PGlite.
+- [ ] Připravit samostatný úplný soukromý exportér. Běžný RPC snapshot neobsahuje source_history_id, checker ho správně odmítá; testovací obohacený SQL snapshot neprokazuje hotovou provozní sběrnici. Výstupy/checker report ukládat0600, ne do browseru nebo logů.
+- [ ] Později projít Draft změny55–57, kompletní export/readback proti potvrzenému projektu a živé45 důkazy. Shoda dodaných souborů neprokazuje Auth/scopes, autoritu, použití8. migrace, vzdálenou zálohu/klíč/obnovu nebo povolení převodu. Aktivace a skutečný import zůstávají zakázané bez výslovného kroku; bez dotazů nyní.
+
 ## 2026-11-28 — parser43 ověřený, provozní kontrola nadále otevřená
 
 - [x] Parser56:18 původních a7 hraničních scénářů skutečně prošlo,259 hostitelských a25 optimalizovaných. Pouze syntetické podklady, žádná změna skutečné evidence.

@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — porovnání artefaktů39 a neúplný standardní export
+
+Čistý checker57 porovnává operátorem dodané artefakty, neprokazuje jejich serverovou autoritu nebo oprávnění. Při úplné shodě může comparisonMatches:true, ale authorityVerified/applyReady/cutoverReady vždy false a3 trvalé brány zůstávají. Report neobsahuje jména/kontakty/částky/rawsource, přesto patří mezi soukromé0600 artefakty kvůli ID. Čtení/zápis zajišťuje budoucí operátorský obal, samotný helper nemá I/O.
+
+Zkušební propojení prokázalo, že standardní crew_import_target_preview nevydává source_history_id. Chybějící pole se nedoplňuje z původního plánu ani zdroje a neinterpretuje jako NULL; checker export odmítne. Provozní exportér je samostatný navazující technický krok, bez rozšíření oprávnění nebo přepisování8 migrací v tomto bloku. Test použil skutečná metadata ze stejného statement snapshotu a původní serverový fingerprint, žádný Python přepočet.26 původních scénářů již skutečně prošlo; označení pending platí jen historicky. Žádný nový produktový/aktivační souhlas.
+
 ## 2026-11-28 — čistý parser43 není povolení importu
 
 Parser56 plní pouze strukturální část39. Přijímá přesně předepsaná pole, vazbu na sourceSha256 a úplnost zdrojových ID; targetFingerprint kontroluje pouze syntakticky, nic nepřepočítává nebo neověřuje na serveru. Identita zůstává explicitní; create nesmí vytvářet osobu nebo propojení účtu. Žádné nové produktové volby ani provozní souhlas nejsou odvozené z testů.
