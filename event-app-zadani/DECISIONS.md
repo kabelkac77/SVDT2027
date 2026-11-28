@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — čistý parser43 není povolení importu
+
+Parser56 plní pouze strukturální část39. Přijímá přesně předepsaná pole, vazbu na sourceSha256 a úplnost zdrojových ID; targetFingerprint kontroluje pouze syntakticky, nic nepřepočítává nebo neověřuje na serveru. Identita zůstává explicitní; create nesmí vytvářet osobu nebo propojení účtu. Žádné nové produktové volby ani provozní souhlas nejsou odvozené z testů.
+
+Původních18 akceptačních scénářů se přesunulo beze změny a prošlo, nikoli pouze syntaxe. Sedm dalších hranic a celá hostitelská regrese prošly.26 scénářů celého checkeru zůstává pending. Pokračování přímo Codexem39 →44; živá autorita, oprávnění a aktivace zůstávají samostatně31/45.
+
 ## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
 
 Oprava55 technicky zpřesňuje existující37/48, nepřidává nový finanční/kompetenční rozsah. Platnost schválení se znovu hodnotí serverovým clock_timestamp() bezprostředně před prvním novým zápisem po zámcích a validaci. Úspěšný identický replay už uložené odpovědi po expiraci zůstává povolený pouze při stále platné identitě/roli/revokačních pravidlech.

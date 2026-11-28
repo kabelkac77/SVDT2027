@@ -195,3 +195,8 @@ Uživatel výslovně určil implementaci přímo Codexem (22/AGENTS), bez čeká
 ### 2026-11-28 — opravená expirace po čekání a validaci
 
 [55](../event-app-zadani/55-CREW-OPRAVA-EXPIRACE-A-OVERENI.md):8. additive migrace doplňuje clock_timestamp() recheck bezprostředně před první INSERT v crew_import_apply, až po čekání a validaci zdroje. Stejný striktní RX01 nyní prošel1/1 s42501 a nezměněným30tabulkovým snapshotem; cache replay po expiraci zůstává.12 skutečných PG včetně dump/restore přesné opravené funkce,281 app/DB,35 cílených,234 hostitelských/70 optimalizovaných, typecheck/build prošly. Původních7 SHA a funkční owner/ACL/config zachované; inventář pinne8 souborů/autoApply:false. Technická oprava k review není živá aplikace8. migrace: před aktivací doložit tělo a ostatní31/45 brány, katalogová signatura nestačí. Další přímá práce Codex43/39/44,18+26 pending neprovedeno, žádný skutečný import nebo nasazení.
+
+
+### 2026-11-28 — čistý parser přesného importního plánu
+
+[56](../event-app-zadani/56-CREW-PARSER-PLANU-A-OVERENI.md): `tools/crew_import_verify_plan.py` poskytuje čisté `parse_import_plan(tables_bytes, plan_text)` → `(plan, preview)` bez I/O nebo změn argumentů. Hlídá přesný JSON/Unicode/16MiB, pokrytí zdroje, unikátní cíle a pravidla identity/verzí; každé odmítnutí má konstantní chybu bez podkladů. Původních18 scénářů přesunuto beze změny a prošlo,7 nových hranic (včetně10000 operací),259 hostitelských a25 parserových pod Python -O prošlo. CI obsahuje nové cesty. Celý checker39/receipt/before-after/provenance má26 pending scénářů a je další. Všech8 migrací beze změny, aktuální aplikační/PG výsledky jsou baseline55. Žádný skutečný import, nasazení nebo aktivace; targetFingerprint se pouze validuje formátem.

@@ -1,5 +1,9 @@
 # SVDT — Codex a místní Claude Code
 
+## 2026-11-28 — parser43 implementovaný přímo Codexem56
+
+Přímá implementace56 dokončuje pouze parser přesného plánu:18 původních a7 hraničních scénářů,259 hostitelských/25 optimalizovaných prošlo. Claude auth/model/usage se nespouští. Následuje39 checker (26 pending), potom44 UI historie; živé brány31/45 zůstávají otevřené bez dotazů. Starší nativní zadání níže jsou historická.
+
 ## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
 
 Přímo Codexem implementovaná oprava48/61 je ověřená v55; stejný striktní RX01 po nové8. migraci prošel. Oprava je připravená k review, ne sloučená nebo nasazená. Další přímé pořadí43 parser →39 checker →44 UI historie. Claude auth/model/usage ani přihlášení se nevyžaduje. Ochrana soukromých dat a živé brány31/45 nadále platí.

@@ -43,3 +43,8 @@ Nevyhodnocovat změny globálních Person/Auth/grantů jako ověřené — tyto 
 ## Stav pracovního bloku2026-11-12
 
 Nativní běh issue54 byl ukončen vlastní420s hranicí jako CLAUDE_TIMEOUT_NO_RETRY, bez použitelného návrhu a bez opakování/modelového fallbacku. Modul crew_import_verify.py NENÍ implementovaný. Nezávisle připravených26 scénářů je uložených jako `event-app/tests/pending/crew_import_verify_test.py.pending`; nejsou součástí spuštěných/prošlých testů. Propojení checkeru s PGlite zůstává budoucí práce. Čtecí rozhraní40 je samostatná dokončovaná část, nikoli náhrada nebo nepravdivé dokončení tohoto protokolu.
+
+
+## Návaznost po dokončení parseru — 2026-11-28
+
+Strukturální načtení plánu nyní poskytuje čistý `parse_import_plan` z43/56. Celý checker39 má tento helper znovu použít, bez kopírování validace. Implementace nyní přímo Codexem dle22/AGENTS, nativní požadavek v původním zadání je historický.26 scénářů celého checkeru zůstává pending; jejich syntaxe ani25 skutečně prošlých parserových kontrol nejsou důkazem celého checkeru nebo živé autority. Ostatní pravidla39 včetně přesného planSha256, before/after, receipt, provenance a permanentních bran zůstávají platná.

@@ -1,5 +1,11 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — parser43 ověřený, provozní kontrola nadále otevřená
+
+- [x] Parser56:18 původních a7 hraničních scénářů skutečně prošlo,259 hostitelských a25 optimalizovaných. Pouze syntetické podklady, žádná změna skutečné evidence.
+- [ ] Později projít společně Draft změny55/56 a následný celý checker39; parser neověřuje autoritu cílového otisku/exportů, receipt ani výsledek převodu.
+- [ ] Před převodem nadále živé důkazy45 (účty/scopes/OAuth/Storage/úplná vzdálená obnova/klíč/aplikovaná8. migrace/browser) a výslovné povolení importu. Žádná aktivace tímto blokem; přístupy a potvrzení odložené bez dotazů.
+
 ## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
 
 - [x] Technická oprava48/61 v55 implementovaná přímo Codexem a synteticky ověřená: RX01 prošel1/1,12 standardních PG včetně dump/restore,281 app/DB a234 hostitelských kontrol. Sedm původních migrací neměněno, nová8. autoApply:false.

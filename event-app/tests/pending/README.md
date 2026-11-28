@@ -6,7 +6,6 @@ Fake Storage SDK a remote adapter neprokazují živé oprávnění, cloudovou ko
 
 ## Crew kontrola převodu
 
-`crew_import_verify_test.py.pending`:26 dříve připravených scénářů celého checkeru39.
-`crew_import_verify_plan_test.py.pending`:18 scénářů samostatného parseru43 z27.11.2026.
+`crew_import_verify_test.py.pending`:26 připravených scénářů celého checkeru39. Modul crew_import_verify.py chybí; scénáře nejsou spuštěné, syntaxe není úspěšný test. Po implementaci je přesunout do tests/. Používají jen syntetické podklady.
 
-Oba moduly chybí. Testy jsou NEspuštěné; kontrola syntaxe není úspěšný test. Parserové scénáře vyžadují existující builder/preview fixture a po implementaci helperu se mají přesunout do `tests/crew_import_verify_plan_test.py` (import tools se vztahuje k této cílové cestě). Plný checker se obdobně přesune do tests/. Žádné skutečné podklady ani import se k jejich spuštění nepoužívají.
+Parser43/56 je od2026-11-28 implementovaný přímo Codexem. Původní `crew_import_verify_plan_test.py.pending` byl přesunut byte-for-byte do `tests/crew_import_verify_plan_test.py`:18 skutečně prošlých scénářů. Dalších7 v `tests/crew_import_verify_plan_edges_test.py`; všech25 prošlo také pod Python -O a je součástí259 prošlých hostitelských kontrol. Parser nepotvrzuje autoritu/exporty ani výsledek skutečného převodu. Viz event-app-zadani/56-CREW-PARSER-PLANU-A-OVERENI.md.

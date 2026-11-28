@@ -1,5 +1,13 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — parser plánu dokončený56; další checker39
+
+- [x] Přímá implementace43 Codexem: čistý parser přesných bytes/JSON, úplné mapování, canonical ID/hash, verze a identity bez I/O. [56](56-CREW-PARSER-PLANU-A-OVERENI.md).
+- [x] Původních18 pending scénářů přesunuto byte-for-byte a prošlo;7 nových hraničních kontrol.259 hostitelských/25 optimalizovaných parserových prošlo,8 SQL migrací beze změny. [Evidence](crew-verify-plan-verification.json).
+- [ ] **Další:39 kontrola receipt + before/after + provenance**, s využitím parseru43;26 připravených scénářů stále pending, propojení s importerem se nesmí vydávat za hotové.
+- [ ] Potom44 inline historie crew a její uživatelská kontrola. Ostatní moduly dle priorit (úkoly/harmonogram, registrace, zóny/mapa, mobilní provoz) zůstávají níže.
+- [ ] Později31/45: review Draft změn včetně55/56, skutečné účty/oprávnění/OAuth/Storage/provider, úplná vzdálená záloha/klíč/obnova a ruční aktivace. Čtyři syntetické temporaries z54 zůstávají evidované, nemažou se. Bez dotazů nyní; skutečný import zakázaný, Claude přihlášení není blokátor.
+
 ## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
 
 - [x] Přímá oprava48/issue61:8. additive migrace, původních7 SHA beze změny, recheck po všech čekáních/validaci před prvním INSERT. Signatura/owner/ACL/config a cache replay zachované.
