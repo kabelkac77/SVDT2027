@@ -1,5 +1,11 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## 2026-11-28 — poškozená evidence a chyby zápisu51
+
+[51](51-POSTGRES-POSKOZENA-EVIDENCE-A-CHYBY-ZAPISU.md): poškozený/cizí nebo ztracený checkpoint se během cleanup nepřepíše; zásah se zastaví před Docker příkazem. Jednorázové soubory se zveřejní celé až po fsync, bez nahrazení existující evidence. Chyba reportu vrací neúspěch i při ověřeném úklidu; reportPersisted a fakta úklidu jsou oddělená. Constructor/recovery CLI má bezpečnou chybovou odpověď bez raw výjimky.
+
+Prošlo13 nových unit případů, celkem203 hostitelských a39 bezpečnostních pod Python -O. Tři skutečné řízené I/O chyby, každá s novou a opakovanou recovery,10 standardních PG případů,4 startup chyby i SIGTERM/SIGKILL prošly. [Evidence](postgres-evidence-io-verification.json). **RX01 znovu selhal;48/issue61 dál blokuje aktivaci.** Runtime/kolektor/7 migrací beze změny;18+26 pending nespouštěno, native auth/model/usage nezkoušeno. Další neblokovaná práce: dvě současné recovery a chyby po zveřejnění/odstranění. Živé přístupy/power loss/obnova/aktivace zůstávají na později31/45, skutečný import zakázaný.
+
 ## 2026-11-28 — chyby startu a neúplné checkpointy50
 
 [50](50-POSTGRES-STARTUP-A-NEUPLNE-CHECKPOINTY.md): checkpoint v2 odlišuje prepared od creating před Docker create. Chybějící ID lze doplnit jen z nezávisle ověřeného vlastního živého kontejneru. Creating bez nalezeného kontejneru zastaví úklid a zachová checkpoint/přístupy; neplatné nebo napůl vyplněné stavy se odmítají. Úplné v1 zůstávají čitelné. Chyba startu vrací exit1 a není úspěšnou sadou ani při dokončeném úklidu.

@@ -1,5 +1,12 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — poškozená evidence a chyby zápisu51
+
+- [x] Dílčí důkaz51: poškozené checkpointy se neinterpretují ani nepřepisují při cleanup;203 hostitelských/39 optimalizovaných kontrol a3 skutečné řízené I/O chyby s novou/opakovanou recovery prošly.
+- [ ] Poškozenou/ztracenou evidenci, nejasné/orphan prostředky nebo neuložený report později bezpečně posoudit. Samotný existující report není důkaz dokončeného procesu; ověřit exit i výsledek úklidu. Žádný prune/automatická rekonstrukce z odhadu.
+- [ ] Power loss/disk full, pozdní I/O chyby a případný výpadek hostitele vyžadují dohodnuté prostředí; řízené chyby51 je nenahrazují.
+- [ ] Před aktivací stále opravit48/issue61 a projít živé brány45. RX01 selhává; přístupy a potvrzení zůstávají na později, skutečný import zakázaný. Zatím bez dotazů.
+
 ## 2026-11-28 — chyby startu a neúplné checkpointy50
 
 - [x] Dílčí start/recovery50:4 řízené skutečné chyby, ztracené ID ověřené z živých metadat, čtyři opakované recovery.190 hostitelských/26 optimalizovaných a10 standardních PG, SIGTERM/SIGKILL prošlo.

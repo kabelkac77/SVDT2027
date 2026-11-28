@@ -77,3 +77,7 @@ RP07–RP10 rozšiřují izolovaný důkaz o různé requesty, ztrátu klientsk�
 ## Dílčí důkaz chyb startu50 — 2026-11-28
 
 Čtyři skutečné řízené chyby startu a jejich opakovaná recovery v nových procesech prošly; v2 odlišuje prepared/creating a chybějící ID přebírá jen z ověřených živých metadat. Creating+absence či orphan se automaticky neuklízí. Jde pouze o testovací infrastrukturu. Živé stavy G03/G06, fyzický výpadek hostitele, provider/Auth/Storage/vzdálené zálohy a aktivační rozhodnutí zůstávají neprovedené. Striktní RX01 opět selhal,48/61 je stále blokátor. Viz [50](50-POSTGRES-STARTUP-A-NEUPLNE-CHECKPOINTY.md).
+
+## Dílčí důkaz ochrany evidence51 — 2026-11-28
+
+Poškozené/chybějící checkpointy a změna během inspekce zastaví testovací cleanup bez přepsání důkazů. Prošly3 skutečné řízené chyby publikace checkpointu/reportu a následná/opakovaná recovery;13 nových unit případů odlišuje ověřený úklid od neuloženého výsledku. Viz [51](51-POSTGRES-POSKOZENA-EVIDENCE-A-CHYBY-ZAPISU.md). Živé stavy G03/G06 ani souhlas s výpadkem hostitele/aktivací se nemění. Fyzický disk/power loss, provider/Auth/Storage/vzdálená obnova nejsou ověřené;48/61 zůstává blokátor.

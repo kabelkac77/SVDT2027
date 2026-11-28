@@ -82,11 +82,13 @@ class PostgresManualScopeTests(unittest.TestCase):
                     self.assertFalse(manual.confirmed_absence(SimpleNamespace(returncode=code, stderr=message), kind))
 
     def test_checkpoint_is_private_atomic_and_contains_no_credentials(self):
-        with tempfile.TemporaryDirectory() as folder:
+        with tempfile.TemporaryDirectory(prefix='postgres-synthetic-') as folder:
             server = object.__new__(manual.SyntheticServer)
             server.folder = Path(folder)
             server.token = 'a' * 32
             server.name = 'svdt-synthetic-' + server.token
+            server.container, server.volumes = None, []
+            server.checkpoint('prepared')
             server.container = 'b' * 64
             server.volumes = ['c' * 64]
             server.password = 'synthetic-secret-never-in-checkpoint'
@@ -137,6 +139,7 @@ class PostgresManualScopeTests(unittest.TestCase):
     def startup_main(self, recovery_result=None, recovery_error=None):
         server = SimpleNamespace(folder=Path('/synthetic'), volumes=[], start=Mock(side_effect=RuntimeError('synthetic startup')),
                                  cleanup=Mock(), private_write=Mock())
+        server.report_writer = server.private_write
         with patch.object(sys, 'argv', self.arguments()+['--run-synthetic', '--probe-startup-failure', 'receipt']), \
              patch.object(manual, 'SyntheticServer', return_value=server), \
              patch.object(manual, 'recover_checkpoint', return_value=recovery_result, side_effect=recovery_error), \
@@ -160,6 +163,160 @@ class PostgresManualScopeTests(unittest.TestCase):
         self.assertFalse(report['manualReviewRequired'])
         self.assertTrue(report['containerRemoved'])
         self.assertEqual(report['casesRun'], 0)
+
+    def evidence_server(self, folder):
+        server = object.__new__(manual.SyntheticServer)
+        server.folder, server.token = Path(folder), 'a' * 32
+        server.name = 'svdt-synthetic-' + server.token
+        server.container, server.volumes, server.children = None, [], []
+        server.checkpoint('prepared')
+        server.container, server.volumes = 'b' * 64, ['c' * 64]
+        server.checkpoint('created')
+        server.password_file, server.pass_file, server.service_file = [server.folder / n for n in ('password', 'pgpass', 'services')]
+        server.password_file.write_text('synthetic-only')
+        server.docker = Mock()
+        return server
+
+    def test_corrupt_or_foreign_checkpoint_cannot_be_overwritten_by_cleanup(self):
+        with tempfile.TemporaryDirectory(prefix='postgres-synthetic-') as folder:
+            server = self.evidence_server(folder)
+            path = server.folder / 'checkpoint.json'
+            foreign = json.loads(path.read_text())
+            foreign['token'] = 'd' * 32
+            foreign['name'] = 'svdt-synthetic-' + foreign['token']
+            for raw in [b'', b'{"version":2,', b'\xff', b'[]', json.dumps(foreign).encode()]:
+                with self.subTest(raw=raw):
+                    path.write_bytes(raw)
+                    with self.assertRaises(RuntimeError):
+                        server.cleanup()
+                    self.assertEqual(path.read_bytes(), raw)
+                    self.assertTrue(server.password_file.exists())
+                    server.docker.assert_not_called()
+
+    def test_missing_checkpoint_is_not_recreated_from_memory_during_cleanup(self):
+        with tempfile.TemporaryDirectory(prefix='postgres-synthetic-') as folder:
+            server = self.evidence_server(folder)
+            path = server.folder / 'checkpoint.json'
+            path.unlink()
+            with self.assertRaisesRegex(RuntimeError, 'Missing checkpoint'):
+                server.cleanup()
+            self.assertFalse(path.exists())
+            self.assertTrue(server.password_file.exists())
+            server.docker.assert_not_called()
+
+    def test_checkpoint_create_write_and_fsync_errors_preserve_previous_complete_receipt(self):
+        with tempfile.TemporaryDirectory(prefix='postgres-synthetic-') as folder:
+            server = self.evidence_server(folder)
+            path = server.folder / 'checkpoint.json'
+            old = path.read_bytes()
+            for target, attr in [(manual.tempfile, 'mkstemp'), (manual.json, 'dump'), (manual.os, 'fsync')]:
+                with self.subTest(operation=attr), patch.object(target, attr, side_effect=OSError('synthetic I/O failure')):
+                    with self.assertRaises(OSError):
+                        server.cleanup()
+                self.assertEqual(path.read_bytes(), old)
+                self.assertEqual(list(server.folder.glob('.checkpoint-*')), [])
+                self.assertTrue(server.password_file.exists())
+                server.docker.assert_not_called()
+
+    def test_private_file_fsync_and_publication_failures_leave_no_partial_target(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'report.json'
+            for operation in ['fsync', 'link']:
+                with self.subTest(operation=operation), patch.object(manual.os, operation, side_effect=OSError('synthetic publication failure')):
+                    with self.assertRaises(OSError):
+                        manual.SyntheticServer.private_write(path, 'complete synthetic report')
+                self.assertFalse(path.exists())
+                self.assertEqual(list(Path(folder).glob('.private-*')), [])
+            manual.SyntheticServer.private_write(path, 'complete synthetic report')
+            self.assertEqual(path.read_text(), 'complete synthetic report')
+            self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+
+    def test_partial_private_write_is_never_published(self):
+        opener = os.fdopen
+        @contextlib.contextmanager
+        def partial(fd, mode):
+            with opener(fd, mode) as out:
+                def write(value):
+                    out.write(value[:3])
+                    raise OSError('synthetic short write')
+                yield SimpleNamespace(write=write)
+        with tempfile.TemporaryDirectory() as folder, patch.object(manual.os, 'fdopen', side_effect=partial):
+            path = Path(folder) / 'report.json'
+            with self.assertRaises(OSError):
+                manual.SyntheticServer.private_write(path, 'complete synthetic report')
+            self.assertFalse(path.exists())
+            self.assertEqual(list(Path(folder).glob('.private-*')), [])
+
+    def test_report_failure_after_passing_tests_preserves_cleanup_facts_and_fails_command(self):
+        server = SimpleNamespace(folder=Path('/synthetic'), volumes=['c' * 64], start=Mock(), cleanup=Mock(return_value=True),
+                                 report_writer=Mock(side_effect=OSError('synthetic-sensitive-message')))
+        result = SimpleNamespace(testsRun=1, failures=[], errors=[], wasSuccessful=lambda: True)
+        with patch.object(sys, 'argv', self.arguments()+['--run-synthetic']), \
+             patch.object(manual, 'SyntheticServer', return_value=server), patch.object(manual.signal, 'signal'), \
+             patch.object(manual.unittest.defaultTestLoader, 'loadTestsFromTestCase'), \
+             patch.object(manual.unittest, 'TextTestRunner') as runner, contextlib.redirect_stdout(io.StringIO()) as output:
+            runner.return_value.run.return_value = result
+            code = manual.main()
+        report = json.loads(output.getvalue())
+        self.assertEqual(code, 1)
+        self.assertFalse(report['successful'])
+        self.assertTrue(report['containerRemoved'])
+        self.assertTrue(report['anonymousVolumesRemoved'])
+        self.assertFalse(report['reportPersisted'])
+        self.assertEqual(report['reportFailure'], 'REPORT_WRITE_FAILED')
+        self.assertTrue(report['manualReviewRequired'])
+        self.assertNotIn('synthetic-sensitive-message', output.getvalue())
+
+    def test_constructor_io_failure_is_safely_reported_before_any_create(self):
+        with patch.object(sys, 'argv', self.arguments()+['--run-synthetic']), \
+             patch.object(manual, 'SyntheticServer', side_effect=OSError('synthetic-sensitive-message')), \
+             contextlib.redirect_stdout(io.StringIO()) as output:
+            code = manual.main()
+        report = json.loads(output.getvalue())
+        self.assertEqual(code, 1)
+        self.assertEqual(report['failureCategory'], 'PREPARATION_FAILED')
+        self.assertFalse(report['containerCreationAttempted'])
+        self.assertFalse(report['reportPersisted'])
+        self.assertNotIn('synthetic-sensitive-message', output.getvalue())
+
+    def test_existing_report_is_preserved_including_symlink_target(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'report.json'
+            foreign = Path(folder) / 'foreign'
+            foreign.write_text('synthetic previous evidence')
+            for symlink in [False, True]:
+                if symlink:
+                    path.symlink_to(foreign)
+                else:
+                    path.write_text('synthetic previous evidence')
+                report = {'successful': True, 'containerRemoved': True}
+                manual.persist_report(report, path, manual.SyntheticServer.private_write)
+                self.assertFalse(report['reportPersisted'])
+                self.assertFalse(report['successful'])
+                self.assertEqual(path.read_text(), 'synthetic previous evidence')
+                self.assertEqual(foreign.read_text(), 'synthetic previous evidence')
+                self.assertEqual(list(Path(folder).glob('.private-*')), [])
+                path.unlink()
+
+    def test_recovery_cli_cannot_exit_zero_when_its_report_was_not_persisted(self):
+        receipt = {'successful': False, 'containerRemoved': True, 'reportPersisted': False}
+        with patch.object(sys, 'argv', self.arguments()+['--run-synthetic', '--recover-owned-test', '/synthetic/checkpoint.json']), \
+             patch.object(manual, 'recover_checkpoint', return_value=receipt), \
+             patch.object(manual, 'SyntheticServer') as server, contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(manual.main(), 1)
+        server.assert_not_called()
+
+    def test_recovery_read_or_write_error_has_safe_failure_receipt(self):
+        with patch.object(sys, 'argv', self.arguments()+['--run-synthetic', '--recover-owned-test', '/synthetic/checkpoint.json']), \
+             patch.object(manual, 'recover_checkpoint', side_effect=OSError('synthetic-sensitive-message')), \
+             contextlib.redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(manual.main(), 1)
+        report = json.loads(output.getvalue())
+        self.assertEqual(report['failureCategory'], 'RECOVERY_FAILED')
+        self.assertFalse(report['successful'])
+        self.assertFalse(report['containerRemoved'])
+        self.assertTrue(report['manualReviewRequired'])
+        self.assertNotIn('synthetic-sensitive-message', output.getvalue())
 
 
 if __name__ == '__main__':

@@ -185,6 +185,49 @@ class RecoveryScopeTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 recovery.read_checkpoint(self.path, IMAGE)
 
+    def test_damaged_bytes_stop_before_docker_and_preserve_evidence(self):
+        original = self.path.read_bytes()
+        damaged = [b'', b'{', original[:len(original)//2], b'\xff', b'{} trailing', b'{"version":NaN}',
+                   b'{"version":Infinity}', b'[' * 1100 + b']' * 1100]
+        for raw in damaged:
+            with self.subTest(raw=raw[:20]):
+                self.path.write_bytes(raw)
+                server = self.fake_type([])
+                with self.assertRaises(RuntimeError):
+                    recovery.recover_checkpoint(self.args, self.path, server, IMAGE, self.absent)
+                self.assertEqual(self.path.read_bytes(), raw)
+                self.assertTrue((self.folder / 'password').exists())
+                server.docker.assert_not_called()
+                server.cleanup.assert_not_called()
+
+    def test_checkpoint_change_after_live_inspection_stops_cleanup(self):
+        server = self.fake_type([])
+        def inspect(*args, **kwargs):
+            changed = dict(self.data, phase='cleaning')
+            self.write(changed)
+            return SimpleNamespace(returncode=0, stdout='\n'.join(json.dumps(v) for v in self.metadata()))
+        server.docker.side_effect = inspect
+        with patch.object(Path, 'is_socket', return_value=True), self.assertRaisesRegex(RuntimeError, 'changed during'):
+            recovery.recover_checkpoint(self.args, self.path, server, IMAGE, self.absent)
+        server.cleanup.assert_not_called()
+        self.assertTrue((self.folder / 'password').exists())
+        self.assertEqual(json.loads(self.path.read_text())['phase'], 'cleaning')
+
+    def test_failed_recovery_report_keeps_verified_cleanup_distinct_from_success(self):
+        server = self.fake_type([SimpleNamespace(returncode=1, stderr='No such object'),
+                                 SimpleNamespace(returncode=1, stderr='No such volume')])
+        server.private_write.side_effect = OSError('synthetic-sensitive-message')
+        with patch.object(Path, 'is_socket', return_value=True):
+            report = recovery.recover_checkpoint(self.args, self.path, server, IMAGE, self.absent)
+        self.assertFalse(report['successful'])
+        self.assertFalse(report['testSuiteSuccessful'])
+        self.assertFalse(report['reportPersisted'])
+        self.assertTrue(report['containerRemoved'])
+        self.assertTrue(report['disposableCredentialsRemoved'])
+        self.assertTrue(report['manualReviewRequired'])
+        self.assertNotIn('synthetic-sensitive-message', json.dumps(report))
+        server.checkpoint.assert_called_once_with('cleaned')
+
 
 if __name__ == '__main__':
     unittest.main()

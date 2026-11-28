@@ -1,5 +1,15 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — poškozená evidence a chyby zápisu51
+
+- [x] Před každou aktualizací kontrolovat původní checkpoint a vlastní identitu; poškozený/cizí/chybějící soubor nepřepsat ani nerekonstruovat při cleanup.
+- [x] Atomické soukromé soubory bez nahrazení stávající evidence; chyby reportu/constructor/recovery bezpečně hlásit, vrátit exit1 a oddělit ověřený úklid od úspěchu příkazu.
+- [x]13 nových ochranných unit případů, celkem203 hostitelských a39 optimalizovaných prošlo. [51](51-POSTGRES-POSKOZENA-EVIDENCE-A-CHYBY-ZAPISU.md), [evidence](postgres-evidence-io-verification.json).
+- [x]3 skutečné řízené I/O chyby (created/cleaning/report) i jejich fresh/repeated recovery.10 standardních PG,4 startup chyby, SIGTERM/SIGKILL regresně prošly.
+- [ ] **Aktivace dál blokovaná48/issue61.** RX01 znovu selhal; oprava v native toku má přednost před43/39/44.18+26 pending nespouštěno, auth/model/usage nezkoušeno.
+- [ ] Další neblokovaná práce: koordinace dvou recovery stejného checkpointu a cílené pozdní chyby po zveřejnění souboru či odstranění kontejneru. Současná sada není důkaz power loss/disk full/odolnosti adresářových metadat.
+- [ ] Na později31/45: nejasné/orphan prostředky a ztracenou evidenci bezpečně posoudit, výpadek hostitele v dohodnutém prostředí; živé účty/OAuth/Storage/provider, úplné vzdálené zálohy/klíč/obnova/browser a aktivace. Bez dotazů nyní; skutečný import zakázaný.
+
 ## 2026-11-28 — chyby startu a neúplné checkpointy50
 
 - [x] Checkpoint v2 prepared/creating zapisovaný před create; úplné v1 zůstávají podporované. Selhání zápisu před create zabrání Docker volání.
