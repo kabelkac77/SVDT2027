@@ -23,7 +23,7 @@ APP = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(APP / 'tests'), str(APP / 'tools')]
 from crew_import_preview_test import fixture, encode
 from crew_import_plan import build_import_plan
-from postgres_test_recovery import recover_checkpoint, read_checkpoint, persist_report, operation_lock, RecoveryBusy, PublicationError
+from postgres_test_recovery import recover_checkpoint, read_checkpoint, persist_report, operation_lock, RecoveryBusy, PublicationError, recovery_pause, RECOVERY_STAGES, inventory_residues
 
 IMAGE = 'postgres@sha256:f1ea2a1a4fb7b68d4836be1fdcb8a6466a89b072158bf9d97663600538c294c5'
 OWNER = 'svdt_synthetic_owner'
@@ -267,6 +267,7 @@ class SyntheticServer:
             actual = self.docker('inspect', '--format', '{{index .Config.Labels "svdt.acceptance.run"}}', self.container).stdout.strip()
             require(actual == self.token, 'Refuse cleanup of any other container')
             self.docker('rm', '--force', '--volumes', self.container)
+            recovery_pause(self, 'removed')
             if getattr(getattr(self, 'args', None), 'probe_evidence_failure', None) == 'after-remove':
                 raise OSError('Controlled failure after owned container removal')
             removed = confirmed_absence(self.docker('inspect', '--format', '{{.Id}}', self.container, check=False), 'object')
@@ -277,7 +278,9 @@ class SyntheticServer:
             if file.exists():
                 file.unlink()
         self.password = None
+        recovery_pause(self, 'credentials')
         self.checkpoint('cleaned')
+        recovery_pause(self, 'checkpoint')
         return removed
 
 
@@ -794,13 +797,97 @@ def verify_evidence_failures(args):
     return 0 if result['successful'] else 1
 
 
+def verify_recovery_interruption(args):
+    root = Path(args.output_root).resolve()
+    require(root.is_dir() and root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0,
+            'Recovery interruption probe requires a private owned root')
+    directory = Path(tempfile.mkdtemp(prefix='recovery-interruption-probe-', dir=root))
+    cases = []
+    for stage in RECOVERY_STAGES:
+        case_root = directory / stage
+        case_root.mkdir(mode=0o700)
+        common = []
+        for key in ('docker', 'docker_socket', 'pg_bin', 'node'):
+            common.extend(['--' + key.replace('_', '-'), getattr(args, key)])
+        common.extend(['--output-root', str(case_root)])
+        prefix = [sys.executable, '-B', str(Path(__file__).resolve()), '--run-synthetic']
+        owner = subprocess.Popen(prefix + ['--probe-interruption'] + common,
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        recovery = None
+        try:
+            deadline = time.monotonic() + 45
+            checkpoint = None
+            while time.monotonic() < deadline:
+                require(owner.poll() is None, 'Owned test exited before ready')
+                found = list(case_root.glob('postgres-synthetic-*/checkpoint.json'))
+                if len(found) == 1 and json.loads(found[0].read_text())['phase'] == 'ready':
+                    checkpoint = found[0]
+                    break
+                time.sleep(0.05)
+            require(checkpoint is not None, 'No ready checkpoint for recovery interruption')
+            owner.kill()
+            owner.communicate(timeout=5)
+            require(owner.returncode == -signal.SIGKILL, 'Only owned test process may be killed')
+            recovery = subprocess.Popen(prefix + ['--probe-recovery-interruption', stage, str(checkpoint)] + common,
+                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            marker = checkpoint.parent / ('recovery-paused-' + stage + '.json')
+            deadline = time.monotonic() + 40
+            while not marker.exists() and time.monotonic() < deadline:
+                require(recovery.poll() is None, 'Recovery exited before interruption point')
+                time.sleep(0.05)
+            require(marker.is_file(), 'Recovery interruption point not reached')
+            _, state, raw = read_checkpoint(checkpoint, IMAGE)
+            expected = 'ready' if stage == 'verified' else 'cleaning' if stage in ('removed', 'credentials') else 'cleaned'
+            require(state['phase'] == expected, 'Wrong checkpoint at recovery interruption')
+            before = inventory_residues(case_root)
+            require(before['complete'] and not before['contentRead'] and not before['filesDeleted'], 'Inventory incomplete or mutating')
+            recover_command = prefix + ['--recover-owned-test', str(checkpoint)] + common
+            busy = subprocess.run(recover_command, capture_output=True, text=True, timeout=15)
+            require(busy.returncode == 1 and json.loads(busy.stdout)['failureCategory'] == 'RECOVERY_BUSY'
+                    and checkpoint.read_bytes() == raw, 'Interrupted recovery did not hold exclusive lease')
+            recovery.kill()
+            output, _ = recovery.communicate(timeout=5)
+            require(recovery.returncode == -signal.SIGKILL and not output.strip(), 'Killed recovery cannot have a final successful reply')
+            require(checkpoint.read_bytes() == raw, 'Recovery checkpoint changed after controlled pause')
+            for attempt in range(2):
+                resumed = subprocess.run(recover_command, capture_output=True, text=True, timeout=40, check=True)
+                receipt = json.loads(resumed.stdout)
+                require(receipt['successful'] and not receipt['testSuiteSuccessful'] and receipt['reportPersisted']
+                        and receipt['alreadyAbsent'] == (stage != 'verified' or attempt == 1), 'Recovery after interruption mismatch')
+            _, final, _ = read_checkpoint(checkpoint, IMAGE)
+            require(final['phase'] == 'cleaned', 'Resumed recovery not cleaned')
+            observer = object.__new__(SyntheticServer)
+            observer.args, observer.docker_config = args, checkpoint.parent / 'docker-client'
+            require(confirmed_absence(observer.docker('inspect', '--format', '{{.Id}}', final['containerId'], check=False), 'object'),
+                    'Interrupted-recovery container absence unconfirmed')
+            for name in final['anonymousVolumes']:
+                require(confirmed_absence(observer.docker('volume', 'inspect', '--format', '{{.Name}}', name, check=False), 'volume'),
+                        'Interrupted-recovery volume absence unconfirmed')
+            after = inventory_residues(case_root)
+            require(after['complete'] and all(after['summary'].get(name, 0) == 0 for name in ('credential', 'temporaryPrivate', 'temporaryCheckpoint')),
+                    'Private recovery residues remain')
+            cases.append({'stage': stage, 'recoveryExitCode': -signal.SIGKILL, 'checkpointPhaseAtKill': state['phase'],
+                          'exclusiveLeaseVerified': True, 'freshRecoveryVerified': True, 'repeatedRecoveryVerified': True,
+                          'finalCleanupVerified': True, 'inventoryBefore': before['summary'], 'inventoryAfter': after['summary']})
+        finally:
+            for process in (recovery, owner):
+                if process is not None and process.poll() is None:
+                    process.kill()
+                    process.communicate(timeout=5)
+    result = {'version': 1, 'mode': 'controlled_recovery_interruption_probe', 'successful': True,
+              'casesVerified': len(cases), 'cases': cases, 'cutoverReady': False, 'liveImportRun': False}
+    persist_report(result, directory / 'report.json', SyntheticServer.private_write)
+    print(json.dumps(result), flush=True)
+    return 0 if result['successful'] else 1
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-synthetic', action='store_true', required=True)
-    parser.add_argument('--docker', required=True)
-    parser.add_argument('--docker-socket', required=True)
-    parser.add_argument('--pg-bin', required=True)
-    parser.add_argument('--node', required=True)
+    parser.add_argument('--docker')
+    parser.add_argument('--docker-socket')
+    parser.add_argument('--pg-bin')
+    parser.add_argument('--node')
     parser.add_argument('--output-root', required=True)
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('--probe-interruption', action='store_true', help='Only for the controlled signal probe; waits at most30 seconds')
@@ -808,22 +895,44 @@ def main():
     mode.add_argument('--verify-sigterm', action='store_true', help='Create an owned child and independently verify its SIGTERM cleanup')
     mode.add_argument('--verify-hard-kill', action='store_true', help='Kill only the owned child, recover in a new process and repeat safely')
     mode.add_argument('--verify-concurrent-recovery', action='store_true', help='Verify active-owner and competing recovery exclusion')
+    mode.add_argument('--verify-recovery-interruption', action='store_true', help='Kill owned recovery at five controlled points and resume')
+    mode.add_argument('--inventory-residues', action='store_true', help='Read-only metadata inventory; no Docker, file content or cleanup')
     mode.add_argument('--recover-owned-test', metavar='CHECKPOINT', help='Explicit recovery after independent live ownership/storage verification')
     mode.add_argument('--probe-recovery-contention', metavar='CHECKPOINT', help='Controlled recovery holder with a bounded private gate')
+    mode.add_argument('--probe-recovery-interruption', nargs=2, metavar=('STAGE', 'CHECKPOINT'), help='Controlled recovery pause for owned SIGKILL probe')
     mode.add_argument('--probe-startup-failure', choices=['prepared', 'receipt', 'start', 'readiness'], help='Controlled fault in the owned disposable server startup')
     mode.add_argument('--verify-startup-failures', action='store_true', help='Verify four controlled startup faults and their cleanup')
     mode.add_argument('--probe-evidence-failure', choices=['checkpoint-created', 'checkpoint-cleaning', 'report', 'after-remove', 'after-checkpoint', 'after-report'], help='Controlled private evidence publication fault')
     mode.add_argument('--verify-evidence-failures', action='store_true', help='Verify controlled evidence I/O faults and fresh recovery')
     args = parser.parse_args()
+    if args.inventory_residues:
+        try:
+            report = inventory_residues(args.output_root)
+        except Exception as error:
+            report = {'mode': 'synthetic_residue_inventory', 'successful': False, 'complete': False,
+                      'failureCategory': 'INVENTORY_FAILED', 'errorCategory': type(error).__name__,
+                      'contentRead': False, 'filesDeleted': False, 'dockerContacted': False, 'locksAcquired': False}
+        print(json.dumps(report), flush=True)
+        return 0 if report['successful'] else 1
+    for name in ('docker', 'docker_socket', 'pg_bin', 'node'):
+        if not getattr(args, name):
+            parser.error('--' + name.replace('_', '-') + ' is required outside metadata inventory')
+    if args.probe_recovery_interruption:
+        if args.probe_recovery_interruption[0] not in RECOVERY_STAGES:
+            parser.error('Invalid controlled recovery stage')
+        args.probe_recovery_stage = args.probe_recovery_interruption[0]
+    if args.verify_recovery_interruption:
+        return verify_recovery_interruption(args)
     if args.verify_sigterm:
         return verify_sigterm(args)
     if args.verify_hard_kill:
         return verify_sigterm(args, hard_kill=True)
     if args.verify_concurrent_recovery:
         return verify_sigterm(args, hard_kill=True, concurrent=True)
-    if args.recover_owned_test or args.probe_recovery_contention:
+    if args.recover_owned_test or args.probe_recovery_contention or args.probe_recovery_interruption:
         try:
-            report = recover_checkpoint(args, args.recover_owned_test or args.probe_recovery_contention, SyntheticServer, IMAGE, confirmed_absence)
+            checkpoint = args.recover_owned_test or args.probe_recovery_contention or args.probe_recovery_interruption[1]
+            report = recover_checkpoint(args, checkpoint, SyntheticServer, IMAGE, confirmed_absence)
         except Exception as error:
             report = {'mode': 'owned_synthetic_test_recovery', 'successful': False, 'testSuiteSuccessful': False,
                       'failureCategory': 'RECOVERY_BUSY' if isinstance(error, RecoveryBusy) else 'RECOVERY_FAILED', 'recoveryErrorCategory': type(error).__name__,

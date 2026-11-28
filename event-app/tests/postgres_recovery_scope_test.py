@@ -1,6 +1,7 @@
 """Recovery boundaries without Docker, database access or operational data."""
 import copy
 import contextlib
+import builtins
 import importlib.util
 import json
 import os
@@ -283,6 +284,104 @@ class RecoveryScopeTests(unittest.TestCase):
              self.assertRaisesRegex(RuntimeError, 'foreign'):
             recovery.recover_checkpoint(self.args, self.path, server, IMAGE, self.absent)
         server.cleanup.assert_not_called()
+
+    def test_inventory_reads_only_metadata_and_never_mutates(self):
+        temporary = self.folder / '.private-synthetic'
+        temporary.write_text('SYNTHETIC-CONTENT-MUST-NOT-APPEAR')
+        temporary.chmod(0o600)
+        (self.folder / '.checkpoint-synthetic').write_bytes(b'{broken checkpoint content')
+        before = {p.name: (p.lstat().st_ino, p.lstat().st_size, p.lstat().st_mtime_ns) for p in self.folder.iterdir()}
+        opener = os.open
+        def directories_only(path, flags, *args, **kwargs):
+            self.assertTrue(flags & os.O_DIRECTORY)
+            self.assertTrue(flags & os.O_NOFOLLOW)
+            self.assertFalse(flags & (os.O_CREAT | os.O_TRUNC | os.O_RDWR | os.O_WRONLY))
+            return opener(path, flags, *args, **kwargs)
+        with patch.object(recovery.os, 'open', side_effect=directories_only), \
+             patch.object(builtins, 'open', side_effect=AssertionError('File content open')), \
+             patch.object(Path, 'open', side_effect=AssertionError('File content open')), \
+             patch.object(recovery.os, 'unlink', side_effect=AssertionError('Deletion')), \
+             patch.object(recovery.os, 'replace', side_effect=AssertionError('Mutation')), \
+             patch.object(recovery.os, 'link', side_effect=AssertionError('Mutation')):
+            report = recovery.inventory_residues(self.root)
+        self.assertTrue(report['complete'])
+        self.assertEqual(report['summary']['credential'], 3)
+        self.assertEqual(report['summary']['temporaryPrivate'], 1)
+        self.assertEqual(report['summary']['temporaryCheckpoint'], 1)
+        self.assertNotIn('SYNTHETIC-CONTENT-MUST-NOT-APPEAR', json.dumps(report))
+        self.assertEqual(before, {p.name: (p.lstat().st_ino, p.lstat().st_size, p.lstat().st_mtime_ns) for p in self.folder.iterdir()})
+
+    def test_inventory_does_not_follow_links_or_open_special_files(self):
+        outside = self.root / 'report'
+        outside.mkdir(mode=0o700)
+        (outside / 'password').write_text('synthetic external content')
+        (self.root / 'postgres-synthetic-link').symlink_to(outside, target_is_directory=True)
+        (self.folder / 'pgpass').unlink()
+        (self.folder / 'pgpass').symlink_to(outside / 'password')
+        os.mkfifo(self.folder / '.private-fifo', 0o600)
+        report = recovery.inventory_residues(self.root)
+        self.assertTrue(report['complete'])
+        entries = {f['relativePath']: f for f in report['findings']}
+        self.assertEqual(entries['postgres-synthetic-link']['kind'], 'symlink')
+        self.assertEqual(entries['postgres-synthetic-scope/pgpass']['kind'], 'symlink')
+        self.assertEqual(entries['postgres-synthetic-scope/.private-fifo']['kind'], 'special')
+        self.assertFalse(any(f['relativePath'].startswith('report/') for f in report['findings']))
+
+    def test_inventory_refuses_symlink_or_public_root(self):
+        link = self.root / 'linked-root'
+        link.symlink_to(self.folder, target_is_directory=True)
+        with self.assertRaises(OSError):
+            recovery.inventory_residues(link)
+        self.folder.chmod(0o755)
+        with self.assertRaises(RuntimeError):
+            recovery.inventory_residues(self.folder)
+
+    def test_inventory_flags_unverified_recognized_directory_as_partial(self):
+        self.folder.chmod(0o755)
+        report = recovery.inventory_residues(self.root)
+        self.assertFalse(report['complete'])
+        self.assertIn('DIRECTORY_UNVERIFIED', report['errors'])
+        self.assertNotIn('credential', report['summary'])
+
+    def test_inventory_limits_are_explicit_incomplete_not_silent_truncation(self):
+        for limits in [dict(max_entries=1), dict(max_findings=1)]:
+            report = recovery.inventory_residues(self.root, **limits)
+            self.assertFalse(report['complete'])
+            self.assertFalse(report['successful'])
+            self.assertIn('SCAN_LIMIT', report['errors'])
+        group = self.root / 'startup-failure-probe-synthetic'
+        nested = group / 'prepared'
+        nested.mkdir(parents=True, mode=0o700)
+        group.chmod(0o700)
+        report = recovery.inventory_residues(self.root, max_depth=1)
+        self.assertFalse(report['complete'])
+        self.assertIn('DEPTH_LIMIT', report['errors'])
+
+    def test_inventory_entry_error_is_safe_and_not_a_complete_report(self):
+        with patch.object(recovery.os, 'stat', side_effect=PermissionError('synthetic-sensitive-message')):
+            report = recovery.inventory_residues(self.root)
+        self.assertFalse(report['complete'])
+        self.assertIn('ENTRY_UNVERIFIED', report['errors'])
+        self.assertNotIn('synthetic-sensitive-message', json.dumps(report))
+
+    def test_inventory_does_not_acquire_or_remove_active_operation_lock(self):
+        with recovery.operation_lock(self.folder):
+            inode = (self.folder / 'operation.lock').stat().st_ino
+            with patch.object(recovery.fcntl, 'flock', side_effect=AssertionError('Inventory acquired lock')):
+                report = recovery.inventory_residues(self.root)
+            self.assertFalse(report['locksAcquired'])
+            self.assertEqual(report['summary']['operationLock'], 1)
+            self.assertEqual((self.folder / 'operation.lock').stat().st_ino, inode)
+
+    def test_recovery_pause_is_explicit_and_bounded(self):
+        server = SimpleNamespace(args=SimpleNamespace(), folder=self.folder, private_write=Mock())
+        recovery.recovery_pause(server, 'verified')
+        server.private_write.assert_not_called()
+        server.args.probe_recovery_stage = 'verified'
+        with patch.object(recovery.time, 'sleep') as sleep, self.assertRaises(RuntimeError):
+            recovery.recovery_pause(server, 'verified')
+        sleep.assert_called_once_with(15)
+        self.assertEqual(server.private_write.call_args.args[0], self.folder / 'recovery-paused-verified.json')
 
 
 if __name__ == '__main__':

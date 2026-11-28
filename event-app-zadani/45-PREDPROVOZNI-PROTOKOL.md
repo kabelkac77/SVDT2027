@@ -85,3 +85,7 @@ Poškozené/chybějící checkpointy a změna během inspekce zastaví testovac�
 ## Dílčí důkaz koordinace recovery52 — 2026-11-28
 
 Společný flock ochránil aktivní syntetický test i souběh dvou recovery procesů. Pozdní chyby po odstranění/publikaci byly samostatně ověřené, včetně nového nezávislého potvrzení již provedených kroků a opakování. [52](52-POSTGRES-SOUBEZNA-RECOVERY-A-POZDNI-CHYBY.md) je technický dílčí důkaz, nikoli změna živých stavů G03/G06 nebo souhlas s výpadkem hostitele. Uložený report může být dřívější snapshot; vyžadovat finální odpověď a exit, při ztrátě nové ověření.48/61 i ostatní živé účty/backup/Auth/Storage/browser brány zůstávají otevřené.
+
+## Dílčí důkaz pádu recovery53 — 2026-11-28
+
+Pět řízených SIGKILL přímo držitele syntetické recovery a nové/opakované převzetí prošly. Samostatný metadatový inventář deklarovaného testovacího rozsahu je pouze read-only přítomnostní snapshot, ne oprávnění smazat nálezy nebo důkaz platnosti checkpointů/živosti zámků. Viz [53](53-POSTGRES-PRERUSENI-RECOVERY-A-INVENTAR.md). Živé stavy G03/G06 ani souhlas s výpadkem hostitele/aktivací se nemění;48/61 a projektové/Auth/Storage/backup/browser brány zůstávají otevřené.

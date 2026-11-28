@@ -395,6 +395,46 @@ class PostgresManualScopeTests(unittest.TestCase):
         self.assertFalse(report['manualReviewRequired'])
         self.assertFalse(report['containerRemoved'])
 
+    def test_metadata_inventory_cli_needs_no_docker_or_database_tools(self):
+        with tempfile.TemporaryDirectory() as folder:
+            argv = ['synthetic-test', '--run-synthetic', '--output-root', folder, '--inventory-residues']
+            with patch.object(sys, 'argv', argv), patch.object(manual, 'SyntheticServer') as server, \
+                 patch.object(manual.subprocess, 'run') as run, contextlib.redirect_stdout(io.StringIO()) as output:
+                self.assertEqual(manual.main(), 0)
+            report = json.loads(output.getvalue())
+            self.assertTrue(report['complete'])
+            self.assertFalse(report['contentRead'])
+            self.assertFalse(report['filesDeleted'])
+            self.assertFalse(report['dockerContacted'])
+            server.assert_not_called()
+            run.assert_not_called()
+
+    def test_inventory_cli_failure_is_safe_and_does_not_read_input_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            file = Path(folder) / 'synthetic-root-file'
+            file.write_text('SYNTHETIC-CONTENT-MUST-NOT-APPEAR')
+            argv = ['synthetic-test', '--run-synthetic', '--output-root', str(file), '--inventory-residues']
+            with patch.object(sys, 'argv', argv), patch.object(manual, 'SyntheticServer') as server, \
+                 contextlib.redirect_stdout(io.StringIO()) as output:
+                self.assertEqual(manual.main(), 1)
+            report = json.loads(output.getvalue())
+            self.assertFalse(report['complete'])
+            self.assertEqual(report['failureCategory'], 'INVENTORY_FAILED')
+            self.assertNotIn('SYNTHETIC-CONTENT-MUST-NOT-APPEAR', output.getvalue())
+            self.assertTrue(file.exists())
+            server.assert_not_called()
+
+    def test_noninventory_tools_and_recovery_stage_are_validated_before_work(self):
+        cases = [['synthetic-test', '--run-synthetic', '--output-root', '/synthetic/output'],
+                 self.arguments()+['--run-synthetic', '--probe-recovery-interruption', 'invalid', '/synthetic/checkpoint.json']]
+        for argv in cases:
+            with patch.object(sys, 'argv', argv), patch.object(manual, 'SyntheticServer') as server, \
+                 patch.object(manual, 'recover_checkpoint') as recover, contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as error:
+                manual.main()
+            self.assertEqual(error.exception.code, 2)
+            server.assert_not_called()
+            recover.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()
