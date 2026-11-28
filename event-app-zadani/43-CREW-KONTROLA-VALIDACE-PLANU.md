@@ -1,5 +1,9 @@
 # Crew — samostatná validace přesného plánu
 
+## Aktuálně dokončeno — 2026-11-28
+
+Implementoval přímo Codex podle výslovného pokynu uživatele. `event-app/tools/crew_import_verify_plan.py` obsahuje čisté rozhraní parse_import_plan;18 původních akceptačních scénářů přesunuto beze změny do aktivních tests/ a skutečně prošlo,7 dalších hranic také. Celkem259 hostitelských a25 parserových pod Python -O prošlo. [56](56-CREW-PARSER-PLANU-A-OVERENI.md), [evidence](crew-verify-plan-verification.json). Další část39 zůstává neimplementovaná s26 pending scénáři. Žádný skutečný import nebo ověření autority; starší stav/nativní formulace níže jsou historické.
+
 ## Rozsah 2026-11-27
 
 První malá část kontrolního protokolu39, nikoli jeho celé dokončení. Starý běh issue54 skončil timeoutem; tento úkol implementuje pouze čisté načtení a strukturální validaci plánu. Neobsahuje porovnání cíle před/po, receipt, zdrojových balíčků ani aktivaci.26 pending testů celého checkeru zůstává pending.
@@ -32,6 +36,6 @@ Syntetické testy: kompatibilita s builderem38 pro create/keep, zachování iden
 
 Další samostatná část: ověřit receipt a before/after podle39, propojit s existujícími26 pending scénáři a syntetickým DB importerem. Vždy zůstanou ruční brány31 a zákaz skutečného importu.
 
-## Skutečný stav tohoto kroku
+## Historický stav před implementací56
 
 Native issue57: dry-run úspěšný,6273 bytes kontextu; běh zastavený před modelem kvůli chybějícímu přihlášení. `crew_import_verify_plan.py` není implementovaný.18 nezávislých scénářů v `event-app/tests/pending/crew_import_verify_plan_test.py.pending` má ověřenou pouze syntaxi. Přesun do `event-app/tests/crew_import_verify_plan_test.py` a spuštění až s modulem; importy předpokládají tuto budoucí cestu v tests/. Nezapočítávat mezi164 skutečně prošlých hostitelských kontrol.

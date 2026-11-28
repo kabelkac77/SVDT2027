@@ -1,5 +1,13 @@
 # Předání organizační aplikace SVDT do Claude Code
 
+## 2026-11-28 — parser přesného plánu dokončený56
+
+Přímo Codexem dokončený [parser43](43-CREW-KONTROLA-VALIDACE-PLANU.md): čistá funkce parse_import_plan načte přesný plán, zkontroluje vazbu na zdroj, úplnost mapování, verze a identity. Žádné I/O, nové účty, odvozování ID nebo změny dat. Odmítá duplicity, neplatné Unicode/JSON/typy a neplatné rozsahy s jedinou konstantní chybou bez hodnot zdroje.
+
+Původních18 připravených scénářů přesunuto beze změny a skutečně prošlo; dalších7 hraničních kontrol včetně10000 operací a16MiB. **259 hostitelských testů a25 parserových při Python -O prošlo.** [Podrobnosti56](56-CREW-PARSER-PLANU-A-OVERENI.md), [evidence](crew-verify-plan-verification.json). Všech8 migrací beze změny; aktuální aplikační/PG výsledky z55 jsou baseline, nikoli znovu provedené v tomto bloku. CI rozšířené o cesty parseru a testů.
+
+**Další přímá implementace:39 celý checker receipt/before/after/provenance →44 inline historie.**26 scénářů checkeru zůstává pending. targetFingerprint se ověřuje pouze formátem; parser není serverová autorita ani souhlas s převodem. Přístupy a potvrzení později31/45, bez Claude a bez skutečného importu/DDL/grant/nasazení/merge/aktivace. Oprava61 je technicky ověřená v55, nadále k review a bez doloženého nasazení.
+
 ## 2026-11-28 — oprava61 implementovaná a synteticky ověřená55
 
 Přímo Codexem implementovaná oprava [55](55-CREW-OPRAVA-EXPIRACE-A-OVERENI.md) přidává8. additive migraci; původních7 SHA zachované. crew_import_apply znovu ověří clock_timestamp() po čekání i validaci těsně před prvním novým zápisem. Identický úspěšný replay po expiraci zůstává beze změny; role/revokace/konflikty i ACL/owner/SECURITY DEFINER/search_path zachované.
