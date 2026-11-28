@@ -1,5 +1,11 @@
 # DECISIONS — potvrzená rozhodnutí
 
+## 2026-11-28 — chyby startu a neúplné checkpointy50
+
+Pokyn pokračovat bez dotazů je uplatněný na hostitelské testy50. Nezavádí produktové oprávnění ani provozní aktivaci. Checkpoint v2 musí odlišit stav před pokusem o create a možný nejasný výsledek. Creating+absence není důkaz, že žádné prostředky nevznikly: úklid se zastaví a důkazy zůstanou. Ztracené ID se přebírá pouze po úplné nezávislé kontrole živého vlastního prostředku, nikoli pouze z JSON/labelu.
+
+Úspěšný úklid selhaného startu nesmí znamenat úspěšnou testovací sadu. Čtyři řízené startovací chyby a opakovaná recovery jsou dílčí skutečný důkaz, nikoli univerzální ochrana proti výpadku napájení/poškození filesystemu. RX01 dál selhává;48/61 a ostatní živé brány zůstávají blokátory. Žádné nové uživatelské schválení se nepředpokládá.
+
 ## 2026-11-28 — mez důvěry při úklidu testovacího prostředí
 
 Uživatel žádá pokračovat samostatně hlavně v soubězích a obnově po přerušení, přístupy/potvrzení odložit.49 rozšiřuje pouze hostitelské testy; nijak nepřebírá nativní implementaci aplikace nebo neobchází přihlášení.

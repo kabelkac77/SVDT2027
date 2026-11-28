@@ -1,5 +1,11 @@
 # Stav implementace
 
+## 2026-11-28 — chyby startu a neúplné checkpointy50
+
+[50](50-POSTGRES-STARTUP-A-NEUPLNE-CHECKPOINTY.md): checkpoint v2 odlišuje prepared od creating před Docker create. Chybějící ID lze doplnit jen z nezávisle ověřeného vlastního živého kontejneru. Creating bez nalezeného kontejneru zastaví úklid a zachová checkpoint/přístupy; neplatné nebo napůl vyplněné stavy se odmítají. Úplné v1 zůstávají čitelné. Chyba startu vrací exit1 a není úspěšnou sadou ani při dokončeném úklidu.
+
+Skutečně prošly4 řízené chyby spuštění (prepared, ztracené ID po create, před startem, před readiness), každá i s opakovanou recovery v novém procesu. Regrese:10 skutečných PG, SIGTERM, SIGKILL/recovery,190 hostitelských a26 bezpečnostních pod Python -O prošlo. [Evidence](postgres-startup-verification.json). **RX01 znovu selhal a48/issue61 dál blokuje aktivaci.** Runtime/kolektor/7 migrací beze změny;18+26 pending neprovedeno. Native auth/model/usage ani provozní import/DDL/grant/deploy/aktivace neproběhly. Další neblokovaná práce: cílené chyby zápisu/reportu a poškozené checkpointy; fyzický výpadek hostitele a živé přístupy/obnova zůstávají v31/45 na později.
+
 ## 2026-11-28 — další souběhy a recovery po SIGKILL
 
 [49](49-POSTGRES-SOUBEH-A-RECOVERY.md): prošly4 nové skutečné PG scénáře (jiný request/stejné approval; ztracený klientský výsledek po COMMIT; dvě oddělené akce/edition2027 s globálním zámkem bez smíchání dat; pád serveru před/po COMMIT s rollbackem a zachováním potvrzených dat). Celkem10 běžných skutečných PG případů prošlo. Ověřené také SIGTERM a SIGKILL vlastního child procesu: nový recovery proces nezávisle ověří ID/název/image/label/mounts a teprve potom uklidí; druhá recovery je bezpečně idempotentní.182 hostitelských kontrol prošlo,18 bezpečnostních i pod Python -O. [Oddělená evidence](postgres-hardkill-verification.json).

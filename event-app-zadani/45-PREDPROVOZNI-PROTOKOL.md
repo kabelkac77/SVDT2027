@@ -73,3 +73,7 @@ Oprava48 / issue61 musí předcházet aktivaci. Samostatný RX01 reproducer po t
 ## Dílčí doplnění souběhů a recovery49 — 2026-11-28
 
 RP07–RP10 rozšiřují izolovaný důkaz o různé requesty, ztrátu klientského výsledku po commit a dvě oddělené akce2027 se skutečně pozorovaným globálním zámkem; skutečný pád serveru před/po COMMIT zachoval rollback/potvrzená data a přesný replay. SIGKILL/recovery po ready checkpointu a druhý idempotentní úklid prošly. Nejde o provozní obnovu ani důkaz výpadku napájení; existující orphan volume se automaticky nemaže. G05/G06/G09 dál blokuje61/48, RX01 je stále selhávající. Živé projektové/backup/Auth/Storage/browser brány zůstávají otevřené.
+
+## Dílčí důkaz chyb startu50 — 2026-11-28
+
+Čtyři skutečné řízené chyby startu a jejich opakovaná recovery v nových procesech prošly; v2 odlišuje prepared/creating a chybějící ID přebírá jen z ověřených živých metadat. Creating+absence či orphan se automaticky neuklízí. Jde pouze o testovací infrastrukturu. Živé stavy G03/G06, fyzický výpadek hostitele, provider/Auth/Storage/vzdálené zálohy a aktivační rozhodnutí zůstávají neprovedené. Striktní RX01 opět selhal,48/61 je stále blokátor. Viz [50](50-POSTGRES-STARTUP-A-NEUPLNE-CHECKPOINTY.md).

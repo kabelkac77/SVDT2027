@@ -1,5 +1,15 @@
 # MASTER BACKLOG
 
+## 2026-11-28 — chyby startu a neúplné checkpointy50
+
+- [x] Checkpoint v2 prepared/creating zapisovaný před create; úplné v1 zůstávají podporované. Selhání zápisu před create zabrání Docker volání.
+- [x] Ztracené ID převzít jen z přesně ověřeného vlastního živého kontejneru; creating+absence odmítnout a zachovat důkazy. Žádný retry/prune/mazání orphan volumes.
+- [x]4 řízené skutečné chyby startu a4 opakované recovery v nových procesech; každý selhaný child exit1/cases0, úklid nezávisle doložený. [50](50-POSTGRES-STARTUP-A-NEUPLNE-CHECKPOINTY.md), [evidence](postgres-startup-verification.json).
+- [x]8 nových bezpečnostních unit případů; celkem190 hostitelských a26 pod Python -O prošlo.10 standardních skutečných PG, SIGTERM a SIGKILL/recovery regresně prošly.
+- [ ] **Aktivace dál blokovaná48/issue61.** Samostatný RX01 znovu selhal; nativní oprava má přednost před parser43/checker39/UI44.18+26 pending nespouštěno, native přihlášení nezkoušeno.
+- [ ] Další neblokovaná práce: cílené chyby checkpoint/report I/O a truncated/poškozené checkpointy. Čtyři řízené výjimky nejsou důkaz power loss/disk full ani všech asynchronních poruch daemonu.
+- [ ] Na později31/45: nejasné/orphan prostředky bezpečně posoudit, výpadek hostitele v dohodnutém prostředí; skutečné účty/OAuth/scopes, úplné vzdálené zálohy/klíč/obnova, browser a samostatná aktivace. Skutečný import zůstává zakázaný; zatím bez dotazů.
+
 ## 2026-11-28 — další souběhy a bezpečný úklid po SIGKILL
 
 - [x] RP07: jiný request pod stejným approval po skutečném čekání odmítnut bez druhého zápisu.

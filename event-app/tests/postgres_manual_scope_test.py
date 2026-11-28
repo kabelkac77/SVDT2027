@@ -126,6 +126,41 @@ class PostgresManualScopeTests(unittest.TestCase):
         self.assertEqual(mask.call_args_list[0].args[0], manual.signal.SIG_BLOCK)
         self.assertEqual(mask.call_args_list[1].args, (manual.signal.SIG_SETMASK, {'synthetic_previous'}))
 
+    def test_failed_creating_checkpoint_prevents_any_docker_create(self):
+        server = object.__new__(manual.SyntheticServer)
+        server.checkpoint = Mock(side_effect=OSError('synthetic checkpoint failure'))
+        server.docker = Mock()
+        with self.assertRaises(OSError):
+            server.create_container()
+        server.docker.assert_not_called()
+
+    def startup_main(self, recovery_result=None, recovery_error=None):
+        server = SimpleNamespace(folder=Path('/synthetic'), volumes=[], start=Mock(side_effect=RuntimeError('synthetic startup')),
+                                 cleanup=Mock(), private_write=Mock())
+        with patch.object(sys, 'argv', self.arguments()+['--run-synthetic', '--probe-startup-failure', 'receipt']), \
+             patch.object(manual, 'SyntheticServer', return_value=server), \
+             patch.object(manual, 'recover_checkpoint', return_value=recovery_result, side_effect=recovery_error), \
+             patch.object(manual.signal, 'signal'), contextlib.redirect_stdout(io.StringIO()) as output:
+            code = manual.main()
+        return code, json.loads(output.getvalue()), server
+
+    def test_startup_failure_with_unverifiable_cleanup_is_manual_review_not_success(self):
+        code, report, server = self.startup_main(recovery_error=RuntimeError('Uncertain create'))
+        self.assertEqual(code, 1)
+        self.assertFalse(report['successful'])
+        self.assertTrue(report['manualReviewRequired'])
+        self.assertEqual(report['failureCategory'], 'STARTUP_FAILED')
+        self.assertFalse(report['containerRemoved'])
+        server.cleanup.assert_not_called()
+
+    def test_cleaned_startup_failure_still_cannot_be_reported_as_passing_suite(self):
+        code, report, _ = self.startup_main(recovery_result={'containerRemoved': True, 'anonymousVolumesRemoved': True})
+        self.assertEqual(code, 1)
+        self.assertFalse(report['successful'])
+        self.assertFalse(report['manualReviewRequired'])
+        self.assertTrue(report['containerRemoved'])
+        self.assertEqual(report['casesRun'], 0)
+
 
 if __name__ == '__main__':
     unittest.main()
