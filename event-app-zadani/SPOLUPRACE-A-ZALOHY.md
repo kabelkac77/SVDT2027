@@ -1,5 +1,13 @@
 # Spolupráce při vývoji a denní zálohy
 
+## 2026-11-28 — úplný soukromý export připravený58
+
+Přímo Codexem dokončený operátorský exportér `crew_import_export.py`: předchozí stav nebo stav po explicitním requestId+actorId. V jedné READ ONLY / REPEATABLE READ transakci čte úplné link/package metadata včetně source_history_id a po převodu také skutečný uložený plán, receipt a přesný source_text. Původní serverový fingerprint nepřepočítává. Žádné SET ROLE/JWT/granty/importní RPC; připojení musí mít předem samostatně potvrzenou identitu a čtecí oprávnění.
+
+Soukromé výstupy pouze pod ignorovanou .local, adresáře0700 a soubory0600, atomic publication bez přepsání; hesla/config obsah se nevypisují. Artefakt i návratový stav mají authorityVerified/applyReady/cutoverReady:false. [58](58-CREW-SOUKROMY-EXPORT-A-OVERENI.md), [evidence](crew-private-export-verification.json).19 nových scénářů,313 hostitelských,19 exportních i při Python -O,281 app/DB/typecheck/build prošly. Skutečný psql/PostgreSQL18.6 export před/po i navazující checker prošly1/1, snapshot30 relací při obou čteních beze změny, vlastní kontejner/volumes/jednorázové přístupy uklizené. PGlite používá skutečný generovaný exportní SQL. Osm migrací beze změny.
+
+**Další neblokovaná implementace:44 inline historie crew a12 browser scénářů.** Na později31/45: review55–58, potvrdit skutečný projekt/DB/uživatele, předem dostupnou admin session a privilegovanou čtecí službu, TLS/konfiguraci a práci se soukromými exporty. Běžný authenticated účet cache requestů číst nesmí; tento nástroj mu nedává grant ani jiný přístup. Skutečná vzdálená záloha/klíč/obnova/OAuth/Storage/browser a výslovná aktivace zůstávají otevřené. Bez dotazů, skutečných podkladů/importu/DDL/grant/deploy/merge nebo Claude.
+
 ## 2026-11-28 — kontrola převodu crew implementovaná57
 
 Přímo Codexem dokončený čistý `verify_import` podle39 s parserem43. Porovnává přesný zdroj a plan hash, potvrzení importu, předchozí/následný stav lidí/odměn a původních vazeb, včetně nezměněnosti ostatních řádků a metadat. Výsledek obsahuje jen ID/názvy odlišných polí a trvalé ruční brány; **comparisonMatches nikdy neznamená authorityVerified/applyReady/cutoverReady**.

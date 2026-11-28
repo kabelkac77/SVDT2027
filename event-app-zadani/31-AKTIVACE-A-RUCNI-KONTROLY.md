@@ -1,5 +1,12 @@
 # Aktivace a odložené ruční kontroly
 
+## 2026-11-28 — soukromý export implementovaný58, živé použití odložené
+
+- [x]58: úplný operátorský čtecí export,19 nových/313 hostitelských,281 app/DB/typecheck/build; skutečný izolovaný PostgreSQL/psql export před/po a checker1/1,30 relací čtením nezměněno, kontejner/volumes/jednorázové přístupy uklizené.
+- [ ] Později review55–58 a potvrzení konkrétního projektu/služby/DB/uživatele/TLS, bezpečných config/pass souborů a předem ověřené admin session s potřebnými čtecími oprávněními. Exportér nenastavuje identitu a nedoplňuje granty; běžný authenticated request cache nečte.
+- [ ] Dohodnout použití/retenci privátních0600 exportů, zacházení s případným neúplným .partial nebo kompletním souborem po chybě dokončení. Žádné automatické mazání nebo načítání do browseru/logů;4 temporaries54 zůstávají beze změny.
+- [ ] Nadále všechny živé45 důkazy: skutečné OAuth/scopes/Storage/provider, aplikovaná8. migrace, úplná vzdálená záloha/klíč/obnova/browser a výslovný souhlas s importem. Export není živá autorita nebo aktivace. Bez dotazů nyní, skutečný import zakázaný.
+
 ## 2026-11-28 — checker39 ověřený synteticky, úplný export ještě samostatně
 
 - [x]57: čisté porovnání podle39,26 původních+9 nových scénářů,294 hostitelských/60 optimalizovaných,281 app/DB a typecheck/build prošly; ověřený skutečný zkušební import/readback v PGlite.

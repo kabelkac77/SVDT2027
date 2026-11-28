@@ -1,6 +1,10 @@
 # Čistý kontrolní protokol po počátečním převodu crew
 
-## Aktuální implementace — 2026-11-28
+## Úplný čtecí export připravený — 2026-11-28
+
+Navazující58 dodává `crew_import_export.py` pro skutečná úplná target metadata včetně source_history_id a po konkrétním request/actor také uložený plán, receipt a source bytes. Vše z jedné READ ONLY / REPEATABLE READ transakce, bez změny serverového fingerprintu. Skutečný izolovaný psql/PG a PGlite napojení na checker prošly; standardní neúplný RPC se nemění a nadále sám nestačí. [58](58-CREW-SOUKROMY-EXPORT-A-OVERENI.md). Předchozí stav57 níže je historický, live potvrzení/účty/autorita/aktivace stále31/45 a bez skutečného importu.
+
+## Implementace checkeru57 — 2026-11-28
 
 Čistý helper `event-app/tools/crew_import_verify.py` implementoval přímo Codex podle aktuálního22/AGENTS. Používá parse_import_plan43, build_import_plan a reconcile_preview, bez kopírování parseru. Původních26 scénářů přesunuto byte-for-byte do tests/ a skutečně prošlo;9 dalších hranic a propojení se syntetickým PGlite importerem prošly také.294 hostitelských/60 optimalizovaných,281 app/DB/typecheck/build prošly. [57](57-CREW-KONTROLA-PREVODU-A-OVERENI.md), [evidence](crew-verify-import-verification.json). Původní nativní postup a timeout/pending záznamy níže jsou historické.
 

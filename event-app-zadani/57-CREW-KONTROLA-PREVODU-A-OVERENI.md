@@ -37,3 +37,8 @@ Běžný `crew_import_target_preview` předává sourceLinks bez source_history_
 3. Později review Draft změn, skutečné účty/scopes/OAuth/Storage/provider, potvrzený projekt/aplikovaná8. migrace, úplná vzdálená záloha/klíč/obnova/browser a výslovný souhlas s importem. Čtyři soukromé syntetické temporaries54 zachované bez automatického mazání/čtení obsahu.
 
 Žádný skutečný personál/SQLite, provozní import/DDL/grant/deploy/merge nebo aktivace. Syntetický JWT/DB výsledek neprokazuje skutečnou identitu, oprávnění nebo serverovou autoritu dodaných souborů. Přístupy a potvrzení evidované na později bez dotazů uživateli.
+
+
+## Navazující implementace58 — 2026-11-28
+
+Úplný operátorský exportér je nyní implementovaný a synteticky ověřený v58. Čte source_history_id a uložený plán/receipt/source přímo ze stejného databázového snapshotu a ponechává serverový fingerprint. Původní poznámka o chybějícím exportéru výše popisuje stav57. Standardní RPC zůstává beze změny a sám není úplným vstupem. Skutečné provozní přístupy, autorita a aktivace se tím nepovažují za vyřešené;31/45 nadále otevřené.

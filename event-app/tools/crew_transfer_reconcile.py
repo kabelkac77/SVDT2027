@@ -28,6 +28,20 @@ def reconcile_preview(tables_bytes, mapping=None, target=None):
         raise ValueError(_FAILURE) from None
 
 
+def validate_target_export(target):
+    """Validate a complete export without inventing a source or a mapping.
+
+    No package is singled out as the current source; source-specific coverage
+    remains the responsibility of reconciliation/verification with real bytes.
+    """
+    try:
+        if target is None:
+            _fail()
+        return _validate_target(target, None, set(), None)
+    except Exception:
+        raise ValueError(_FAILURE) from None
+
+
 def _fail():
     raise ValueError()
 
